@@ -1,0 +1,3 @@
+
+
+gprof MD.exe gmon.out > analysis.txt
