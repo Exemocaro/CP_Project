@@ -464,33 +464,46 @@ double Kinetic() { //Write Function here!
     
 }
 
-
+// NOTA: MELHORAR ESTA FUNÇÃO
 // Function to calculate the potential energy of the system
 double Potential() {
     double quot, r2, rnorm, term1, term2, Pot;
     int i, j, k;
+    double ri0, ri1, ri2, rj0, rj1, rj2, mult0, mult1, mult2;
     
     Pot=0.;
     for (i=0; i<N; i++) {
+        ri0 = r[i][0];
+        ri1 = r[i][1];
+        ri2 = r[i][2];
         for (j=0; j<N; j++) {
+            rj0 = r[j][0];
+            rj1 = r[j][1];
+            rj2 = r[j][2];
             
             if (j!=i) {
                 r2=0.;
-                for (k=0; k<3; k++) {
+                // NOTA: LOOP UNROLLING:
+                /* for (k=0; k<3; k++) {
                     r2 += (r[i][k]-r[j][k])*(r[i][k]-r[j][k]);
-                }
+                } */
+                mult0 = ri0-rj0;
+                mult1 = ri1-rj1;
+                mult2 = ri2-rj2;
+
+                r2 += mult0*mult0;
+                r2 += mult1*mult1;
+                r2 += mult2*mult2;
+
                 rnorm=sqrt(r2);
                 quot=sigma/rnorm;
-                term1 = pow(quot,12.);
-                term2 = pow(quot,6.);
                 
-                Pot += 4*epsilon*(term1 - term2);
-                
+                Pot += (pow(quot,12.)- pow(quot,6.));
             }
         }
     }
-    
-    return Pot;
+    // NOTA: SIMPLIFICAR A MULTIPLICAÇÃO
+    return 4.0 * epsilon * Pot;
 }
 
 
@@ -541,55 +554,74 @@ void computeAccelerations() { // NOTA: melhorar a funçao !!!!
 // returns sum of dv/dt*m/A (aka Pressure) from elastic collisions with walls
 double VelocityVerlet(double dt, int iter, FILE *fp) {
     int i, j, k;
-    
+    //double dt2 = dt*dt;
     double psum = 0.;
-    
-    //  Compute accelerations from forces at current position
-    // this call was removed (commented) for predagogical reasons
-    //computeAccelerations();
-    //  Update positions and velocity with current velocity and acceleration
-    //printf("  Updated Positions!\n");
+    double ai0dt;
+    double ai1dt;
+    double ai2dt;
+
+    double m2 = 2*m;
+
     for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
+        // NOTA: LOOP UNROLLING
+        /* for (j=0; j<3; j++) {
             r[i][j] += v[i][j]*dt + 0.5*a[i][j]*dt*dt;
             
             v[i][j] += 0.5*a[i][j]*dt;
-        }
+        } */
+
+        ai0dt = 0.5*a[i][0]*dt;
+
+        ai1dt = 0.5*a[i][1]*dt;
+
+        ai2dt = 0.5*a[i][2]*dt;
+
+        r[i][0] += dt*(v[i][0]*dt + ai0dt);
+        v[i][0] += ai0dt;
+        
+        r[i][1] += dt*(v[i][1] + ai1dt);
+        v[i][1] += ai1dt;
+
+        r[i][2] += dt*(v[i][2] + ai2dt);
+        v[i][2] += ai2dt;
+
         //printf("  %i  %6.4e   %6.4e   %6.4e\n",i,r[i][0],r[i][1],r[i][2]);
     }
     //  Update accellerations from updated positions
     computeAccelerations();
     //  Update velocity with updated acceleration
     for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            v[i][j] += 0.5*a[i][j]*dt;
+        v[i][0] += 0.5*a[i][0]*dt;
+        v[i][1] += 0.5*a[i][1]*dt;
+        v[i][2] += 0.5*a[i][2]*dt;
+    
+        // Elastic walls
+        if (r[i][0]<0.) {
+            v[i][0] *=-1.; //- elastic walls
+            psum += m2*fabs(v[i][0])/dt;  // contribution to pressure from "left" walls
+        }
+        if (r[i][1]<0.) {
+            v[i][1] *=-1.; //- elastic walls
+            psum += m2*fabs(v[i][1])/dt;  // contribution to pressure from "left" walls
+        }
+        if (r[i][2]<0.) {
+            v[i][2] *=-1.; //- elastic walls
+            psum += m2*fabs(v[i][2])/dt;  // contribution to pressure from "left" walls
+        }
+
+        if (r[i][0]>=L) {
+            v[i][0]*=-1.;  //- elastic walls
+            psum += m2*fabs(v[i][0])/dt;  // contribution to pressure from "right" walls
+        }
+        if (r[i][1]>=L) {
+            v[i][1]*=-1.;  //- elastic walls
+            psum += m2*fabs(v[i][1])/dt;  // contribution to pressure from "right" walls
+        }
+        if (r[i][2]>=L) {
+            v[i][2]*=-1.;  //- elastic walls
+            psum += m2*fabs(v[i][2])/dt;  // contribution to pressure from "right" walls
         }
     }
-    
-    // Elastic walls
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            if (r[i][j]<0.) {
-                v[i][j] *=-1.; //- elastic walls
-                psum += 2*m*fabs(v[i][j])/dt;  // contribution to pressure from "left" walls
-            }
-            if (r[i][j]>=L) {
-                v[i][j]*=-1.;  //- elastic walls
-                psum += 2*m*fabs(v[i][j])/dt;  // contribution to pressure from "right" walls
-            }
-        }
-    }
-    
-    
-    /* removed, uncomment to save atoms positions */
-    /*for (i=0; i<N; i++) {
-        fprintf(fp,"%s",atype);
-        for (j=0; j<3; j++) {
-            fprintf(fp,"  %12.10e ",r[i][j]);
-        }
-        fprintf(fp,"\n");
-    }*/
-    //fprintf(fp,"\n \n");
     
     return psum/(6*L*L);
 }
