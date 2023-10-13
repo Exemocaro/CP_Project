@@ -20,17 +20,113 @@
       98,642504000 seconds user
        0,019999000 seconds sys
 
+ Performance counter stats for './MD.exe':
 
-// DEPOIS DE LOOP UNROLLING NO VelocityVelvet():
+         705790592      L1-dcache-load-misses                                                 
+      644228779732      instructions                     #    1,77  insn per cycle            
+      364866730401      cycles                                                                
+      644228779732      INST_RETIRED.ANY                 #     0,57 CPI                       
+      364866730401      CPU_CLK_UNHALTED.THREAD                                               
+
+     103,677890649 seconds time elapsed
+
+      93,943241000 seconds user
+       0,111984000 seconds sys
+
+// DEPOIS DAS FLAGS
 
  Performance counter stats for './MD.exe':
 
-         754974040      L1-dcache-load-misses                                                 
-      644209672042      instructions                                                          
-      644209672042      INST_RETIRED.ANY                 #     0,58 CPI                       
-      372633877465      CPU_CLK_UNHALTED.THREAD                                               
+         673748416      L1-dcache-load-misses                                                 
+      416402194655      instructions                     #    1,77  insn per cycle            
+      235814290786      cycles                                                                
+      416402194655      INST_RETIRED.ANY                 #     0,57 CPI                       
+      235814290786      CPU_CLK_UNHALTED.THREAD                                               
 
-     108,417098056 seconds time elapsed
+      68,247065747 seconds time elapsed
 
-      95,846144000 seconds user
-       0,395942000 seconds sys
+      60,726427000 seconds user
+       0,107982000 seconds sys
+
+// DEPOIS DA SIMPLIFICAÇÃO DO POW() EM COMPUTE ACCELERATIONS
+
+ Performance counter stats for './MD.exe':
+
+         667280448      L1-dcache-load-misses                                                 
+      303527172184      instructions                     #    1,69  insn per cycle            
+      179891574832      cycles                                                                
+      303527172184      INST_RETIRED.ANY                 #     0,59 CPI                       
+      179891574832      CPU_CLK_UNHALTED.THREAD                                               
+
+      52,689307834 seconds time elapsed
+
+      46,282051000 seconds user
+       0,024001000 seconds sys
+
+
+// DEPOIS DA SIMPLIFICAÇÃO DO POW() EM Potential()
+
+ Performance counter stats for 'make run':
+
+         417657552      L1-dcache-load-misses                                                 
+       40026302977      instructions                     #    2,11  insn per cycle            
+       18977673368      cycles                                                                
+       40026302977      INST_RETIRED.ANY                 #     0,47 CPI                       
+       18977673368      CPU_CLK_UNHALTED.THREAD                                               
+
+       4,890328874 seconds time elapsed
+
+       4,875793000 seconds user
+       0,011993000 seconds sys
+
+
+// DEPOIS DA SIMPLIFICAÇÃO DO POW() EM Potential()
+
+ Performance counter stats for 'make run':
+
+
+         669970596      L1-dcache-load-misses                                                 
+       52216267237      instructions                     #    2,32  insn per cycle            
+       22501611806      cycles                                                                
+       52216267237      INST_RETIRED.ANY                 #     0,43 CPI                       
+       22501611806      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,817308327 seconds time elapsed
+
+       5,815339000 seconds user
+       0,000000000 seconds sys
+
+
+
+
+
+--------------------
+
+
+ Performance counter stats for 'make run':
+
+         703778238      L1-dcache-load-misses                                                 
+      430742273364      instructions                     #    1,74  insn per cycle            
+      247879267842      cycles                                                                
+      430742273364      INST_RETIRED.ANY                 #     0,58 CPI                       
+      247879267842      CPU_CLK_UNHALTED.THREAD                                               
+
+      63,962683825 seconds time elapsed
+
+      63,574848000 seconds user
+       0,380025000 seconds sys
+
+
+
+       Performance counter stats for 'make run':
+
+         714442232      L1-dcache-load-misses                                                 
+      430767987621      instructions                     #    1,73  insn per cycle            
+      249167818988      cycles                                                                
+      430767987621      INST_RETIRED.ANY                 #     0,58 CPI                       
+      249167818988      CPU_CLK_UNHALTED.THREAD                                               
+
+      64,350035296 seconds time elapsed
+
+      64,239495000 seconds user
+       0,068004000 seconds sys

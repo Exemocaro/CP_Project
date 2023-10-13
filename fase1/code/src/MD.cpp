@@ -1,56 +1,56 @@
 /*
-MD.c - a simple molecular dynamics program for simulating real gas properties of Lennard-Jones particles.
-
-Copyright (C) 2016  Jonathan J. Foley IV, Chelsea Sweet, Oyewumi Akinfenwa
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Electronic Contact:  foleyj10@wpunj.edu
-Mail Contact:   Prof. Jonathan Foley
-Department of Chemistry, William Paterson University
-300 Pompton Road
-Wayne NJ 07470
-*/
-
+ MD.c - a simple molecular dynamics program for simulating real gas properties of Lennard-Jones particles.
+ 
+ Copyright (C) 2016  Jonathan J. Foley IV, Chelsea Sweet, Oyewumi Akinfenwa
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ Electronic Contact:  foleyj10@wpunj.edu
+ Mail Contact:   Prof. Jonathan Foley
+ Department of Chemistry, William Paterson University
+ 300 Pompton Road
+ Wayne NJ 07470
+ 
+ */
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>
 
+
 // Number of particles
 int N;
 
 //  Lennard-Jones parameters in natural units!
-double sigma = 1.; // NOTA: Lennard-Jones potential 
-double epsilon = 1.; // NOTA: Lennard-Jones potential 
+double sigma = 1.;
+double epsilon = 1.;
 double m = 1.;
 double kB = 1.;
 
-double NA = 6.022140857e23; // NOTA: NUMERO DE AVOGADRO
+double NA = 6.022140857e23;
 double kBSI = 1.38064852e-23;  // m^2*kg/(s^2*K)
 
 //  Size of box, which will be specified in natural units
-double L; // NOTA: box size
+double L;
 
 //  Initial Temperature in Natural Units
-double Tinit;  //2; // NOTA: T inicial
+double Tinit;  //2;
 //  Vectors!
 //
-const int MAXPART=5001; // NOTA: Número máximo de partículas?
-// NOTA: Vetores que armazenam as posições, velocidades, acelerações e forças DE CADA PARTÍCULA
+const int MAXPART=5001;
 //  Position
-double r[MAXPART][3]; // (x,y,z), (x,y,z), ...
+double r[MAXPART][3];
 //  Velocity
 double v[MAXPART][3];
 //  Acceleration
@@ -81,7 +81,7 @@ double MeanSquaredVelocity();
 //  Compute total kinetic energy from particle mass and velocities
 double Kinetic();
 
-char * OUTPUT_FOLDER = "output/";
+const char * OUTPUT_FOLDER = "output/";
 
 int main()
 {
@@ -91,15 +91,22 @@ int main()
     double dt, Vol, Temp, Press, Pavg, Tavg, rho;
     double VolFac, TempFac, PressFac, timefac;
     double KE, PE, mvs, gc, Z;
-    char trash[10000], prefix[1000], tfn[1000], ofn[1000], afn[1000];
-    FILE *infp, *tfp, *ofp, *afp;
+    char prefix[1000], tfn[1000], ofn[1000], afn[1000];
+    // char trash[10000];
+    FILE *tfp, *ofp, *afp;
+    // FILE *infp;
     
     
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("                  WELCOME TO WILLY P CHEM MD!\n");
     printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("\n  ENTER A TITLE FOR YOUR CALCULATION!\n");
-    scanf("%s",prefix);
+    
+    if (scanf("%s", prefix) != 1) {
+        fprintf(stderr, "Error reading prefix.\n");
+        exit(1);
+    }
+
 
     strcpy(tfn,OUTPUT_FOLDER);
     strcat(tfn,prefix);
@@ -112,7 +119,6 @@ int main()
     strcpy(afn,OUTPUT_FOLDER);
     strcat(afn,prefix);
     strcat(afn,"_average.txt");
-
     
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("                  TITLE ENTERED AS '%s'\n",prefix);
@@ -144,7 +150,11 @@ int main()
     printf("  FOR KRYPTON, TYPE 'Kr' THEN PRESS 'return' TO CONTINUE\n");
     printf("  FOR XENON,   TYPE 'Xe' THEN PRESS 'return' TO CONTINUE\n");
     printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-    scanf("%s",atype);
+    if (scanf("%s", atype) != 1) {
+        fprintf(stderr, "Error reading atype.\n");
+        exit(1);
+    }
+
     
     if (strcmp(atype,"He")==0) {
         
@@ -204,7 +214,11 @@ int main()
     printf("\n  YOU WILL NOW ENTER A FEW SIMULATION PARAMETERS\n");
     printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("\n\n  ENTER THE INTIAL TEMPERATURE OF YOUR GAS IN KELVIN\n");
-    scanf("%lf",&Tinit);
+    if (scanf("%lf", &Tinit) != 1) {
+        fprintf(stderr, "Error reading Tinit.\n");
+        exit(1);
+    }
+
     // Make sure temperature is a positive number!
     if (Tinit<0.) {
         printf("\n  !!!!! ABSOLUTE TEMPERATURE MUST BE A POSITIVE NUMBER!  PLEASE TRY AGAIN WITH A POSITIVE TEMPERATURE!!!\n");
@@ -218,7 +232,11 @@ int main()
     printf("  FOR REFERENCE, NUMBER DENSITY OF AN IDEAL GAS AT STP IS ABOUT 40 moles/m^3\n");
     printf("  NUMBER DENSITY OF LIQUID ARGON AT 1 ATM AND 87 K IS ABOUT 35000 moles/m^3\n");
     
-    scanf("%lf",&rho);
+    if (scanf("%lf", &rho) != 1) {
+        fprintf(stderr, "Error reading rho.\n");
+        exit(1);
+    }
+
     
     N = 10*216;
     Vol = N/(rho*NA);
@@ -334,9 +352,7 @@ int main()
         Tavg += Temp;
         Pavg += Press;
         
-        fprintf(ofp,"  %8.4e  %20.8f  %20.8f %20.8f  %20.8f  %20.8f \n",i*dt*timefac,Temp,Press,KE, PE, KE+PE);
-        
-        
+        fprintf(ofp,"  %8.4e  %20.12f  %20.12f %20.12f  %20.12f  %20.12f \n",i*dt*timefac,Temp,Press,KE, PE, KE+PE);
     }
     
     // Because we have calculated the instantaneous temperature and pressure,
@@ -345,20 +361,21 @@ int main()
     Tavg /= NumTime;
     Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
     gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
-    fprintf(afp,"  Total Time (s)      T (K)               P (Pa)      PV/nT (J/(mol K))         Z           V (m^3)              N\n");
-    fprintf(afp," --------------   -----------        ---------------   --------------   ---------------   ------------   -----------\n");
-    fprintf(afp,"  %8.4e  %15.5f       %15.5f     %10.5f       %10.5f        %10.5e         %i\n",i*dt*timefac,Tavg,Pavg,gc,Z,Vol*VolFac,N);
+    fprintf(afp,"     Total Time (s)                 T (K)                         P (Pa)                PV/nT (J/(mol K))                  Z                        V (m^3)                       N\n");
+    fprintf(afp," -----------------------   ----------------------       -------------------------   -------------------------   ------------------------   -----------------------   ---------------------------\n");
+    fprintf(afp,"  %8.12e       %15.12f              %15.12f       %10.12f              %10.12f             %10.12e          %i\n",i*dt*timefac,Tavg,Pavg,gc,Z,Vol*VolFac,N);
     
     printf("\n  TO ANIMATE YOUR SIMULATION, OPEN THE FILE \n  '%s' WITH VMD AFTER THE SIMULATION COMPLETES\n",tfn);
     printf("\n  TO ANALYZE INSTANTANEOUS DATA ABOUT YOUR MOLECULE, OPEN THE FILE \n  '%s' WITH YOUR FAVORITE TEXT EDITOR OR IMPORT THE DATA INTO EXCEL\n",ofn);
     printf("\n  THE FOLLOWING THERMODYNAMIC AVERAGES WILL BE COMPUTED AND WRITTEN TO THE FILE  \n  '%s':\n",afn);
-    printf("\n  AVERAGE TEMPERATURE (K):                 %15.5f\n",Tavg);
-    printf("\n  AVERAGE PRESSURE  (Pa):                  %15.5f\n",Pavg);
-    printf("\n  PV/nT (J * mol^-1 K^-1):                 %15.5f\n",gc);
-    printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.5f\n",100*fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
-    printf("\n  THE COMPRESSIBILITY (unitless):          %15.5f \n",Z);
-    printf("\n  TOTAL VOLUME (m^3):                      %10.5e \n",Vol*VolFac);
+    printf("\n  AVERAGE TEMPERATURE (K):                 %15.12f\n",Tavg);
+    printf("\n  AVERAGE PRESSURE  (Pa):                  %15.12f\n",Pavg);
+    printf("\n  PV/nT (J * mol^-1 K^-1):                 %15.12f\n",gc);
+    printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
+    printf("\n  THE COMPRESSIBILITY (unitless):          %15.12f \n",Z);
+    printf("\n  TOTAL VOLUME (m^3):                      %10.12e \n",Vol*VolFac);
     printf("\n  NUMBER OF PARTICLES (unitless):          %i \n", N);
+    
     
     
     
@@ -464,54 +481,92 @@ double Kinetic() { //Write Function here!
     
 }
 
-// NOTA: MELHORAR ESTA FUNÇÃO
+double custom_pow1(double base, double exponent) {
+    if (exponent == 0.0) {
+        return 1.0;
+    } else if (exponent == 1.0) {
+        return base;
+    } else if (exponent < 0.0) {
+        return 1.0 / custom_pow1(base, -exponent);
+    } else {
+        double result = 1.0;
+        int n = (int)exponent;
+        for (int i = 0; i < n; i++) {
+            result *= base;
+        }
+        return result;
+    }
+}
+
+double custom_pow2(double base, int exponent) {
+    if (exponent == 0) {
+        return 1.0;
+    } else if (exponent < 0) {
+        base = 1.0 / base;
+        exponent = -exponent;
+    }
+
+    double result = 1.0;
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            result *= base;
+        }
+        base *= base;
+        exponent /= 2;
+    }
+
+    return result;
+}
+
+
 // Function to calculate the potential energy of the system
 double Potential() {
-    double quot, r2, rnorm, term1, term2, Pot;
-    int i, j, k;
+    double quot, r2, rnorm;
+    int i, j;
     double ri0, ri1, ri2, rj0, rj1, rj2, mult0, mult1, mult2;
+    double quot_2, quot_6;
     
-    Pot=0.;
-    for (i=0; i<N; i++) {
+    double Pot = 0.;
+    for (i = 0; i < N; i++) {
         ri0 = r[i][0];
         ri1 = r[i][1];
         ri2 = r[i][2];
-        for (j=0; j<N; j++) {
+        for (j = 0; j < N; j++) {
             rj0 = r[j][0];
             rj1 = r[j][1];
             rj2 = r[j][2];
             
-            if (j!=i) {
-                r2=0.;
-                // NOTA: LOOP UNROLLING:
-                /* for (k=0; k<3; k++) {
-                    r2 += (r[i][k]-r[j][k])*(r[i][k]-r[j][k]);
-                } */
-                mult0 = ri0-rj0;
-                mult1 = ri1-rj1;
-                mult2 = ri2-rj2;
+            if (j != i) {
+                r2 = 0.;
+                mult0 = ri0 - rj0;
+                mult1 = ri1 - rj1;
+                mult2 = ri2 - rj2;
 
-                r2 += mult0*mult0;
-                r2 += mult1*mult1;
-                r2 += mult2*mult2;
+                r2 += mult0 * mult0;
+                r2 += mult1 * mult1;
+                r2 += mult2 * mult2;
 
-                rnorm=sqrt(r2);
-                quot=sigma/rnorm;
-                
-                Pot += (pow(quot,12.)- pow(quot,6.));
+                rnorm = sqrt(r2);
+                quot = sigma / rnorm;
+                Pot += (pow(quot, 12.) - pow(quot,6.));
+
+                /* 
+                double r6 = r2 * r2 * r2;
+                double r12 = r6 * r6;
+                Pot += (sigma / r12 - sigma / r6);
+                */
             }
         }
     }
-    // NOTA: SIMPLIFICAR A MULTIPLICAÇÃO
     return 4.0 * epsilon * Pot;
 }
 
 
- 
+
 //   Uses the derivative of the Lennard-Jones potential to calculate
 //   the forces on each atom.  Then uses a = F/m to calculate the
 //   accelleration of each atom. 
-void computeAccelerations() { // NOTA: melhorar a funçao !!!!
+void computeAccelerations() {
     int i, j, k;
     double f, rSqd;
     double rij[3]; // position of i relative to j
@@ -527,18 +582,12 @@ void computeAccelerations() { // NOTA: melhorar a funçao !!!!
             // initialize r^2 to zero
             rSqd = 0;
             
-            //for (k = 0; k < 3; k++) {
-            //  component-by-componenent position of i relative to j
-            rij[0] = r[i][0] - r[j][0];
-            rSqd += rij[0] * rij[0];
-
-            rij[1] = r[i][1] - r[j][1];
-            rSqd += rij[1] * rij[1];
-
-            rij[2] = r[i][2] - r[j][2];
-            rSqd += rij[2] * rij[2];
-            //  sum of squares of the components
-            //}
+            for (k = 0; k < 3; k++) {
+                //  component-by-componenent position of i relative to j
+                rij[k] = r[i][k] - r[j][k];
+                //  sum of squares of the components
+                rSqd += rij[k] * rij[k];
+            }
             
             //  From derivative of Lennard-Jones with sigma and epsilon set equal to 1 in natural units!
             f = 24 * (2 * pow(rSqd, -7) - pow(rSqd, -4));
@@ -553,81 +602,61 @@ void computeAccelerations() { // NOTA: melhorar a funçao !!!!
 
 // returns sum of dv/dt*m/A (aka Pressure) from elastic collisions with walls
 double VelocityVerlet(double dt, int iter, FILE *fp) {
-    int i, j, k;
-    //double dt2 = dt*dt;
+    int i, j;
+    
     double psum = 0.;
-    double ai0dt;
-    double ai1dt;
-    double ai2dt;
-
-    double m2 = 2*m;
-
+    
+    //  Compute accelerations from forces at current position
+    // this call was removed (commented) for predagogical reasons
+    //computeAccelerations();
+    //  Update positions and velocity with current velocity and acceleration
+    //printf("  Updated Positions!\n");
     for (i=0; i<N; i++) {
-        // NOTA: LOOP UNROLLING
-        /* for (j=0; j<3; j++) {
+        for (j=0; j<3; j++) {
             r[i][j] += v[i][j]*dt + 0.5*a[i][j]*dt*dt;
             
             v[i][j] += 0.5*a[i][j]*dt;
-        } */
-
-        ai0dt = 0.5*a[i][0]*dt;
-
-        ai1dt = 0.5*a[i][1]*dt;
-
-        ai2dt = 0.5*a[i][2]*dt;
-
-        r[i][0] += dt*(v[i][0]*dt + ai0dt);
-        v[i][0] += ai0dt;
-        
-        r[i][1] += dt*(v[i][1] + ai1dt);
-        v[i][1] += ai1dt;
-
-        r[i][2] += dt*(v[i][2] + ai2dt);
-        v[i][2] += ai2dt;
-
+        }
         //printf("  %i  %6.4e   %6.4e   %6.4e\n",i,r[i][0],r[i][1],r[i][2]);
     }
     //  Update accellerations from updated positions
     computeAccelerations();
     //  Update velocity with updated acceleration
     for (i=0; i<N; i++) {
-        v[i][0] += 0.5*a[i][0]*dt;
-        v[i][1] += 0.5*a[i][1]*dt;
-        v[i][2] += 0.5*a[i][2]*dt;
-    
-        // Elastic walls
-        if (r[i][0]<0.) {
-            v[i][0] *=-1.; //- elastic walls
-            psum += m2*fabs(v[i][0])/dt;  // contribution to pressure from "left" walls
-        }
-        if (r[i][1]<0.) {
-            v[i][1] *=-1.; //- elastic walls
-            psum += m2*fabs(v[i][1])/dt;  // contribution to pressure from "left" walls
-        }
-        if (r[i][2]<0.) {
-            v[i][2] *=-1.; //- elastic walls
-            psum += m2*fabs(v[i][2])/dt;  // contribution to pressure from "left" walls
-        }
-
-        if (r[i][0]>=L) {
-            v[i][0]*=-1.;  //- elastic walls
-            psum += m2*fabs(v[i][0])/dt;  // contribution to pressure from "right" walls
-        }
-        if (r[i][1]>=L) {
-            v[i][1]*=-1.;  //- elastic walls
-            psum += m2*fabs(v[i][1])/dt;  // contribution to pressure from "right" walls
-        }
-        if (r[i][2]>=L) {
-            v[i][2]*=-1.;  //- elastic walls
-            psum += m2*fabs(v[i][2])/dt;  // contribution to pressure from "right" walls
+        for (j=0; j<3; j++) {
+            v[i][j] += 0.5*a[i][j]*dt;
         }
     }
+    
+    // Elastic walls
+    for (i=0; i<N; i++) {
+        for (j=0; j<3; j++) {
+            if (r[i][j]<0.) {
+                v[i][j] *=-1.; //- elastic walls
+                psum += 2*m*fabs(v[i][j])/dt;  // contribution to pressure from "left" walls
+            }
+            if (r[i][j]>=L) {
+                v[i][j]*=-1.;  //- elastic walls
+                psum += 2*m*fabs(v[i][j])/dt;  // contribution to pressure from "right" walls
+            }
+        }
+    }
+    
+    
+    /* removed, uncomment to save atoms positions */
+    /*for (i=0; i<N; i++) {
+        fprintf(fp,"%s",atype);
+        for (j=0; j<3; j++) {
+            fprintf(fp,"  %12.10e ",r[i][j]);
+        }
+        fprintf(fp,"\n");
+    }*/
+    //fprintf(fp,"\n \n");
     
     return psum/(6*L*L);
 }
 
 
-// NOTA: VER MELHOR ESTA FUNÇÃO
 void initializeVelocities() {
     
     int i, j;
