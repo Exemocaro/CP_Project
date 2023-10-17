@@ -1,0 +1,134 @@
+ Percent |	Source code & Disassembly of MD.exe for cycles (10077 samples, percent: local period)
+-----------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3    Disassembly of section .text:
+         :
+         : 5    0000000000002530 <Potential()>:
+         : 6    Potential():
+         :
+         : 492  }
+         :
+         :
+         : 495  // Function to calculate the potential energy of the system
+         : 496  double Potential() {
+    0.00 :   2530:   endbr64
+         : 497  double r2; //, rnorm; //, quot;
+         : 498  int i, j;
+         : 499  double ri0, ri1, ri2, rj0, rj1, rj2, mult0, mult1, mult2;
+         :
+         : 501  double Pot = 0.;
+         : 502  for (i = 0; i < N; i++) {
+    0.00 :   2534:   mov    0x79f0e(%rip),%esi        # 7c448 <N>
+    0.00 :   253a:   test   %esi,%esi
+    0.00 :   253c:   jle    263e <Potential()+0x10e>
+    0.00 :   2542:   lea    0x5ca17(%rip),%r9        # 5ef60 <r>
+         : 496  double Pot = 0.;
+    0.00 :   2549:   pxor   %xmm5,%xmm5
+         : 518  r2 += mult1 * mult1;
+         : 519  r2 += mult2 * mult2;
+         :
+         : 521  double r6 = r2 * r2 * r2;
+         : 522  double r12 = r6 * r6;
+         : 523  Pot += (sigma / r12 - sigma / r6);
+    0.00 :   254d:   movsd  0x4ae3(%rip),%xmm4        # 7038 <sigma>
+         : 497  for (i = 0; i < N; i++) {
+    0.00 :   2555:   xor    %ecx,%ecx
+         : 518  Pot += (sigma / r12 - sigma / r6);
+    0.00 :   2557:   mov    %r9,%r8
+         : 496  double Pot = 0.;
+    0.00 :   255a:   movapd %xmm5,%xmm3
+    0.00 :   255e:   xchg   %ax,%ax
+         : 498  ri0 = r[i][0];
+    0.01 :   2560:   movsd  (%r8),%xmm8
+         : 499  ri1 = r[i][1];
+    0.00 :   2565:   movsd  0x8(%r8),%xmm7
+         : 500  ri2 = r[i][2];
+    0.00 :   256b:   mov    %r9,%rax
+         : 501  for (j = 0; j < N; j++) {
+    0.02 :   256e:   xor    %edx,%edx
+         : 500  ri2 = r[i][2];
+    0.00 :   2570:   movsd  0x10(%r8),%xmm6
+         : 501  for (j = 0; j < N; j++) {
+    0.00 :   2576:   lea    0x1(%rcx),%edi
+    0.00 :   2579:   nopl   0x0(%rax)
+         : 506  if (j != i) {
+    0.01 :   2580:   cmp    %edx,%ecx
+    0.00 :   2582:   je     2620 <Potential()+0xf0>
+         : 508  mult0 = ri0 - rj0;
+    0.00 :   2588:   movapd %xmm8,%xmm2
+    9.86 :   258d:   subsd  (%rax),%xmm2
+         : 509  mult1 = ri1 - rj1;
+    0.05 :   2591:   movapd %xmm7,%xmm1
+         : 501  for (j = 0; j < N; j++) {
+    0.00 :   2595:   add    $0x1,%edx
+         : 509  mult1 = ri1 - rj1;
+    0.09 :   2598:   subsd  0x8(%rax),%xmm1
+         : 510  mult2 = ri2 - rj2;
+    9.17 :   259d:   movapd %xmm6,%xmm0
+    0.10 :   25a1:   subsd  0x10(%rax),%xmm0
+         : 501  for (j = 0; j < N; j++) {
+    0.00 :   25a6:   add    $0x18,%rax
+         : 512  r2 += mult0 * mult0;
+    0.00 :   25aa:   mulsd  %xmm2,%xmm2
+         : 513  r2 += mult1 * mult1;
+   10.10 :   25ae:   mulsd  %xmm1,%xmm1
+         : 514  r2 += mult2 * mult2;
+    0.01 :   25b2:   mulsd  %xmm0,%xmm0
+         : 512  r2 += mult0 * mult0;
+    0.01 :   25b6:   addsd  %xmm5,%xmm2
+         : 513  r2 += mult1 * mult1;
+    0.02 :   25ba:   addsd  %xmm2,%xmm1
+         : 514  r2 += mult2 * mult2;
+    9.57 :   25be:   addsd  %xmm1,%xmm0
+         : 516  double r6 = r2 * r2 * r2;
+    0.02 :   25c2:   movapd %xmm0,%xmm1
+    0.03 :   25c6:   mulsd  %xmm0,%xmm1
+    0.04 :   25ca:   mulsd  %xmm1,%xmm0
+         : 518  Pot += (sigma / r12 - sigma / r6);
+   10.77 :   25ce:   movapd %xmm4,%xmm1
+         : 517  double r12 = r6 * r6;
+    0.01 :   25d2:   movapd %xmm0,%xmm2
+    0.02 :   25d6:   mulsd  %xmm0,%xmm2
+         : 518  Pot += (sigma / r12 - sigma / r6);
+    2.63 :   25da:   divsd  %xmm2,%xmm1
+   12.12 :   25de:   movapd %xmm4,%xmm2
+    0.02 :   25e2:   divsd  %xmm0,%xmm2
+    0.11 :   25e6:   movapd %xmm1,%xmm0
+    6.46 :   25ea:   subsd  %xmm2,%xmm0
+   28.67 :   25ee:   addsd  %xmm0,%xmm3
+         : 501  for (j = 0; j < N; j++) {
+    0.01 :   25f2:   cmp    %edx,%esi
+    0.09 :   25f4:   jne    2580 <Potential()+0x50>
+         : 497  for (i = 0; i < N; i++) {
+    0.00 :   25f6:   mov    %edi,%ecx
+    0.00 :   25f8:   add    $0x18,%r8
+    0.00 :   25fc:   cmp    %edi,%esi
+    0.00 :   25fe:   jne    2560 <Potential()+0x30>
+         :
+         :
+         : 530  }
+         : 531  }
+         : 532  }
+         : 533  return 4.0 * epsilon * Pot;
+    0.00 :   2604:   movsd  0x2664(%rip),%xmm0        # 4c70 <_IO_stdin_used+0xc70>
+    0.00 :   260c:   mulsd  0x4a1c(%rip),%xmm0        # 7030 <epsilon>
+    0.00 :   2614:   mulsd  %xmm3,%xmm0
+         : 529  }
+    0.00 :   2618:   ret
+    0.00 :   2619:   nopl   0x0(%rax)
+         : 501  for (j = 0; j < N; j++) {
+    0.00 :   2620:   mov    %edi,%edx
+    0.00 :   2622:   add    $0x18,%rax
+    0.00 :   2626:   cmp    %edi,%esi
+    0.00 :   2628:   jne    2580 <Potential()+0x50>
+         : 497  for (i = 0; i < N; i++) {
+    0.00 :   262e:   mov    %edi,%ecx
+    0.00 :   2630:   add    $0x18,%r8
+    0.00 :   2634:   cmp    %edi,%esi
+    0.00 :   2636:   jne    2560 <Potential()+0x30>
+    0.00 :   263c:   jmp    2604 <Potential()+0xd4>
+         : 496  double Pot = 0.;
+    0.00 :   263e:   pxor   %xmm3,%xmm3
+    0.00 :   2642:   jmp    2604 <Potential()+0xd4>

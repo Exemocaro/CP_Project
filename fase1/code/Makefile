@@ -1,6 +1,6 @@
 CC = gcc
 SRC = src/
-CFLAGS = -Wall -pg -O3
+CFLAGS = -ftree-vectorize -msse2 -Wall -g -O3 
 # CFLAGS = -Wall -pg -O3 -march=native -mtune=native -flto -mavx -pthread
 # -fopt-info-vec-missed
 .DEFAULT_GOAL = MD.exe

@@ -117,16 +117,32 @@
        0,380025000 seconds sys
 
 
+// DEPOIS DOS POWS
 
-       Performance counter stats for 'make run':
+ Performance counter stats for 'make run':
 
-         714442232      L1-dcache-load-misses                                                 
-      430767987621      instructions                     #    1,73  insn per cycle            
-      249167818988      cycles                                                                
-      430767987621      INST_RETIRED.ANY                 #     0,58 CPI                       
-      249167818988      CPU_CLK_UNHALTED.THREAD                                               
+         670962902      L1-dcache-load-misses                                                 
+       53155618968      instructions                     #    2,19  insn per cycle            
+       24271398385      cycles                                                                
+       53155618968      INST_RETIRED.ANY                 #     0,46 CPI                       
+       24271398385      CPU_CLK_UNHALTED.THREAD                                               
 
-      64,350035296 seconds time elapsed
+       6,267132326 seconds time elapsed
 
-      64,239495000 seconds user
-       0,068004000 seconds sys
+       6,255259000 seconds user
+       0,007995000 seconds sys
+
+// DEPOIS DAS SQRTS
+
+ Performance counter stats for 'make run':
+
+         670949501      L1-dcache-load-misses                                                 
+       52217371748      instructions                     #    2,24  insn per cycle            
+       23338921711      cycles                                                                
+       52217371748      INST_RETIRED.ANY                 #     0,45 CPI                       
+       23338921711      CPU_CLK_UNHALTED.THREAD                                               
+
+       6,043747851 seconds time elapsed
+
+       6,037637000 seconds user
+       0,004201000 seconds sys

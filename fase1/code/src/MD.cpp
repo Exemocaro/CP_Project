@@ -83,6 +83,10 @@ double Kinetic();
 
 const char * OUTPUT_FOLDER = "output/";
 
+double my_fabs(double x) {
+    return (x < 0) ? -x : x;
+}
+
 int main()
 {
     
@@ -363,7 +367,7 @@ int main()
     gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
     fprintf(afp,"     Total Time (s)                 T (K)                         P (Pa)                PV/nT (J/(mol K))                  Z                        V (m^3)                       N\n");
     fprintf(afp," -----------------------   ----------------------       -------------------------   -------------------------   ------------------------   -----------------------   ---------------------------\n");
-    fprintf(afp,"  %8.12e       %15.12g             %15.12g       %10.12g              %10.12g             %10.12e          %i\n",i*dt*timefac,Tavg,Pavg,gc,Z,Vol*VolFac,N);
+    fprintf(afp,"  %8.12e       %15.12g              %15.12g       %10.12g              %10.12g             %10.12e          %i\n",i*dt*timefac,Tavg,Pavg,gc,Z,Vol*VolFac,N);
     
     printf("\n  TO ANIMATE YOUR SIMULATION, OPEN THE FILE \n  '%s' WITH VMD AFTER THE SIMULATION COMPLETES\n",tfn);
     printf("\n  TO ANALYZE INSTANTANEOUS DATA ABOUT YOUR MOLECULE, OPEN THE FILE \n  '%s' WITH YOUR FAVORITE TEXT EDITOR OR IMPORT THE DATA INTO EXCEL\n",ofn);
@@ -371,10 +375,11 @@ int main()
     printf("\n  AVERAGE TEMPERATURE (K):                 %15.12f\n",Tavg);
     printf("\n  AVERAGE PRESSURE  (Pa):                  %15.12f\n",Pavg);
     printf("\n  PV/nT (J * mol^-1 K^-1):                 %15.12f\n",gc);
-    printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
+    printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*my_fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
     printf("\n  THE COMPRESSIBILITY (unitless):          %15.12f \n",Z);
     printf("\n  TOTAL VOLUME (m^3):                      %10.12e \n",Vol*VolFac);
     printf("\n  NUMBER OF PARTICLES (unitless):          %i \n", N);
+    
     
     
     
@@ -481,47 +486,10 @@ double Kinetic() { //Write Function here!
     
 }
 
-double custom_pow1(double base, double exponent) {
-    if (exponent == 0.0) {
-        return 1.0;
-    } else if (exponent == 1.0) {
-        return base;
-    } else if (exponent < 0.0) {
-        return 1.0 / custom_pow1(base, -exponent);
-    } else {
-        double result = 1.0;
-        int n = (int)exponent;
-        for (int i = 0; i < n; i++) {
-            result *= base;
-        }
-        return result;
-    }
-}
-
-double custom_pow2(double base, int exponent) {
-    if (exponent == 0) {
-        return 1.0;
-    } else if (exponent < 0) {
-        base = 1.0 / base;
-        exponent = -exponent;
-    }
-
-    double result = 1.0;
-    while (exponent > 0) {
-        if (exponent % 2 == 1) {
-            result *= base;
-        }
-        base *= base;
-        exponent /= 2;
-    }
-
-    return result;
-}
-
 
 // Function to calculate the potential energy of the system
 double Potential() {
-    double r2, rnorm, quot;
+    double r2; //, rnorm; //, quot;
     int i, j;
     double ri0, ri1, ri2, rj0, rj1, rj2, mult0, mult1, mult2;
     
@@ -545,21 +513,20 @@ double Potential() {
                 r2 += mult1 * mult1;
                 r2 += mult2 * mult2;
 
-                rnorm = sqrt(r2);
-                quot = sigma / rnorm;
-                //Pot += (custom_pow2(quot, 12.) - custom_pow2(quot,6.));
-
-                
                 double r6 = r2 * r2 * r2;
                 double r12 = r6 * r6;
                 Pot += (sigma / r12 - sigma / r6);
+
+                //rnorm = mult0;
+                //quot = sigma / rnorm;
+                //Pot += (custom_pow2(quot, 12.) - custom_pow2(quot,6.));
+
                 
             }
         }
     }
     return 4.0 * epsilon * Pot;
 }
-
 
 
 //   Uses the derivative of the Lennard-Jones potential to calculate
@@ -572,14 +539,6 @@ void computeAccelerations() { // NOTA: melhorar a funçao !!!!
 
     double inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
     
-    
-    for (i = 0; i < N; i++) {  // set all accelerations to zero
-        //for (k = 0; k < 3; k++) {
-        a[i][0] = 0;
-        a[i][1] = 0;
-        a[i][2] = 0;
-        //}
-    }
     for (i = 0; i < N-1; i++) {   // loop over all distinct pairs i,j
         for (j = i+1; j < N; j++) {
             // initialize r^2 to zero
@@ -616,11 +575,19 @@ void computeAccelerations() { // NOTA: melhorar a funçao !!!!
         }
     }
 }
+
 // returns sum of dv/dt*m/A (aka Pressure) from elastic collisions with walls
 double VelocityVerlet(double dt, int iter, FILE *fp) {
-    int i, j;
+    int i;
     
     double psum = 0.;
+
+    double dt2 = dt*dt;
+    double dt5 = dt * 0.5;
+
+    double ai05;
+    double ai15;
+    double ai25;
     
     //  Compute accelerations from forces at current position
     // this call was removed (commented) for predagogical reasons
@@ -628,36 +595,110 @@ double VelocityVerlet(double dt, int iter, FILE *fp) {
     //  Update positions and velocity with current velocity and acceleration
     //printf("  Updated Positions!\n");
     for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
+        /* for (j=0; j<3; j++) {
             r[i][j] += v[i][j]*dt + 0.5*a[i][j]*dt*dt;
-            
             v[i][j] += 0.5*a[i][j]*dt;
-        }
+        } */
+
+        ai05 =  0.5*a[i][0];
+        ai15 =  0.5*a[i][1];
+        ai25 =  0.5*a[i][2];
+
+        r[i][0] += v[i][0]*dt + ai05*dt2;
+        v[i][0] += ai05*dt;
+
+        r[i][1] += v[i][1]*dt + ai15*dt2;
+        v[i][1] += ai15*dt;
+        
+        r[i][2] += v[i][2]*dt + ai25*dt2;
+        v[i][2] += ai25*dt;
+
+        a[i][0] = 0;
+        a[i][1] = 0;
+        a[i][2] = 0;
+
         //printf("  %i  %6.4e   %6.4e   %6.4e\n",i,r[i][0],r[i][1],r[i][2]);
     }
     //  Update accellerations from updated positions
-    computeAccelerations();
+    //computeAccelerations();
+
+    //int i, 
+    int j, k;
+    double f, rSqd;
+    double rij[3]; // position of i relative to j
+
+    double inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
+    
+    for (i = 0; i < N-1; i++) {   // loop over all distinct pairs i,j
+        for (j = i+1; j < N; j++) {
+            // initialize r^2 to zero
+            rSqd = 0;
+            
+            //for (k = 0; k < 3; k++) {
+            //  component-by-componenent position of i relative to j
+            rij[0] = r[i][0] - r[j][0];
+            rSqd += rij[0] * rij[0];
+
+            rij[1] = r[i][1] - r[j][1];
+            rSqd += rij[1] * rij[1];
+
+            rij[2] = r[i][2] - r[j][2];
+            rSqd += rij[2] * rij[2];
+            //  sum of squares of the components
+            //}
+            
+            //  From derivative of Lennard-Jones with sigma and epsilon set equal to 1 in natural units!
+            //f = 24 * (2 * custom_pow2(rSqd, -7) - custom_pow2(rSqd, -4));
+
+            inv_rSqd = 1.0 / rSqd;
+            inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
+            inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
+
+            f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
+
+            for (k = 0; k < 3; k++) {
+                //  from F = ma, where m = 1 in natural units!
+                a[i][k] += rij[k] * f;
+                a[j][k] -= rij[k] * f;
+            }
+        }
+    }
+
     //  Update velocity with updated acceleration
     for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            v[i][j] += 0.5*a[i][j]*dt;
+        v[i][0] += a[i][0]*dt5;
+        v[i][1] += a[i][1]*dt5;
+        v[i][2] += a[i][2]*dt5;
+
+        // Elastic walls
+        if (r[i][0]<0.) {
+            v[i][0] *=-1.; //- elastic walls
+            psum += 2*m*my_fabs(v[i][0])/dt;  // contribution to pressure from "left" walls
+        }
+        else if (r[i][0]>=L) {
+            v[i][0]*=-1.;  //- elastic walls
+            psum += 2*m*my_fabs(v[i][0])/dt;  // contribution to pressure from "right" walls
+        }
+
+        if (r[i][1]<0.) {
+            v[i][1] *=-1.; //- elastic walls
+            psum += 2*m*my_fabs(v[i][1])/dt;  // contribution to pressure from "left" walls
+        }
+        else if (r[i][1]>=L) {
+            v[i][1]*=-1.;  //- elastic walls
+            psum += 2*m*my_fabs(v[i][1])/dt;  // contribution to pressure from "right" walls
+        }
+
+        if (r[i][2]<0.) {
+            v[i][2] *=-1.; //- elastic walls
+            psum += 2*m*my_fabs(v[i][2])/dt;  // contribution to pressure from "left" walls
+        }
+        else if (r[i][2]>=L) {
+            v[i][2]*=-1.;  //- elastic walls
+            psum += 2*m*my_fabs(v[i][2])/dt;  // contribution to pressure from "right" walls
         }
     }
-    
-    // Elastic walls
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            if (r[i][j]<0.) {
-                v[i][j] *=-1.; //- elastic walls
-                psum += 2*m*fabs(v[i][j])/dt;  // contribution to pressure from "left" walls
-            }
-            if (r[i][j]>=L) {
-                v[i][j]*=-1.;  //- elastic walls
-                psum += 2*m*fabs(v[i][j])/dt;  // contribution to pressure from "right" walls
-            }
-        }
-    }
-    
     
     /* removed, uncomment to save atoms positions */
     /*for (i=0; i<N; i++) {
@@ -682,7 +723,6 @@ void initializeVelocities() {
         for (j=0; j<3; j++) {
             //  Pull a number from a Gaussian Distribution
             v[i][j] = gaussdist();
-            
         }
     }
     
@@ -758,6 +798,5 @@ double gaussdist() {
         
         available = false;
         return gset;
-        
     }
 }
