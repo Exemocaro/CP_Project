@@ -146,3 +146,45 @@
 
        6,037637000 seconds user
        0,004201000 seconds sys
+
+// --------------------------------------------------------------------------------------
+
+ Performance counter stats for 'make run':
+
+         670176504      L1-dcache-load-misses                                                 
+       52686051815      instructions                     #    2,28  insn per cycle            
+       23116551141      cycles                                                                
+       52686051815      INST_RETIRED.ANY                 #     0,44 CPI                       
+       23116551141      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,958494866 seconds time elapsed
+
+       5,953910000 seconds user
+       0,003999000 seconds sys
+
+ Performance counter stats for 'make run':
+
+         670559628      L1-dcache-load-misses                                                 
+       52686838973      instructions                     #    2,28  insn per cycle            
+       23059884959      cycles                                                                
+       52686838973      INST_RETIRED.ANY                 #     0,44 CPI                       
+       23059884959      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,957055010 seconds time elapsed
+
+       5,956639000 seconds user
+       0,000000000 seconds sys
+
+
+Performance counter stats for 'make run':
+
+         673564535      L1-dcache-load-misses                                                 
+       52702911928      instructions                     #    2,14  insn per cycle            
+       24588533974      cycles                                                                
+       52702911928      INST_RETIRED.ANY                 #     0,47 CPI                       
+       24588533974      CPU_CLK_UNHALTED.THREAD                                               
+
+       6,334362965 seconds time elapsed
+
+       6,216371000 seconds user
+       0,103832000 seconds sys

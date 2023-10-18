@@ -1,5 +1,3 @@
-
-
 gprof MD.exe gmon.out > analysis.txt
 sudo perf stat -e L1-dcache-load-misses,instructions,cycles -M cpi make run
 sudo perf annotate --source Potential > Potential_output.txt

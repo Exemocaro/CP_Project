@@ -1,15 +1,15 @@
 CC = gcc
 SRC = src/
-CFLAGS = -ftree-vectorize -msse2 -Wall -g -O3 
+CFLAGS = -fno-omit-frame-pointer -mavx -Wall -g -O3
 # CFLAGS = -Wall -pg -O3 -march=native -mtune=native -flto -mavx -pthread
-# -fopt-info-vec-missed
+# -fopt-info-vec-missed -fopt-info-loop
 .DEFAULT_GOAL = MD.exe
 
 MD.exe: $(SRC)/MD.cpp
 	$(CC) $(CFLAGS) $(SRC)MD.cpp -lm -o MD.exe
 
 clean:
-	rm -f ./MD.exe gmon.out
+	rm -f ./MD.exe gmon.out perf.data
 
 run:
 	./MD.exe < input/inputdata.txt
