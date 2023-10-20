@@ -30,7 +30,8 @@
 #include<vector>
 
 // Number of particles
-int N;
+//int N;
+const int N = 10*216;
 
 //  Lennard-Jones parameters in natural units!
 double sigma = 1.;
@@ -47,8 +48,18 @@ double L;
 //  Initial Temperature in Natural Units
 double Tinit;  //2;
 const int MAXPART=5001;
+const int MAXPART3 = MAXPART * 3;
 
+//  Position
+double r[MAXPART3];
+//  Velocity
+double v[MAXPART3];
+//  Acceleration
+double a[MAXPART3];
+//  Force
+double F[MAXPART3];
 
+/* 
 //  Position
 double r[MAXPART][3];
 //  Velocity
@@ -57,18 +68,18 @@ double v[MAXPART][3];
 double a[MAXPART][3];
 //  Force
 double F[MAXPART][3];
-
+*/
 
 /* 
 // Vectors!
 // Position
-std::vector<std::vector<double>> r(MAXPART, std::vector<double>(3));
+std::vector<double> r(MAXPART3);
 // Velocity
-std::vector<std::vector<double>> v(MAXPART, std::vector<double>(3));
+std::vector<double> v(MAXPART3);
 // Acceleration
-std::vector<std::vector<double>> a(MAXPART, std::vector<double>(3));
+std::vector<double> a(MAXPART3);
 // Force
-std::vector<std::vector<double>> F(MAXPART, std::vector<double>(3));
+std::vector<double> F(MAXPART3);
 */
 
 // atom type
@@ -95,10 +106,6 @@ double MeanSquaredVelocity();
 double Kinetic();
 
 const char * OUTPUT_FOLDER = "output/";
-
-double my_fabs(double x) {
-    return (x < 0) ? -x : x;
-}
 
 int main()
 {
@@ -255,7 +262,8 @@ int main()
     }
 
     
-    N = 10*216;
+    //N = 10*216;
+    //N = 10*216*3;
     Vol = N/(rho*NA);
     
     Vol /= VolFac;
@@ -388,7 +396,7 @@ int main()
     printf("\n  AVERAGE TEMPERATURE (K):                 %15.12f\n",Tavg);
     printf("\n  AVERAGE PRESSURE  (Pa):                  %15.12f\n",Pavg);
     printf("\n  PV/nT (J * mol^-1 K^-1):                 %15.12f\n",gc);
-    printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*my_fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
+    printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
     printf("\n  THE COMPRESSIBILITY (unitless):          %15.12f \n",Z);
     printf("\n  TOTAL VOLUME (m^3):                      %10.12e \n",Vol*VolFac);
     printf("\n  NUMBER OF PARTICLES (unitless):          %i \n", N);
@@ -417,13 +425,12 @@ void initialize() {
     for (i=0; i<n; i++) {
         for (j=0; j<n; j++) {
             for (k=0; k<n; k++) {
-                if (p<N) {
-                    
-                    r[p][0] = (i + 0.5)*pos;
-                    r[p][1] = (j + 0.5)*pos;
-                    r[p][2] = (k + 0.5)*pos;
+                if (p<N*3) {
+                    r[p] = (i + 0.5)*pos;
+                    r[p+1] = (j + 0.5)*pos;
+                    r[p+2] = (k + 0.5)*pos;
                 }
-                p++;
+                p+=3;
             }
         }
     }
@@ -453,11 +460,11 @@ double MeanSquaredVelocity() {
     double vz2 = 0;
     double v2;
     
-    for (int i=0; i<N; i++) {
+    for (int i=0; i<N*3; i+=3) {
         
-        vx2 = vx2 + v[i][0]*v[i][0];
-        vy2 = vy2 + v[i][1]*v[i][1];
-        vz2 = vz2 + v[i][2]*v[i][2];
+        vx2 = vx2 + v[i]*v[i];
+        vy2 = vy2 + v[i+1]*v[i+1];
+        vz2 = vz2 + v[i+2]*v[i+2];
         
     }
     v2 = (vx2+vy2+vz2)/N;
@@ -473,36 +480,35 @@ double Kinetic() { //Write Function here!
     double v2, kin;
     
     kin =0.;
-    for (int i=0; i<N; i++) {
-        
+    for (int i=0; i<N*3; i+=3) {
         v2 = 0.;
-        for (int j=0; j<3; j++) {
-            
-            v2 += v[i][j]*v[i][j];
-            
-        }
+
+        v2 += v[i]*v[i];
+        v2 += v[i+1]*v[i+1];
+        v2 += v[i+2]*v[i+2];
+
         kin += m*v2/2.;
-        
     }
     
     //printf("  Total Kinetic Energy is %f\n",N*mvs*m/2.);
     return kin;
-    
 }
 
+/*
+// VETORIZADO COM ERROS
 double Potential() {
     double r2, Pot;
     int i, j;
     Pot=0.;
     
-    for (i=0; i<N; i++) {
-        double ri0 = r[i][0];
-        double ri1 = r[i][1];
-        double ri2 = r[i][2];
-        for (j = i + 1; j < N; j++) {
-            double dr0 = ri0 - r[j][0];
-            double dr1 = ri1 - r[j][1];
-            double dr2 = ri2 - r[j][2];
+    for (i=0; i<N*3; i+=3) {
+        double ri0 = r[i];
+        double ri1 = r[i+1];
+        double ri2 = r[i+2];
+        for (j = i + 3; j < N*3; j+=3) {
+            double dr0 = ri0 - r[j];
+            double dr1 = ri1 - r[j+1];
+            double dr2 = ri2 - r[j+2];
 
             r2 = dr0 * dr0 + dr1 * dr1 + dr2 * dr2;
             double r6 = r2 * r2 * r2;
@@ -512,259 +518,199 @@ double Potential() {
     }
     return 4.0 * epsilon * Pot;
 }
+*/
 
-/* 
+// VETORIZADO SEM ERROS
 double Potential() {
     double r2, Pot;
     int i, j;
-    Pot=0.;
-    
-    for (i=0; i<N; i++) {
-        double ri0 = r[i][0];
-        double ri1 = r[i][1];
-        double ri2 = r[i][2];
-        for (j=0; j<N; j++) {
-            if (j != i) {
-                double dr0 = ri0 - r[j][0];
-                double dr1 = ri1 - r[j][1];
-                double dr2 = ri2 - r[j][2];
-                r2 = dr0 * dr0 + dr1 * dr1 + dr2 * dr2;
-                double r6 = r2 * r2 * r2;
-                double r12 = r6 * r6;
-                Pot += (sigma / r12 - sigma / r6);
-            }
+    double ri[3], dr[3], r6, r12;
+    Pot = 0.0;
+
+    for (i = 0; i < N * 3; i += 3) {
+        ri[0] = r[i];
+        ri[1] = r[i + 1];
+        ri[2] = r[i + 2];
+        for (j = 0; j < i; j += 3) {
+            // Calculate the distances between all pairs of particles.
+            dr[0] = ri[0] - r[j];
+            dr[1] = ri[1] - r[j + 1];
+            dr[2] = ri[2] - r[j + 2];
+
+            // Calculate the squared distances between all pairs of particles.
+            r2 = dr[0] * dr[0] + dr[1] * dr[1] + dr[2] * dr[2];
+
+            // Calculate the sixth and twelfth powers of the squared distances.
+            r6 = r2 * r2 * r2;
+            r12 = r6 * r6;
+
+            // Calculate the potential energy using the boolean mask.
+            Pot += (sigma / r12 - sigma / r6);
+        }
+        for (j = i+3; j < N * 3; j += 3) {
+            // Calculate the distances between all pairs of particles.
+            dr[0] = ri[0] - r[j];
+            dr[1] = ri[1] - r[j + 1];
+            dr[2] = ri[2] - r[j + 2];
+
+            // Calculate the squared distances between all pairs of particles.
+            r2 = dr[0] * dr[0] + dr[1] * dr[1] + dr[2] * dr[2];
+
+            // Calculate the sixth and twelfth powers of the squared distances.
+            r6 = r2 * r2 * r2;
+            r12 = r6 * r6;
+
+            // Calculate the potential energy using the boolean mask.
+            Pot += (sigma / r12 - sigma / r6);
         }
     }
+
     return 4.0 * epsilon * Pot;
 }
-*/
 
-/*
-// Transposed position matrix
-double r_transposed[3][MAXPART];
-
-// Function to transpose the r matrix for better spatial locality
-void transposeMatrix() {
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < 3; j++) {
-            r_transposed[j][i] = r[i][j];
-        }
-    }
-}*/
-
-
-/* 
-double r_transposed[3][MAXPART];
-
-// Function to transpose the r matrix for better spatial locality
-void transposeMatrix() {
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < 3; j++) {
-            r_transposed[j][i] = r[i][j];
-        }
-    }
-}
-
-// Optimized Potential function using the transposed r matrix
-double Potential() {
-    double r2;
-    int i, j;
-    double Pot = 0.;
-
-    transposeMatrix();
-
-    for (i = 0; i < N; i++) {
-        for (j = 0; j < N; j++) {
-            if (j != i) {
-                r2 = 0.;
-                for (int k = 0; k < 3; k++) {
-                    double diff = r_transposed[k][i] - r_transposed[k][j];
-                    r2 += diff * diff;
-                }
-
-                double r6 = r2 * r2 * r2;
-                double r12 = r6 * r6;
-
-                Pot += (sigma / r12 - sigma / r6);
-            }
-        }
-    }
-    return 4.0 * epsilon * Pot;
-}
-*/
- 
 
 void computeAccelerations() {
-    int i, j, k;
-    double f, rSqd;
-    double rij[3]; // position of i relative to j
-    double inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
-    double rijkf;
-    
-    for (i = 0; i < N-1; i++) {   // loop over all distinct pairs i,j
-        for (j = i + 1; j < N; j++) {
-            // initialize r^2 to zero
-            rSqd = 0;
-            
-            for (k = 0; k < 3; k++) {
-                //  component-by-componenent position of i relative to j
-                rij[k] = r[i][k] - r[j][k];
-                //  sum of squares of the components
-                rSqd += rij[k] * rij[k];
-            }
-            
-            //  From derivative of Lennard-Jones with sigma and epsilon set equal to 1 in natural units!
+    int i, j;
+    double f, inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
+    double cache[MAXPART3];
+
+    // Loop over all distinct pairs i,j
+    for (i = 0; i < (N - 1) * 3; i += 3) {
+        for (j = i + 3; j < N * 3; j += 3) {
+            // Calculate differences in positions
+            double dx = r[i] - r[j];
+            double dy = r[i + 1] - r[j + 1];
+            double dz = r[i + 2] - r[j + 2];
+
+            // Calculate the squared distance
+            double rSqd = dx * dx + dy * dy + dz * dz;
+
+            // Calculate inverse powers of rSqd
             inv_rSqd = 1.0 / rSqd;
             inv_rSqd_2 = inv_rSqd * inv_rSqd;
             inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
             inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
+            // Calculate the force magnitude
             f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
-            
-            for (k = 0; k < 3; k++) {
-                //  from F = ma, where m = 1 in natural units!
-                rijkf = rij[k] * f;
-                a[i][k] += rijkf;
-                a[j][k] -= rijkf;
-            }
+
+            cache[j] = f * dx;
+            cache[j+1] = f * dy;
+            cache[j+2] = f * dz;
+
+            // Update accelerations
+            a[i] += cache[j];
+            a[i + 1] += cache[j+1];
+            a[i + 2] += cache[j+2];
+        }
+        // VETORIZAMOS!!!!!!!!
+        for (int j = i + 3; j < N * 3; j += 3) {
+            a[j] -= cache[j];
+            a[j + 1] -= cache[j+1];
+            a[j + 2] -= cache[j+2];
         }
     }
 }
-
-
-/* 
-void computeAccelerations() {
-    int i, j, k;
-    double f, rSqd = 0; // initialize r^2 to zero
-    double rij[3]; // position of i relative to j
-    double inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
-    double rijkf;
-    
-    for (i = 0; i < N-1; i++) {   // loop over all distinct pairs i,j
-        for (j = i + 1; j < N; j++) {
-            for (k = 0; k < 3; k++) {
-                //  component-by-componenent position of i relative to j
-                rij[k] = r[i][k] - r[j][k];
-                //  sum of squares of the components
-                rSqd += rij[k] * rij[k];
-
-                if(k >= 2){
-                    //  From derivative of Lennard-Jones with sigma and epsilon set equal to 1 in natural units!
-                    inv_rSqd = 1.0 / rSqd;
-                    inv_rSqd_2 = inv_rSqd * inv_rSqd;
-                    inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-                    inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
-
-                    f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
-                    
-                    for(int w = 0; w < 3; w++){
-                        //  from F = ma, where m = 1 in natural units!
-                        rijkf = rij[w] * f;
-                        a[i][w] += rijkf;
-                        a[j][w] -= rijkf;
-                    }
-                    rSqd = 0;
-                }
-            }
-        }
-    }
-}
-*/
 
 // returns sum of dv/dt*m/A (aka Pressure) from elastic collisions with walls
 double VelocityVerlet(double dt, int iter, FILE *fp) {
-    int i, j;
+    int i;
     
     double psum = 0.;
 
     double dt2 = dt*dt;
     double dt5 = dt * 0.5;
 
-    double aij5;
+    double aij5[3];
+
+    double m2 = 2*m;
     
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            aij5 =  0.5*a[i][j];
+    for (i=0; i<N*3; i+=3) {
+        aij5[0] =  0.5*a[i];
+        aij5[1] =  0.5*a[i+1];
+        aij5[2] =  0.5*a[i+2];
 
-            r[i][j] += v[i][j]*dt + aij5*dt2;
-            v[i][j] += aij5*dt;
+        r[i] += v[i]*dt + aij5[0]*dt2;
+        r[i+1] += v[i+1]*dt + aij5[1]*dt2;
+        r[i+2] += v[i+2]*dt + aij5[2]*dt2;
 
-            // reset accelerations, taken from computeAccelerations()
-            a[i][j] = 0;
-        }
+        v[i] += aij5[0]*dt;
+        v[i+1] += aij5[1]*dt;
+        v[i+2] += aij5[2]*dt;
+
+        a[i] = 0;
+        a[i+1] = 0;
+        a[i+2]= 0;
     }
 
     //  Update accellerations from updated positions
     computeAccelerations();
 
     //  Update velocity with updated acceleration
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            v[i][j] += a[i][j]*dt5;
-        }
+    for (i=0; i<N*3; i+=3) {
+        v[i] += a[i]*dt5;
+        v[i+1] += a[i+1]*dt5;
+        v[i+2] += a[i+2]*dt5;
+
         // Elastic walls
-        for (j=0; j<3; j++) {
-            if (r[i][j] < 0. || r[i][j] >= L) {
-                v[i][j] *= -1.;
-                psum += 2*m*fabs(v[i][j])/dt;// contribution to pressure from "left" and "right" walls
-            }
+        if (r[i] < 0. || r[i] >= L) {
+            v[i] *= -1.;
+            psum += m2*fabs(v[i])/dt;// contribution to pressure from "left" and "right" walls
+        }
+        if (r[i+1] < 0. || r[i+1] >= L) {
+            v[i+1] *= -1.;
+            psum += m2*fabs(v[i+1])/dt;// contribution to pressure from "left" and "right" walls
+        }
+        if (r[i+2] < 0. || r[i+2] >= L) {
+            v[i+2] *= -1.;
+            psum += m2*fabs(v[i+2])/dt;// contribution to pressure from "left" and "right" walls
         }
     }
-    
     return psum/(6*L*L);
 }
 
 void initializeVelocities() {
     
-    int i, j;
+    int i;
     
-    for (i=0; i<N; i++) {
-        
-        for (j=0; j<3; j++) {
-            //  Pull a number from a Gaussian Distribution
-            v[i][j] = gaussdist();
-        }
+    for (i=0; i<N*3; i+=3) {
+        //  Pull a number from a Gaussian Distribution
+        v[i] = gaussdist();
+        v[i+1] = gaussdist();
+        v[i+2] = gaussdist();
     }
     
     double vCM[3] = {0, 0, 0};
     
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            
-            vCM[j] += m*v[i][j];
-            
-        }
+    for (i=0; i<N*3; i+=3) {
+        vCM[0] += m*v[i];
+        vCM[1] += m*v[i+1];
+        vCM[2] += m*v[i+2];
     }
     
     
     for (i=0; i<3; i++) vCM[i] /= N*m;
     
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            
-            v[i][j] -= vCM[j];
-            
-        }
+    for (i=0; i<N*3; i+=3) {
+        v[i] -= vCM[0];
+        v[i+1] -= vCM[1];
+        v[i+2] -= vCM[2];
     }
     
     double vSqdSum, lambda;
     vSqdSum=0.;
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            
-            vSqdSum += v[i][j]*v[i][j];
-            
-        }
+    for (i=0; i<N*3; i+=3) {
+        vSqdSum += v[i]*v[i];
+        vSqdSum += v[i+1]*v[i+1];
+        vSqdSum += v[i+2]*v[i+2];
     }
     
     lambda = sqrt( 3*(N-1)*Tinit/vSqdSum);
     
-    for (i=0; i<N; i++) {
-        for (j=0; j<3; j++) {
-            
-            v[i][j] *= lambda;
-            
-        }
+    for (i=0; i<N*3; i+=3) {
+        v[i] *= lambda;
+        v[i+1] *= lambda;
+        v[i+2] *= lambda;
     }
 }
 

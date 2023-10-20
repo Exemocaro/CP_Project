@@ -188,3 +188,48 @@ Performance counter stats for 'make run':
 
        6,216371000 seconds user
        0,103832000 seconds sys
+
+// MELHOR TEMPO ATÉ AGORA DEPOIS DA SEMI-VETORIZAÇÃO
+
+Performance counter stats for 'make run':
+
+         672438980      L1-dcache-load-misses                                                 
+       38131275609      instructions                     #    1,77  insn per cycle            
+       21563910865      cycles                                                                
+       38131275609      INST_RETIRED.ANY                 #     0,57 CPI                       
+       21563910865      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,596521495 seconds time elapsed
+
+       5,583353000 seconds user
+       0,011995000 seconds sys
+
+// compute vetorizado
+
+ Performance counter stats for 'make run':
+
+        1012004308      L1-dcache-load-misses                                                 
+       29445397335      instructions                     #    1,64  insn per cycle            
+       17974709562      cycles                                                                
+       29445397335      INST_RETIRED.ANY                 #     0,61 CPI                       
+       17974709562      CPU_CLK_UNHALTED.THREAD                                               
+
+       4,642685438 seconds time elapsed
+
+       4,610452000 seconds user
+       0,031993000 seconds sys
+
+// potential vetorizado sem erros
+
+ Performance counter stats for 'make run':
+
+        1011874567      L1-dcache-load-misses                                                 
+       18716458990      instructions                     #    1,31  insn per cycle            
+       14259858343      cycles                                                                
+       18716458990      INST_RETIRED.ANY                 #     0,76 CPI                       
+       14259858343      CPU_CLK_UNHALTED.THREAD                                               
+
+       3,690821094 seconds time elapsed
+
+       3,680552000 seconds user
+       0,007996000 seconds sys
