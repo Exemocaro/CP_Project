@@ -3,7 +3,7 @@ SRC = src/
 CFLAGS = -fno-omit-frame-pointer -mavx -Wall -g -O3
 # CFLAGS = -Wall -pg -O3 -march=native -mtune=native -flto -mavx -pthread
 # -fopt-info-vec-missed -fopt-info-loop
-#-fopt-info-optimized=output/report.txt
+# -fopt-info-optimized=output/report.txt
 .DEFAULT_GOAL = MD.exe
 
 MD.exe: $(SRC)/MD.cpp

@@ -45,6 +45,9 @@ double kBSI = 1.38064852e-23;  // m^2*kg/(s^2*K)
 //  Size of box, which will be specified in natural units
 double L;
 
+double Global_KE;
+double Global_Pot;
+
 //  Initial Temperature in Natural Units
 double Tinit;  //2;
 const int MAXPART=5001;
@@ -100,10 +103,19 @@ double gaussdist();
 void initializeVelocities();
 //  Compute total potential energy from particle coordinates
 double Potential();
+double Potential2();
 //  Compute mean squared velocity from particle velocities
 double MeanSquaredVelocity();
 //  Compute total kinetic energy from particle mass and velocities
 double Kinetic();
+
+
+double computeAccelerationsAndPot();
+
+double MSV_Kinetic();
+
+double VV_Pot(double, int, FILE*);
+
 
 const char * OUTPUT_FOLDER = "output/";
 
@@ -186,7 +198,6 @@ int main()
         PressFac = 8152287.336171632;
         TempFac = 10.864459551225972;
         timefac = 1.7572698825166272e-12;
-        
     }
     else if (strcmp(atype,"Ne")==0) {
         
@@ -194,7 +205,6 @@ int main()
         PressFac = 27223022.27659913;
         TempFac = 40.560648991243625;
         timefac = 2.1192341945685407e-12;
-        
     }
     else if (strcmp(atype,"Ar")==0) {
         
@@ -203,7 +213,6 @@ int main()
         TempFac = 142.0950000000000;
         timefac = 2.09618e-12;
         //strcpy(atype,"Ar");
-        
     }
     else if (strcmp(atype,"Kr")==0) {
         
@@ -211,7 +220,6 @@ int main()
         PressFac = 59935428.40275003;
         TempFac = 199.1817584391428;
         timefac = 8.051563913585078e-13;
-        
     }
     else if (strcmp(atype,"Xe")==0) {
         
@@ -219,7 +227,6 @@ int main()
         PressFac = 70527773.72794868;
         TempFac = 280.30305642163006;
         timefac = 9.018957925790732e-13;
-        
     }
     else {
         
@@ -228,7 +235,6 @@ int main()
         TempFac = 142.0950000000000;
         timefac = 2.09618e-12;
         strcpy(atype,"Ar");
-        
     }
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("\n                     YOU ARE SIMULATING %s GAS! \n",atype);
@@ -353,18 +359,34 @@ int main()
         // This updates the positions and velocities using Newton's Laws
         // Also computes the Pressure as the sum of momentum changes from wall collisions / timestep
         // which is a Kinetic Theory of gasses concept of Pressure
+        
+
+        // VERSÃO SEPARADA
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
-        
+        PE = Potential();
+        //PE = Potential2();
+
+
+        /* 
+        // VERSÃO JUNTA
+        Press = VV_Pot(dt, i+1, tfp);
+        Press *= PressFac;
+        PE = Global_Pot;
+        */
+
         //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //  Now we would like to calculate somethings about the system:
         //  Instantaneous mean velocity squared, Temperature, Pressure
         //  Potential, and Kinetic Energy
         //  We would also like to use the IGL to try to see if we can extract the gas constant
-        mvs = MeanSquaredVelocity();
-        KE = Kinetic();
-        PE = Potential();
-        
+        //mvs = MeanSquaredVelocity();
+        //KE = Kinetic();
+        //PE = Potential();
+
+        mvs = MSV_Kinetic();
+        KE = Global_KE;
+
         // Temperature from Kinetic Theory
         Temp = m*mvs/(3*kB) * TempFac;
         
@@ -452,51 +474,42 @@ void initialize() {
     */
 }   
 
-//  Function to calculate the averaged velocity squared
-double MeanSquaredVelocity() { 
+double MSV_Kinetic(){
     
     double vx2 = 0;
     double vy2 = 0;
     double vz2 = 0;
-    double v2;
-    
-    for (int i=0; i<N*3; i+=3) {
-        
-        vx2 = vx2 + v[i]*v[i];
-        vy2 = vy2 + v[i+1]*v[i+1];
-        vz2 = vz2 + v[i+2]*v[i+2];
-        
-    }
-    v2 = (vx2+vy2+vz2)/N;
-    
-    
-    //printf("  Average of x-component of velocity squared is %f\n",v2);
-    return v2;
-}
+    double v22;
 
-//  Function to calculate the kinetic energy of the system
-double Kinetic() { //Write Function here!  
-    
-    double v2, kin;
+    double v0, v1, v2;
+
+    double msv, kin;
     
     kin =0.;
     for (int i=0; i<N*3; i+=3) {
-        v2 = 0.;
+        v0 = v[i]*v[i];
+        v1 = v[i+1]*v[i+1];
+        v2 = v[i+2]*v[i+2];
+        
+        vx2 += v0;
+        vy2 += v1;
+        vz2 += v2;
 
-        v2 += v[i]*v[i];
-        v2 += v[i+1]*v[i+1];
-        v2 += v[i+2]*v[i+2];
-
-        kin += m*v2/2.;
+        v22 = v0 + v1 + v2;
+        
+        kin += m*v22/2.;
     }
+    msv = (vx2+vy2+vz2)/N;
     
-    //printf("  Total Kinetic Energy is %f\n",N*mvs*m/2.);
-    return kin;
+    //printf("  Average of x-component of velocity squared is %f\n",v2);
+    /* double result[2] = {msv, kin};
+    return result; */
+    Global_KE = kin;
+    return msv;
 }
 
-/*
 // VETORIZADO COM ERROS
-double Potential() {
+double Potential2() {
     double r2, Pot;
     int i, j;
     Pot=0.;
@@ -518,13 +531,12 @@ double Potential() {
     }
     return 4.0 * epsilon * Pot;
 }
-*/
 
 // VETORIZADO SEM ERROS
 double Potential() {
-    double r2, Pot;
+    double Pot;
     int i, j;
-    double ri[3], dr[3], r6, r12;
+    double ri[3];// dr[3], r6, r12;
     Pot = 0.0;
 
     for (i = 0; i < N * 3; i += 3) {
@@ -532,36 +544,42 @@ double Potential() {
         ri[1] = r[i + 1];
         ri[2] = r[i + 2];
         for (j = 0; j < i; j += 3) {
-            // Calculate the distances between all pairs of particles.
-            dr[0] = ri[0] - r[j];
-            dr[1] = ri[1] - r[j + 1];
-            dr[2] = ri[2] - r[j + 2];
+            // Calculate differences in positions
+            double dx = ri[0] - r[j];
+            double dy = ri[1] - r[j+1];
+            double dz = ri[2] - r[j+2];
 
-            // Calculate the squared distances between all pairs of particles.
-            r2 = dr[0] * dr[0] + dr[1] * dr[1] + dr[2] * dr[2];
+            // Calculate the squared distance
+            double rSqd = dx * dx + dy * dy + dz * dz;
 
-            // Calculate the sixth and twelfth powers of the squared distances.
-            r6 = r2 * r2 * r2;
-            r12 = r6 * r6;
+            // Calculate inverse powers of rSqd
+            double inv_rSqd = 1.0 / rSqd;
+            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
+            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
 
-            // Calculate the potential energy using the boolean mask.
-            Pot += (sigma / r12 - sigma / r6);
+            // ---------------------- ini pot
+            Pot += (inv_rSqd_6 - inv_rSqd_3);
+            // ---------------------- fim pot
         }
         for (j = i+3; j < N * 3; j += 3) {
-            // Calculate the distances between all pairs of particles.
-            dr[0] = ri[0] - r[j];
-            dr[1] = ri[1] - r[j + 1];
-            dr[2] = ri[2] - r[j + 2];
+            // Calculate differences in positions
+            double dx = ri[0] - r[j];
+            double dy = ri[1] - r[j+1];
+            double dz = ri[2] - r[j+2];
 
-            // Calculate the squared distances between all pairs of particles.
-            r2 = dr[0] * dr[0] + dr[1] * dr[1] + dr[2] * dr[2];
+            // Calculate the squared distance
+            double rSqd = dx * dx + dy * dy + dz * dz;
 
-            // Calculate the sixth and twelfth powers of the squared distances.
-            r6 = r2 * r2 * r2;
-            r12 = r6 * r6;
+            // Calculate inverse powers of rSqd
+            double inv_rSqd = 1.0 / rSqd;
+            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
+            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
 
-            // Calculate the potential energy using the boolean mask.
-            Pot += (sigma / r12 - sigma / r6);
+            // ---------------------- ini pot
+            Pot += (inv_rSqd_6 - inv_rSqd_3);
+            // ---------------------- fim pot
         }
     }
 
@@ -575,7 +593,8 @@ void computeAccelerations() {
     double cache[MAXPART3];
 
     // Loop over all distinct pairs i,j
-    for (i = 0; i < (N - 1) * 3; i += 3) {
+    for (i = 0; i < N * 3; i += 3) {
+        
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
             double dx = r[i] - r[j];
@@ -592,7 +611,7 @@ void computeAccelerations() {
             inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
             // Calculate the force magnitude
-            f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
+            f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
             cache[j] = f * dx;
             cache[j+1] = f * dy;
@@ -600,71 +619,156 @@ void computeAccelerations() {
 
             // Update accelerations
             a[i] += cache[j];
-            a[i + 1] += cache[j+1];
-            a[i + 2] += cache[j+2];
+            a[i+1] += cache[j+1];
+            a[i+2] += cache[j+2];
         }
-        // VETORIZAMOS!!!!!!!!
-        for (int j = i + 3; j < N * 3; j += 3) {
+        // update acelerações do j
+        for (j = i + 3; j < N * 3; j += 3) {
             a[j] -= cache[j];
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
+        /* // update acelerações do i
+        for (j = i + 3; j < N * 3; j += 3) {
+            // Update accelerations
+            a[i] += cache[j];
+            a[i+1] += cache[j+1];
+            a[i+2] += cache[j+2];
+        } */
     }
 }
 
-// -----------------------------------------------------------------------------------------
-double CalculatePotentialAndAccelerations() {
-    double r2, Pot = 0.0;
+double computeAccelerationsAndPot(){
+    // Potential
+    double Pot;
     int i, j;
-    double ri[3], dr[3], r6, r12;
+    //double ri[3], dr[3], r6, r12;
+    Pot = 0.0;
 
-    // Loop over all distinct pairs i, j
-    for (i = 0; i < N * 3; i += 3) {
-        ri[0] = r[i];
-        ri[1] = r[i + 1];
-        ri[2] = r[i + 2];
-        
-        for (j = 0; j < N * 3; j += 3) {
-            if (i != j) {
-                // Calculate the distances between particles i and j.
-                dr[0] = ri[0] - r[j];
-                dr[1] = ri[1] - r[j + 1];
-                dr[2] = ri[2] - r[j + 2];
+    // compute
+    double f, inv_rSqd, inv_rSqd_2, inv_rSqd_3, inv_rSqd_4, inv_rSqd_6, inv_rSqd_7;
+    double cache[MAXPART3];
+    //double cache_pot[MAXPART3];
 
-                // Calculate the squared distances between particles i and j.
-                r2 = dr[0] * dr[0] + dr[1] * dr[1] + dr[2] * dr[2];
+    // loop
+    for (i = 0; i < (N-1) * 3; i += 3) {
+        // ---------------------- pot
+        double ri0 = r[i];
+        double ri1 = r[i+1];
+        double ri2 = r[i+2];
+        // ---------------------- fim pot
+        for (j = i + 3; j < N * 3; j += 3) {
+            // Calculate differences in positions
+            double dx = ri0 - r[j];
+            double dy = ri1 - r[j+1];
+            double dz = ri2 - r[j+2];
 
-                // Calculate the sixth and twelfth powers of the squared distances.
-                r6 = r2 * r2 * r2;
-                r12 = r6 * r6;
+            // Calculate the squared distance
+            double rSqd = dx * dx + dy * dy + dz * dz;
 
-                // Calculate the potential energy.
-                Pot += (sigma / r12 - sigma / r6);
+            // Calculate inverse powers of rSqd
+            inv_rSqd = 1.0 / rSqd;
+            inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
+            inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
+            inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
+            inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
-                if (i < (N - 1) * 3) {
-                    // Calculate inverse powers of rSqd for acceleration calculations
-                    double inv_rSqd = 1.0 / r2;
-                    double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-                    double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-                    double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
+            // Calculate the force magnitude
+            //f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
+            f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
-                    // Calculate the force magnitude
-                    double f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
+            cache[j] = f * dx;
+            cache[j+1] = f * dy;
+            cache[j+2] = f * dz;
 
-                    // Update accelerations
-                    a[i] += f * dr[0];
-                    a[i + 1] += f * dr[1];
-                    a[i + 2] += f * dr[2];
-                }
-            }
+            // ---------------------- ini pot
+            Pot += (inv_rSqd_6 - inv_rSqd_3) * 2;
+            // ---------------------- fim pot
+
+            // Update accelerations
+            a[i] += cache[j];
+            a[i+1] += cache[j+1];
+            a[i+2] += cache[j+2];
         }
+        // update acelerações do j
+        for (j = i + 3; j < N * 3; j += 3) {
+            a[j] -= cache[j];
+            a[j + 1] -= cache[j+1];
+            a[j + 2] -= cache[j+2];
+        }
+        /* // update acelerações do i
+        for (j = i + 3; j < N * 3; j += 3) {
+            // Update accelerations
+            a[i] += cache[j];
+            a[i+1] += cache[j+1];
+            a[i+2] += cache[j+2];
+        } */
     }
-
-    // Update potential energy after the loop
-    Pot *= 4.0 * epsilon;
-
     return Pot;
 }
+
+
+double VV_Pot(double dt, int iter, FILE *fp){
+    // Velocity Verlet
+    double psum = 0.;
+    double dt2 = dt*dt;
+    double dt5 = dt * 0.5;
+    double aij5[3];
+    double m2 = 2*m;
+    int i;
+
+    double Pot;
+
+    for (i=0; i<N*3; i+=3) {
+        aij5[0] =  0.5*a[i];
+        aij5[1] =  0.5*a[i+1];
+        aij5[2] =  0.5*a[i+2];
+
+        r[i] += v[i]*dt + aij5[0]*dt2;
+        r[i+1] += v[i+1]*dt + aij5[1]*dt2;
+        r[i+2] += v[i+2]*dt + aij5[2]*dt2;
+
+        v[i] += aij5[0]*dt;
+        v[i+1] += aij5[1]*dt;
+        v[i+2] += aij5[2]*dt;
+
+        a[i] = 0;
+        a[i+1] = 0;
+        a[i+2]= 0;
+    }
+
+    //  Update accellerations from updated positions
+    Pot = computeAccelerationsAndPot();
+
+    //  Update velocity with updated acceleration
+    for (i=0; i<N*3; i+=3) {
+        v[i] += a[i]*dt5;
+        v[i+1] += a[i+1]*dt5;
+        v[i+2] += a[i+2]*dt5;
+
+        // Elastic walls
+        if (r[i] < 0. || r[i] >= L) {
+            v[i] *= -1.;
+            psum += m2*fabs(v[i])/dt;// contribution to pressure from "left" and "right" walls
+        }
+        if (r[i+1] < 0. || r[i+1] >= L) {
+            v[i+1] *= -1.;
+            psum += m2*fabs(v[i+1])/dt;// contribution to pressure from "left" and "right" walls
+        }
+        if (r[i+2] < 0. || r[i+2] >= L) {
+            v[i+2] *= -1.;
+            psum += m2*fabs(v[i+2])/dt;// contribution to pressure from "left" and "right" walls
+        }
+    }
+    
+    double vv = psum/(6*L*L);;
+/*     double pot = 4.0 * epsilon * Pot;
+    double result[2] = {vv, pot}; */
+    Global_Pot = 4.0 * epsilon * Pot;
+    return vv;
+}
+
 
 // -----------------------------------------------------------------------------------------
 // returns sum of dv/dt*m/A (aka Pressure) from elastic collisions with walls
