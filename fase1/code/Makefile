@@ -1,6 +1,6 @@
 CC = gcc
 SRC = src/
-CFLAGS = -fno-omit-frame-pointer -funroll-loops -mavx -Wall -pg -O3 -fopt-info-vec-missed
+CFLAGS = -fno-omit-frame-pointer -mavx -Wall -g -O3
 # CFLAGS = -Wall -pg -O3 -march=native -mtune=native -flto -mavx -pthread
 # -fopt-info-vec-missed -fopt-info-loop
 #-fopt-info-optimized=output/report.txt

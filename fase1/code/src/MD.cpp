@@ -612,6 +612,61 @@ void computeAccelerations() {
     }
 }
 
+// -----------------------------------------------------------------------------------------
+double CalculatePotentialAndAccelerations() {
+    double r2, Pot = 0.0;
+    int i, j;
+    double ri[3], dr[3], r6, r12;
+
+    // Loop over all distinct pairs i, j
+    for (i = 0; i < N * 3; i += 3) {
+        ri[0] = r[i];
+        ri[1] = r[i + 1];
+        ri[2] = r[i + 2];
+        
+        for (j = 0; j < N * 3; j += 3) {
+            if (i != j) {
+                // Calculate the distances between particles i and j.
+                dr[0] = ri[0] - r[j];
+                dr[1] = ri[1] - r[j + 1];
+                dr[2] = ri[2] - r[j + 2];
+
+                // Calculate the squared distances between particles i and j.
+                r2 = dr[0] * dr[0] + dr[1] * dr[1] + dr[2] * dr[2];
+
+                // Calculate the sixth and twelfth powers of the squared distances.
+                r6 = r2 * r2 * r2;
+                r12 = r6 * r6;
+
+                // Calculate the potential energy.
+                Pot += (sigma / r12 - sigma / r6);
+
+                if (i < (N - 1) * 3) {
+                    // Calculate inverse powers of rSqd for acceleration calculations
+                    double inv_rSqd = 1.0 / r2;
+                    double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+                    double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
+                    double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
+
+                    // Calculate the force magnitude
+                    double f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
+
+                    // Update accelerations
+                    a[i] += f * dr[0];
+                    a[i + 1] += f * dr[1];
+                    a[i + 2] += f * dr[2];
+                }
+            }
+        }
+    }
+
+    // Update potential energy after the loop
+    Pot *= 4.0 * epsilon;
+
+    return Pot;
+}
+
+// -----------------------------------------------------------------------------------------
 // returns sum of dv/dt*m/A (aka Pressure) from elastic collisions with walls
 double VelocityVerlet(double dt, int iter, FILE *fp) {
     int i;
