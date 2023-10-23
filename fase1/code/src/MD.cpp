@@ -30,7 +30,6 @@
 #include<vector>
 
 // Number of particles
-//int N;
 const int N = 10*216;
 
 //  Lennard-Jones parameters in natural units!
@@ -45,14 +44,16 @@ double kBSI = 1.38064852e-23;  // m^2*kg/(s^2*K)
 //  Size of box, which will be specified in natural units
 double L;
 
+// Global variables to store kinetic and potential values, used in MSV_Kinetic and VV_Pot
 double Global_KE;
 double Global_Pot;
 
 //  Initial Temperature in Natural Units
-double Tinit;  //2;
+double Tinit;
 const int MAXPART=5001;
 const int MAXPART3 = MAXPART * 3;
 
+// Changed matrix into a vector
 //  Position
 double r[MAXPART3];
 //  Velocity
@@ -61,29 +62,6 @@ double v[MAXPART3];
 double a[MAXPART3];
 //  Force
 double F[MAXPART3];
-
-/* 
-//  Position
-double r[MAXPART][3];
-//  Velocity
-double v[MAXPART][3];
-//  Acceleration
-double a[MAXPART][3];
-//  Force
-double F[MAXPART][3];
-*/
-
-/* 
-// Vectors!
-// Position
-std::vector<double> r(MAXPART3);
-// Velocity
-std::vector<double> v(MAXPART3);
-// Acceleration
-std::vector<double> a(MAXPART3);
-// Force
-std::vector<double> F(MAXPART3);
-*/
 
 // atom type
 char atype[10];
@@ -109,14 +87,16 @@ double MeanSquaredVelocity();
 //  Compute total kinetic energy from particle mass and velocities
 double Kinetic();
 
-
+// Junction of ComputeAccelerations() and Potential()
 double computeAccelerationsAndPot();
 
+// Junction of MeanSquaredVelocity() and Kinetic()
 double MSV_Kinetic();
 
+// Junction of VelocityVerlet() and Potential()
 double VV_Pot(double, int, FILE*);
 
-
+// self explanatory
 const char * OUTPUT_FOLDER = "output/";
 
 int main()
@@ -128,9 +108,7 @@ int main()
     double VolFac, TempFac, PressFac, timefac;
     double KE, PE, mvs, gc, Z;
     char prefix[1000], tfn[1000], ofn[1000], afn[1000];
-    // char trash[10000];
     FILE *tfp, *ofp, *afp;
-    // FILE *infp;
     
     
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
@@ -193,21 +171,18 @@ int main()
 
     
     if (strcmp(atype,"He")==0) {
-        
         VolFac = 1.8399744000000005e-29;
         PressFac = 8152287.336171632;
         TempFac = 10.864459551225972;
         timefac = 1.7572698825166272e-12;
     }
     else if (strcmp(atype,"Ne")==0) {
-        
         VolFac = 2.0570823999999997e-29;
         PressFac = 27223022.27659913;
         TempFac = 40.560648991243625;
         timefac = 2.1192341945685407e-12;
     }
     else if (strcmp(atype,"Ar")==0) {
-        
         VolFac = 3.7949992920124995e-29;
         PressFac = 51695201.06691862;
         TempFac = 142.0950000000000;
@@ -215,21 +190,18 @@ int main()
         //strcpy(atype,"Ar");
     }
     else if (strcmp(atype,"Kr")==0) {
-        
         VolFac = 4.5882712000000004e-29;
         PressFac = 59935428.40275003;
         TempFac = 199.1817584391428;
         timefac = 8.051563913585078e-13;
     }
     else if (strcmp(atype,"Xe")==0) {
-        
         VolFac = 5.4872e-29;
         PressFac = 70527773.72794868;
         TempFac = 280.30305642163006;
         timefac = 9.018957925790732e-13;
     }
     else {
-        
         VolFac = 3.7949992920124995e-29;
         PressFac = 51695201.06691862;
         TempFac = 142.0950000000000;
@@ -267,9 +239,6 @@ int main()
         exit(1);
     }
 
-    
-    //N = 10*216;
-    //N = 10*216*3;
     Vol = N/(rho*NA);
     
     Vol /= VolFac;
@@ -362,29 +331,29 @@ int main()
         
 
         // VERSÃO SEPARADA
+        /*
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
         PE = Potential();
         //PE = Potential2();
+        */
 
-
-        /* 
+        
         // VERSÃO JUNTA
         Press = VV_Pot(dt, i+1, tfp);
         Press *= PressFac;
+        // Updated the potential value
         PE = Global_Pot;
-        */
+        
 
         //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //  Now we would like to calculate somethings about the system:
         //  Instantaneous mean velocity squared, Temperature, Pressure
         //  Potential, and Kinetic Energy
         //  We would also like to use the IGL to try to see if we can extract the gas constant
-        //mvs = MeanSquaredVelocity();
-        //KE = Kinetic();
-        //PE = Potential();
 
         mvs = MSV_Kinetic();
+        // Updated the kinetic value
         KE = Global_KE;
 
         // Temperature from Kinetic Theory
@@ -474,6 +443,7 @@ void initialize() {
     */
 }   
 
+// Junction of MeanSquaredVelocity() and Kinetic()
 double MSV_Kinetic(){
     
     double vx2 = 0;
@@ -502,13 +472,12 @@ double MSV_Kinetic(){
     msv = (vx2+vy2+vz2)/N;
     
     //printf("  Average of x-component of velocity squared is %f\n",v2);
-    /* double result[2] = {msv, kin};
-    return result; */
+    // Updated the kinetic value
     Global_KE = kin;
     return msv;
 }
 
-// VETORIZADO COM ERROS
+// Vectorized with errors, version 2
 double Potential2() {
     double r2, Pot;
     int i, j;
@@ -532,7 +501,7 @@ double Potential2() {
     return 4.0 * epsilon * Pot;
 }
 
-// VETORIZADO SEM ERROS
+// Vectorized without errors, version 1
 double Potential() {
     double Pot;
     int i, j;
@@ -558,9 +527,9 @@ double Potential() {
             double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
             double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
 
-            // ---------------------- ini pot
+            // ---------------------- begin pot
             Pot += (inv_rSqd_6 - inv_rSqd_3);
-            // ---------------------- fim pot
+            // ---------------------- end pot
         }
         for (j = i+3; j < N * 3; j += 3) {
             // Calculate differences in positions
@@ -577,9 +546,9 @@ double Potential() {
             double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
             double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
 
-            // ---------------------- ini pot
+            // ---------------------- begin pot
             Pot += (inv_rSqd_6 - inv_rSqd_3);
-            // ---------------------- fim pot
+            // ---------------------- end pot
         }
     }
 
@@ -622,13 +591,13 @@ void computeAccelerations() {
             a[i+1] += cache[j+1];
             a[i+2] += cache[j+2];
         }
-        // update acelerações do j
+        // update accelerations of j
         for (j = i + 3; j < N * 3; j += 3) {
             a[j] -= cache[j];
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
-        /* // update acelerações do i
+        /* // update accelerations of i
         for (j = i + 3; j < N * 3; j += 3) {
             // Update accelerations
             a[i] += cache[j];
@@ -642,21 +611,19 @@ double computeAccelerationsAndPot(){
     // Potential
     double Pot;
     int i, j;
-    //double ri[3], dr[3], r6, r12;
     Pot = 0.0;
 
     // compute
     double f, inv_rSqd, inv_rSqd_2, inv_rSqd_3, inv_rSqd_4, inv_rSqd_6, inv_rSqd_7;
     double cache[MAXPART3];
-    //double cache_pot[MAXPART3];
 
     // loop
     for (i = 0; i < (N-1) * 3; i += 3) {
-        // ---------------------- pot
+        // ---------------------- begin pot
         double ri0 = r[i];
         double ri1 = r[i+1];
         double ri2 = r[i+2];
-        // ---------------------- fim pot
+        // ---------------------- end pot
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
             double dx = ri0 - r[j];
@@ -675,29 +642,28 @@ double computeAccelerationsAndPot(){
             inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
             // Calculate the force magnitude
-            //f = 24 * (2 * inv_rSqd_7 - inv_rSqd_4);
             f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
             cache[j] = f * dx;
             cache[j+1] = f * dy;
             cache[j+2] = f * dz;
 
-            // ---------------------- ini pot
+            // ---------------------- begin pot
             Pot += (inv_rSqd_6 - inv_rSqd_3) * 2;
-            // ---------------------- fim pot
+            // ---------------------- end pot
 
             // Update accelerations
             a[i] += cache[j];
             a[i+1] += cache[j+1];
             a[i+2] += cache[j+2];
         }
-        // update acelerações do j
+        // update accelerations of j
         for (j = i + 3; j < N * 3; j += 3) {
             a[j] -= cache[j];
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
-        /* // update acelerações do i
+        /* // update accelerations of i
         for (j = i + 3; j < N * 3; j += 3) {
             // Update accelerations
             a[i] += cache[j];
@@ -763,8 +729,6 @@ double VV_Pot(double dt, int iter, FILE *fp){
     }
     
     double vv = psum/(6*L*L);;
-/*     double pot = 4.0 * epsilon * Pot;
-    double result[2] = {vv, pot}; */
     Global_Pot = 4.0 * epsilon * Pot;
     return vv;
 }
