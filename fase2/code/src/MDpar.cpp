@@ -28,6 +28,8 @@
 #include<math.h>
 #include<string.h>
 #include<vector>
+#include<omp.h>
+
 
 // Number of particles
 const int N = 10*216;
@@ -101,6 +103,11 @@ const char * OUTPUT_FOLDER = "output/";
 
 int main()
 {
+
+    //#ifdef NUM_THREADS
+    //omp_set_num_threads(NUM_THREADS);
+    omp_set_num_threads(8);
+    //#endif
     
     //  variable delcarations
     int i;
@@ -331,20 +338,18 @@ int main()
         
 
         // VERSÃO SEPARADA
-        /*
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
         PE = Potential();
         //PE = Potential2();
-        */
 
-        
+        /* 
         // VERSÃO JUNTA
         Press = VV_Pot(dt, i+1, tfp);
         Press *= PressFac;
         // Updated the potential value
         PE = Global_Pot;
-        
+        */
 
         //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //  Now we would like to calculate somethings about the system:
@@ -508,10 +513,19 @@ double Potential() {
     double ri[3];// dr[3], r6, r12;
     Pot = 0.0;
 
+    /*     
+    #pragma omp parallel num_threads(2)
+    #pragma omp for reduction(+:Pot) 
+    */
     for (i = 0; i < N * 3; i += 3) {
         ri[0] = r[i];
         ri[1] = r[i + 1];
         ri[2] = r[i + 2];
+
+        /*         
+        #pragma omp parallel
+        #pragma omp for reduction(+:Pot) 
+        */
         for (j = 0; j < i; j += 3) {
             // Calculate differences in positions
             double dx = ri[0] - r[j];
@@ -531,6 +545,10 @@ double Potential() {
             Pot += (inv_rSqd_6 - inv_rSqd_3);
             // ---------------------- end pot
         }
+        /*
+        #pragma omp parallel
+        #pragma omp for reduction(+:Pot) 
+        */
         for (j = i+3; j < N * 3; j += 3) {
             // Calculate differences in positions
             double dx = ri[0] - r[j];
@@ -563,7 +581,8 @@ void computeAccelerations() {
 
     // Loop over all distinct pairs i,j
     for (i = 0; i < N * 3; i += 3) {
-        
+        /* #pragma omp parallel
+        #pragma omp for reduction(+:f) */
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
             double dx = r[i] - r[j];
@@ -591,19 +610,13 @@ void computeAccelerations() {
             a[i+1] += cache[j+1];
             a[i+2] += cache[j+2];
         }
-        // update accelerations of j
+        //#pragma omp parallel
+        #pragma omp for reduction(+:a)
         for (j = i + 3; j < N * 3; j += 3) {
             a[j] -= cache[j];
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
-        /* // update accelerations of i
-        for (j = i + 3; j < N * 3; j += 3) {
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
-        } */
     }
 }
 
@@ -663,13 +676,6 @@ double computeAccelerationsAndPot(){
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
-        /* // update accelerations of i
-        for (j = i + 3; j < N * 3; j += 3) {
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
-        } */
     }
     return Pot;
 }

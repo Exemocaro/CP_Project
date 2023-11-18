@@ -29,6 +29,7 @@
 #include<string.h>
 #include<vector>
 
+
 // Number of particles
 const int N = 10*216;
 
@@ -663,13 +664,6 @@ double computeAccelerationsAndPot(){
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
-        /* // update accelerations of i
-        for (j = i + 3; j < N * 3; j += 3) {
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
-        } */
     }
     return Pot;
 }

@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/luis/4Ano1Semestre/CP/CP_Trabalho/fase1/code/src",
-      "program": "/home/luis/4Ano1Semestre/CP/CP_Trabalho/fase1/code/src/build/Debug/outDebug",
+      "cwd": "/home/luis/4Ano1Semestre/CP/CP_Trabalho/fase2/code/src",
+      "program": "/home/luis/4Ano1Semestre/CP/CP_Trabalho/fase2/code/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
