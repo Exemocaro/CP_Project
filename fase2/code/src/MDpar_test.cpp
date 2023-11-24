@@ -55,6 +55,17 @@ double Tinit;
 const int MAXPART=5001;
 const int MAXPART3 = MAXPART * 3;
 
+// Reversed matrix
+//  Position
+double r[3][MAXPART];
+//  Velocity
+double v[3][MAXPART];
+//  Acceleration
+double a[3][MAXPART];
+//  Force
+double F[3][MAXPART];
+
+/* 
 // Changed matrix into a vector
 //  Position
 double r[MAXPART3];
@@ -64,6 +75,7 @@ double v[MAXPART3];
 double a[MAXPART3];
 //  Force
 double F[MAXPART3];
+*/
 
 // atom type
 char atype[10];
@@ -331,14 +343,15 @@ int main()
         // Also computes the Pressure as the sum of momentum changes from wall collisions / timestep
         // which is a Kinetic Theory of gasses concept of Pressure
         
-
+         
         // VERSÃO SEPARADA
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
         PE = Potential();
         //PE = Potential2();
-
-        /* 
+        
+        
+        /*
         // VERSÃO JUNTA
         Press = VV_Pot(dt, i+1, tfp);
         Press *= PressFac;
@@ -416,12 +429,12 @@ void initialize() {
     for (i=0; i<n; i++) {
         for (j=0; j<n; j++) {
             for (k=0; k<n; k++) {
-                if (p<N*3) {
-                    r[p] = (i + 0.5)*pos;
-                    r[p+1] = (j + 0.5)*pos;
-                    r[p+2] = (k + 0.5)*pos;
+                if (p<N) {
+                    r[0][p] = (i + 0.5)*pos;
+                    r[1][p] = (j + 0.5)*pos;
+                    r[2][p] = (k + 0.5)*pos;
                 }
-                p+=3;
+                p+=1;
             }
         }
     }
@@ -456,10 +469,10 @@ double MSV_Kinetic(){
     double msv, kin;
     
     kin =0.;
-    for (int i=0; i<N*3; i+=3) {
-        v0 = v[i]*v[i];
-        v1 = v[i+1]*v[i+1];
-        v2 = v[i+2]*v[i+2];
+    for (int i=0; i<N; i+=1) {
+        v0 = v[0][i]*v[0][i];
+        v1 = v[1][i]*v[1][i];
+        v2 = v[2][i]*v[2][i];
         
         vx2 += v0;
         vy2 += v1;
@@ -483,14 +496,14 @@ double Potential2() {
     int i, j;
     Pot=0.;
     
-    for (i=0; i<N*3; i+=3) {
-        double ri0 = r[i];
-        double ri1 = r[i+1];
-        double ri2 = r[i+2];
-        for (j = i + 3; j < N*3; j+=3) {
-            double dr0 = ri0 - r[j];
-            double dr1 = ri1 - r[j+1];
-            double dr2 = ri2 - r[j+2];
+    for (i=0; i<N; i+=1) {
+        double ri0 = r[0][i];
+        double ri1 = r[1][i];
+        double ri2 = r[2][i];
+        for (j = i + 3; j < N; j+=1) {
+            double dr0 = ri0 - r[0][j];
+            double dr1 = ri1 - r[1][j];
+            double dr2 = ri2 - r[2][j];
 
             r2 = dr0 * dr0 + dr1 * dr1 + dr2 * dr2;
             double r6 = r2 * r2 * r2;
@@ -505,27 +518,27 @@ double Potential2() {
 double Potential() {
     double Pot;
     int i, j;
-    double ri[3];// dr[3], r6, r12;
+    double ri[3]; // dr[3], r6, r12;
     Pot = 0.0;
 
-    /*     
+    /*
     #pragma omp parallel num_threads(2)
     #pragma omp for reduction(+:Pot) 
     */
-    for (i = 0; i < N * 3; i += 3) {
-        ri[0] = r[i];
-        ri[1] = r[i + 1];
-        ri[2] = r[i + 2];
+    for (i = 0; i < N; i += 1) {
+        ri[0] = r[0][i];
+        ri[1] = r[1][i];
+        ri[2] = r[2][i];
 
         /*         
         #pragma omp parallel
         #pragma omp for reduction(+:Pot) 
         */
-        for (j = 0; j < i; j += 3) {
+        for (j = 0; j < i; j += 1) {
             // Calculate differences in positions
-            double dx = ri[0] - r[j];
-            double dy = ri[1] - r[j+1];
-            double dz = ri[2] - r[j+2];
+            double dx = ri[0] - r[0][j];
+            double dy = ri[1] - r[1][j];
+            double dz = ri[2] - r[2][j];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
@@ -544,11 +557,11 @@ double Potential() {
         #pragma omp parallel
         #pragma omp for reduction(+:Pot) 
         */
-        for (j = i+3; j < N * 3; j += 3) {
+        for (j = i+1; j < N; j += 1) {
             // Calculate differences in positions
-            double dx = ri[0] - r[j];
-            double dy = ri[1] - r[j+1];
-            double dz = ri[2] - r[j+2];
+            double dx = ri[0] - r[0][j];
+            double dy = ri[1] - r[1][j];
+            double dz = ri[2] - r[2][j];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
@@ -572,17 +585,17 @@ double Potential() {
 void computeAccelerations() {
     int i, j;
     double f, inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
-    double cache[MAXPART3];
+    double cache[3][MAXPART];
 
     // Loop over all distinct pairs i,j
-    for (i = 0; i < N * 3; i += 3) {
+    for (i = 0; i < N; i += 1) {
         /* #pragma omp parallel
         #pragma omp for reduction(+:f) */
-        for (j = i + 3; j < N * 3; j += 3) {
+        for (j = i+1; j < N; j += 1) {
             // Calculate differences in positions
-            double dx = r[i] - r[j];
-            double dy = r[i + 1] - r[j + 1];
-            double dz = r[i + 2] - r[j + 2];
+            double dx = r[0][i] - r[0][j];
+            double dy = r[1][i] - r[1][j];
+            double dz = r[2][i] - r[2][j];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
@@ -596,21 +609,21 @@ void computeAccelerations() {
             // Calculate the force magnitude
             f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
-            cache[j] = f * dx;
-            cache[j+1] = f * dy;
-            cache[j+2] = f * dz;
+            cache[0][j] = f * dx;
+            cache[1][j] = f * dy;
+            cache[2][j] = f * dz;
 
             // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
+            a[0][i] += cache[0][j];
+            a[1][i] += cache[1][j];
+            a[2][i] += cache[2][j];
         }
         //#pragma omp parallel
         //#pragma omp for reduction(+:a)
-        for (j = i + 3; j < N * 3; j += 3) {
-            a[j] -= cache[j];
-            a[j + 1] -= cache[j+1];
-            a[j + 2] -= cache[j+2];
+        for (j = i+1; j < N; j += 1) {
+            a[0][j] -= cache[0][j];
+            a[1][j] -= cache[1][j];
+            a[2][j] -= cache[2][j];
         }
     }
 }
@@ -623,20 +636,21 @@ double computeAccelerationsAndPot(){
 
     // compute
     double f, inv_rSqd, inv_rSqd_2, inv_rSqd_3, inv_rSqd_4, inv_rSqd_6, inv_rSqd_7;
-    double cache[MAXPART3];
+    double cache[3][MAXPART];
+    double ri[3]; // dr[3], r6, r12;
 
     // loop
-    for (i = 0; i < (N-1) * 3; i += 3) {
+    for (i = 0; i < (N-1); i += 1) {
         // ---------------------- begin pot
-        double ri0 = r[i];
-        double ri1 = r[i+1];
-        double ri2 = r[i+2];
+        ri[0] = r[0][i];
+        ri[1] = r[1][i];
+        ri[2] = r[2][i];
         // ---------------------- end pot
-        for (j = i + 3; j < N * 3; j += 3) {
+        for (j = i + 1; j < N; j += 1) {
             // Calculate differences in positions
-            double dx = ri0 - r[j];
-            double dy = ri1 - r[j+1];
-            double dz = ri2 - r[j+2];
+            double dx = ri[0] - r[0][j];
+            double dy = ri[1] - r[1][j];
+            double dz = ri[2] - r[2][j];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
@@ -652,24 +666,24 @@ double computeAccelerationsAndPot(){
             // Calculate the force magnitude
             f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
-            cache[j] = f * dx;
-            cache[j+1] = f * dy;
-            cache[j+2] = f * dz;
+            cache[0][j] = f * dx;
+            cache[1][j] = f * dy;
+            cache[2][j] = f * dz;
 
             // ---------------------- begin pot
             Pot += (inv_rSqd_6 - inv_rSqd_3) * 2;
             // ---------------------- end pot
 
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
+             // Update accelerations
+            a[0][i] += cache[0][j];
+            a[1][i] += cache[1][j];
+            a[2][i] += cache[2][j];
         }
         // update accelerations of j
-        for (j = i + 3; j < N * 3; j += 3) {
-            a[j] -= cache[j];
-            a[j + 1] -= cache[j+1];
-            a[j + 2] -= cache[j+2];
+        for (j = i+1; j < N; j += 1) {
+            a[0][j] -= cache[0][j];
+            a[1][j] -= cache[1][j];
+            a[2][j] -= cache[2][j];
         }
     }
     return Pot;
@@ -687,45 +701,45 @@ double VV_Pot(double dt, int iter, FILE *fp){
 
     double Pot;
 
-    for (i=0; i<N*3; i+=3) {
-        aij5[0] =  0.5*a[i];
-        aij5[1] =  0.5*a[i+1];
-        aij5[2] =  0.5*a[i+2];
+    for (i=0; i<N; i+=1) {
+        aij5[0] =  0.5*a[0][i];
+        aij5[1] =  0.5*a[1][i];
+        aij5[2] =  0.5*a[2][i];
 
-        r[i] += v[i]*dt + aij5[0]*dt2;
-        r[i+1] += v[i+1]*dt + aij5[1]*dt2;
-        r[i+2] += v[i+2]*dt + aij5[2]*dt2;
+        r[0][i] += v[0][i]*dt + aij5[0]*dt2;
+        r[1][i] += v[1][i]*dt + aij5[1]*dt2;
+        r[2][i] += v[2][i]*dt + aij5[2]*dt2;
 
-        v[i] += aij5[0]*dt;
-        v[i+1] += aij5[1]*dt;
-        v[i+2] += aij5[2]*dt;
+        v[0][i] += aij5[0]*dt;
+        v[1][i] += aij5[1]*dt;
+        v[2][i] += aij5[2]*dt;
 
-        a[i] = 0;
-        a[i+1] = 0;
-        a[i+2]= 0;
+        a[0][i] = 0;
+        a[1][i] = 0;
+        a[2][i] = 0;
     }
 
     //  Update accellerations from updated positions
     Pot = computeAccelerationsAndPot();
 
     //  Update velocity with updated acceleration
-    for (i=0; i<N*3; i+=3) {
-        v[i] += a[i]*dt5;
-        v[i+1] += a[i+1]*dt5;
-        v[i+2] += a[i+2]*dt5;
+    for (i=0; i<N; i+=1) {
+        v[0][i] += a[0][i]*dt5;
+        v[1][i] +=a[1][i]*dt5;
+        v[2][i] += a[2][i]*dt5;
 
         // Elastic walls
-        if (r[i] < 0. || r[i] >= L) {
-            v[i] *= -1.;
-            psum += m2*fabs(v[i])/dt;// contribution to pressure from "left" and "right" walls
+        if (r[0][i] < 0. || r[0][i] >= L) {
+            v[0][i] *= -1.;
+            psum += m2*fabs(v[0][i])/dt;// contribution to pressure from "left" and "right" walls
         }
-        if (r[i+1] < 0. || r[i+1] >= L) {
-            v[i+1] *= -1.;
-            psum += m2*fabs(v[i+1])/dt;// contribution to pressure from "left" and "right" walls
+        if (r[1][i] < 0. ||r[1][i] >= L) {
+            v[1][i] *= -1.;
+            psum += m2*fabs(v[1][i])/dt;// contribution to pressure from "left" and "right" walls
         }
-        if (r[i+2] < 0. || r[i+2] >= L) {
-            v[i+2] *= -1.;
-            psum += m2*fabs(v[i+2])/dt;// contribution to pressure from "left" and "right" walls
+        if (r[2][i] < 0. || r[2][i] >= L) {
+            v[2][i] *= -1.;
+            psum += m2*fabs(v[2][i])/dt;// contribution to pressure from "left" and "right" walls
         }
     }
     
@@ -749,45 +763,45 @@ double VelocityVerlet(double dt, int iter, FILE *fp) {
 
     double m2 = 2*m;
     
-    for (i=0; i<N*3; i+=3) {
-        aij5[0] =  0.5*a[i];
-        aij5[1] =  0.5*a[i+1];
-        aij5[2] =  0.5*a[i+2];
+    for (i=0; i<N; i+=1) {
+        aij5[0] =  0.5*a[0][i];
+        aij5[1] =  0.5*a[1][i];
+        aij5[2] =  0.5*a[2][i];
 
-        r[i] += v[i]*dt + aij5[0]*dt2;
-        r[i+1] += v[i+1]*dt + aij5[1]*dt2;
-        r[i+2] += v[i+2]*dt + aij5[2]*dt2;
+        r[0][i] += v[0][i]*dt + aij5[0]*dt2;
+        r[1][i] += v[1][i]*dt + aij5[1]*dt2;
+        r[2][i] += v[2][i]*dt + aij5[2]*dt2;
 
-        v[i] += aij5[0]*dt;
-        v[i+1] += aij5[1]*dt;
-        v[i+2] += aij5[2]*dt;
+        v[0][i] += aij5[0]*dt;
+        v[1][i] += aij5[1]*dt;
+        v[2][i] += aij5[2]*dt;
 
-        a[i] = 0;
-        a[i+1] = 0;
-        a[i+2]= 0;
+        a[0][i] = 0;
+        a[1][i] = 0;
+        a[2][i] = 0;
     }
 
     //  Update accellerations from updated positions
     computeAccelerations();
 
     //  Update velocity with updated acceleration
-    for (i=0; i<N*3; i+=3) {
-        v[i] += a[i]*dt5;
-        v[i+1] += a[i+1]*dt5;
-        v[i+2] += a[i+2]*dt5;
+    for (i=0; i<N; i+=1) {
+        v[0][i] += a[0][i]*dt5;
+        v[1][i] += a[1][i]*dt5;
+        v[2][i] += a[2][i]*dt5;
 
         // Elastic walls
-        if (r[i] < 0. || r[i] >= L) {
-            v[i] *= -1.;
-            psum += m2*fabs(v[i])/dt;// contribution to pressure from "left" and "right" walls
+        if (r[0][i] < 0. || r[0][i] >= L) {
+            v[0][i] *= -1.;
+            psum += m2*fabs(v[0][i])/dt;// contribution to pressure from "left" and "right" walls
         }
-        if (r[i+1] < 0. || r[i+1] >= L) {
-            v[i+1] *= -1.;
-            psum += m2*fabs(v[i+1])/dt;// contribution to pressure from "left" and "right" walls
+        if (r[1][i] < 0. ||r[1][i] >= L) {
+            v[1][i] *= -1.;
+            psum += m2*fabs(v[1][i])/dt;// contribution to pressure from "left" and "right" walls
         }
-        if (r[i+2] < 0. || r[i+2] >= L) {
-            v[i+2] *= -1.;
-            psum += m2*fabs(v[i+2])/dt;// contribution to pressure from "left" and "right" walls
+        if (r[2][i] < 0. || r[2][i] >= L) {
+            v[2][i] *= -1.;
+            psum += m2*fabs(v[2][i])/dt;// contribution to pressure from "left" and "right" walls
         }
     }
     return psum/(6*L*L);
@@ -797,44 +811,44 @@ void initializeVelocities() {
     
     int i;
     
-    for (i=0; i<N*3; i+=3) {
+    for (i=0; i<N*1; i+=1) {
         //  Pull a number from a Gaussian Distribution
-        v[i] = gaussdist();
-        v[i+1] = gaussdist();
-        v[i+2] = gaussdist();
+        v[0][i] = gaussdist();
+        v[1][i] = gaussdist();
+        v[2][i] = gaussdist();
     }
     
     double vCM[3] = {0, 0, 0};
     
-    for (i=0; i<N*3; i+=3) {
-        vCM[0] += m*v[i];
-        vCM[1] += m*v[i+1];
-        vCM[2] += m*v[i+2];
+    for (i=0; i<N; i+=1) {
+        vCM[0] += m*v[0][i];
+        vCM[1] += m*v[1][i];
+        vCM[2] += m*v[2][i];
     }
     
     
     for (i=0; i<3; i++) vCM[i] /= N*m;
     
-    for (i=0; i<N*3; i+=3) {
-        v[i] -= vCM[0];
-        v[i+1] -= vCM[1];
-        v[i+2] -= vCM[2];
+    for (i=0; i<N; i+=1) {
+        v[0][i] -= vCM[0];
+        v[1][i] -= vCM[1];
+        v[2][i] -= vCM[2];
     }
     
     double vSqdSum, lambda;
     vSqdSum=0.;
-    for (i=0; i<N*3; i+=3) {
-        vSqdSum += v[i]*v[i];
-        vSqdSum += v[i+1]*v[i+1];
-        vSqdSum += v[i+2]*v[i+2];
+    for (i=0; i<N; i+=1) {
+        vSqdSum += v[0][i]*v[0][i];
+        vSqdSum += v[1][i]*v[1][i];
+        vSqdSum += v[2][i]*v[2][i];
     }
     
-    lambda = sqrt( 3*(N-1)*Tinit/vSqdSum);
+    lambda = sqrt(3*(N-1)*Tinit/vSqdSum);
     
-    for (i=0; i<N*3; i+=3) {
-        v[i] *= lambda;
-        v[i+1] *= lambda;
-        v[i+2] *= lambda;
+    for (i=0; i<N; i+=1) {
+        v[0][i] *= lambda;
+        v[1][i] *= lambda;
+        v[2][i] *= lambda;
     }
 }
 

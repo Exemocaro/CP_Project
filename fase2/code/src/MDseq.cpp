@@ -31,7 +31,7 @@
 
 
 // Number of particles
-const int N = 10*216;
+const int N = 10*500;
 
 //  Lennard-Jones parameters in natural units!
 double sigma = 1.;
@@ -51,7 +51,7 @@ double Global_Pot;
 
 //  Initial Temperature in Natural Units
 double Tinit;
-const int MAXPART=5000;
+const int MAXPART=5001;
 const int MAXPART3 = MAXPART * 3;
 
 // Changed matrix into a vector
@@ -332,19 +332,20 @@ int main()
         
 
         // VERSÃO SEPARADA
-        /*
+        
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
         PE = Potential();
         //PE = Potential2();
-        */
-
         
+
+        /*
         // VERSÃO JUNTA
         Press = VV_Pot(dt, i+1, tfp);
         Press *= PressFac;
         // Updated the potential value
         PE = Global_Pot;
+        */
         
 
         //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

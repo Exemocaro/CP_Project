@@ -294,3 +294,36 @@ Performance counter stats for 'make run':
        2,985784000 seconds user
        0,004957000 seconds sys
 
+
+
+
+real    0m28,791s
+user    0m28,777s
+sys     0m0,000s
+Running with OMP_NUM_THREADS=2
+
+real    0m29,544s
+user    0m29,383s
+sys     0m0,148s
+Running with OMP_NUM_THREADS=4
+
+real    0m28,954s
+user    0m28,832s
+sys     0m0,112s
+Running with OMP_NUM_THREADS=20
+
+real    0m28,375s
+user    0m28,222s
+sys     0m0,124s
+Running with OMP_NUM_THREADS=40
+
+real    0m28,352s
+user    0m28,148s
+sys     0m0,192s
+
+
+
+
+real    0m13,713s
+user    0m13,704s
+sys     0m0,008s
