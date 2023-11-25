@@ -327,3 +327,120 @@ sys     0m0,192s
 real    0m13,713s
 user    0m13,704s
 sys     0m0,008s
+
+
+-------------------------------------------------------------
+make runseq
+-----------------------------------------------------------
+ Performance counter stats for './MDseq.exe':
+
+          11378978      cache-misses                     #    0,375 % of all cache refs       
+        3032367776      cache-references                                                      
+        5639239514      L1-dcache-load-misses                                                 
+      186637737986      instructions                     #    2,42  insn per cycle            
+       77007431146      cycles                                                                
+
+      19,750806077 seconds time elapsed
+
+      19,735526000 seconds user
+       0,000000000 seconds sys
+--------------------------------------------------------------
+make runpar
+-------------------------------------------------------------
+ Performance counter stats for './MDpar.exe':
+
+          18337198      cache-misses                     #    0,426 % of all cache refs       
+        4309040998      cache-references                                                      
+        7509771864      L1-dcache-load-misses                                                 
+      368132840289      instructions                     #    2,39  insn per cycle            
+      153744133877      cycles                                                                
+
+      24,467423196 seconds time elapsed
+
+      39,690367000 seconds user
+       0,031992000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (tem valores errados !!!) 
+
+          17870004      cache-misses                     #    0,271 % of all cache refs       
+        6586385591      cache-references                                                      
+        8253704371      L1-dcache-load-misses                                                 
+      243114734434      instructions                     #    0,75  insn per cycle            
+      324050462693      cycles                                                                
+
+      10,998504753 seconds time elapsed
+
+      83,140752000 seconds user
+       0,187164000 seconds sys
+--------------------------------------------------------------
+make runpar - cluster (script nosso)
+-------------------------------------------------------------
+
+ Performance counter stats for './MDpar.exe': (sem paralelizaçao no codigo)
+
+        5664456352      L1-dcache-load-misses                                       
+      276193798525      inst_retired.any          #      0,5 CPI                    
+      150843137382      cycles                                                      
+
+      60,342569078 seconds time elapsed
+
+      60,335333000 seconds user
+       0,004000000 seconds sys
+
+
+
+ Performance counter stats for './MDpar.exe': (32 threads)
+
+        8553533451      L1-dcache-load-misses                                       
+      667703163417      inst_retired.any          #      2,2 CPI                    
+     1494867201040      cycles                                                      
+
+      21,228602256 seconds time elapsed
+
+     598,007055000 seconds user
+       0,204059000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (28 threads)
+
+        8604358212      L1-dcache-load-misses                                       
+      616669966550      inst_retired.any          #      2,0 CPI                    
+     1212621106545      cycles                                                      
+
+      20,837105552 seconds time elapsed
+
+     485,058408000 seconds user
+       0,253068000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (6 threads)
+
+        8562348029      L1-dcache-load-misses:u                                     
+      360137183306      inst_retired.any:u                                          
+      272440576983      cycles:u                                                    
+
+      21,262766233 seconds time elapsed
+
+     110,038130000 seconds user
+       0,033008000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (2 threads)
+
+        8446060809      L1-dcache-load-misses                                       
+      323626132484      inst_retired.any          #      0,5 CPI                    
+      175823667948      cycles                                                      
+
+     132,725772875 seconds time elapsed
+
+      70,333379000 seconds user
+       0,004999000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (1 thread, sequencial (?))
+
+        8453770323      L1-dcache-load-misses                                       
+      321130851978      inst_retired.any          #      0,5 CPI                    
+      168217469862      cycles                                                      
+
+     160,090096687 seconds time elapsed
+
+      67,284420000 seconds user
+       0,005000000 seconds sys
+

@@ -123,7 +123,6 @@ int main()
         exit(1);
     }
 
-
     strcpy(tfn,OUTPUT_FOLDER);
     strcat(tfn,prefix);
     strcat(tfn,"_traj.xyz");
@@ -331,7 +330,6 @@ int main()
         // Also computes the Pressure as the sum of momentum changes from wall collisions / timestep
         // which is a Kinetic Theory of gasses concept of Pressure
         
-
         // VERSÃO SEPARADA
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
@@ -502,117 +500,91 @@ double Potential2() {
 }
 
 // Vectorized without errors, version 1
+// ESTÁ A PARALELIZAR MAS COM VALORES DO OUTPUT PARCIALMENTE ERRADOS !!!
 double Potential() {
     double Pot;
     int i, j;
-    double ri[3];// dr[3], r6, r12;
+    //double dx,dy,dz,rSqd,inv_rSqd,inv_rSqd_2,inv_rSqd_3,inv_rSqd_6;
     Pot = 0.0;
 
-    /*     
-    #pragma omp parallel num_threads(2)
-    #pragma omp for reduction(+:Pot) 
-    */
+    #pragma omp parallel for reduction(+:Pot) // variaveis de loop sao paralelizadas por default
     for (i = 0; i < N * 3; i += 3) {
-        ri[0] = r[i];
-        ri[1] = r[i + 1];
-        ri[2] = r[i + 2];
+        for (j = 0; j < N * 3; j += 3) {
+            if (i != j) {
+                // Calculate differences in positions
+                double dx = r[i] - r[j];
+                double dy = r[i+1] - r[j+1];
+                double dz = r[i+2] - r[j+2];
 
-        /*         
-        #pragma omp parallel
-        #pragma omp for reduction(+:Pot) 
-        */
-        for (j = 0; j < i; j += 3) {
-            // Calculate differences in positions
-            double dx = ri[0] - r[j];
-            double dy = ri[1] - r[j+1];
-            double dz = ri[2] - r[j+2];
+                // Calculate the squared distance
+                double rSqd = dx * dx + dy * dy + dz * dz;
 
-            // Calculate the squared distance
-            double rSqd = dx * dx + dy * dy + dz * dz;
+                // Calculate inverse powers of rSqd
+                double inv_rSqd = 1.0 / rSqd;
+                double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+                double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
+                double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
 
-            // Calculate inverse powers of rSqd
-            double inv_rSqd = 1.0 / rSqd;
-            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
-            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
 
-            // ---------------------- begin pot
-            Pot += (inv_rSqd_6 - inv_rSqd_3);
-            // ---------------------- end pot
-        }
-        /*
-        #pragma omp parallel
-        #pragma omp for reduction(+:Pot) 
-        */
-        for (j = i+3; j < N * 3; j += 3) {
-            // Calculate differences in positions
-            double dx = ri[0] - r[j];
-            double dy = ri[1] - r[j+1];
-            double dz = ri[2] - r[j+2];
-
-            // Calculate the squared distance
-            double rSqd = dx * dx + dy * dy + dz * dz;
-
-            // Calculate inverse powers of rSqd
-            double inv_rSqd = 1.0 / rSqd;
-            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
-            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
-
-            // ---------------------- begin pot
-            Pot += (inv_rSqd_6 - inv_rSqd_3);
-            // ---------------------- end pot
+                // ---------------------- begin pot
+                Pot += (inv_rSqd_6 - inv_rSqd_3);
+                // ---------------------- end pot
+            }
         }
     }
 
     return 4.0 * epsilon * Pot;
 }
 
-
+// PARALELIZA CORRETAMENTE !!!
 void computeAccelerations() {
     int i, j;
-    double f, inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
-    double cache[MAXPART3];
+    //double f, inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
+    //double dx, dy, dz, rSqd;
 
     // Loop over all distinct pairs i,j
+    #pragma omp parallel for
     for (i = 0; i < N * 3; i += 3) {
-        /* #pragma omp parallel
-        #pragma omp for reduction(+:f) */
+        double cache[MAXPART3] = {0};
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
             double dx = r[i] - r[j];
-            double dy = r[i + 1] - r[j + 1];
-            double dz = r[i + 2] - r[j + 2];
+            double dy = r[i+1] - r[j+1];
+            double dz = r[i+2] - r[j+2];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
 
             // Calculate inverse powers of rSqd
-            inv_rSqd = 1.0 / rSqd;
-            inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-            inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
+            double inv_rSqd = 1.0 / rSqd;
+            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
+            double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
             // Calculate the force magnitude
-            f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
+            double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
             cache[j] = f * dx;
             cache[j+1] = f * dy;
             cache[j+2] = f * dz;
-
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
         }
-        //#pragma omp parallel
-        //#pragma omp for reduction(+:a)
-        for (j = i + 3; j < N * 3; j += 3) {
-            a[j] -= cache[j];
-            a[j + 1] -= cache[j+1];
-            a[j + 2] -= cache[j+2];
+        #pragma omp critical
+        {
+            for (j = i + 3; j < N * 3; j += 3) {
+                a[i] += cache[j];
+                a[i+1] += cache[j+1];
+                a[i+2] += cache[j+2];
+            }
         }
-    }
+        #pragma omp critical
+        {
+            for (j = i + 3; j < N * 3; j += 3) {
+                a[j] -= cache[j];
+                a[j+1] -= cache[j+1];
+                a[j+2] -= cache[j+2];
+            }
+        }
+    } 
 }
 
 double computeAccelerationsAndPot(){
@@ -623,23 +595,19 @@ double computeAccelerationsAndPot(){
 
     // compute
     double f, inv_rSqd, inv_rSqd_2, inv_rSqd_3, inv_rSqd_4, inv_rSqd_6, inv_rSqd_7;
+    double dx, dy, dz, rSqd;
     double cache[MAXPART3];
 
-    // loop
+    // loop over all distinct pairs i,j
     for (i = 0; i < (N-1) * 3; i += 3) {
-        // ---------------------- begin pot
-        double ri0 = r[i];
-        double ri1 = r[i+1];
-        double ri2 = r[i+2];
-        // ---------------------- end pot
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
-            double dx = ri0 - r[j];
-            double dy = ri1 - r[j+1];
-            double dz = ri2 - r[j+2];
+            dx = r[i] - r[j];
+            dy = r[i+1] - r[j+1];
+            dz = r[i+2] - r[j+2];
 
             // Calculate the squared distance
-            double rSqd = dx * dx + dy * dy + dz * dz;
+            rSqd = dx * dx + dy * dy + dz * dz;
 
             // Calculate inverse powers of rSqd
             inv_rSqd = 1.0 / rSqd;
@@ -687,6 +655,7 @@ double VV_Pot(double dt, int iter, FILE *fp){
 
     double Pot;
 
+    #pragma omp parallel for private(aij5)
     for (i=0; i<N*3; i+=3) {
         aij5[0] =  0.5*a[i];
         aij5[1] =  0.5*a[i+1];
@@ -709,6 +678,7 @@ double VV_Pot(double dt, int iter, FILE *fp){
     Pot = computeAccelerationsAndPot();
 
     //  Update velocity with updated acceleration
+    #pragma omp parallel for reduction(+:psum)
     for (i=0; i<N*3; i+=3) {
         v[i] += a[i]*dt5;
         v[i+1] += a[i+1]*dt5;

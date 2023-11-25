@@ -18,9 +18,11 @@ clean:
 	rm -f gmon.out perf.data ./MD*.exe
 
 runseq: MDseq.exe
-	./MDseq.exe < inputdata.txt
+#	./MDseq.exe < inputdata.txt
+	sudo perf stat -e cache-misses,cache-references,L1-dcache-load-misses,instructions,cycles ./MDseq.exe < inputdata.txt
 
 runpar: MDpar.exe
-	export OMP_NUM_THREADS=2;\
-	./MDpar.exe < inputdata.txt
+	export OMP_NUM_THREADS=4;\
+	sudo perf stat -e cache-misses,cache-references,L1-dcache-load-misses,instructions,cycles ./MDpar.exe < inputdata.txt
+#	./MDpar.exe < inputdata.txt
 	
