@@ -1,6 +1,6 @@
 CC = gcc
 SRC = src/
-CFLAGS = -Wall -p -O3
+CFLAGS = -Wall -pg -O3 -funroll-all-loops -ftree-vectorize -mavx
 
 .DEFAULT_GOAL = all
 

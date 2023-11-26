@@ -7,5 +7,5 @@ fi
 
 function_name="$1"
 
-sudo perf record -g -- make runpar
+sudo perf record -g -- make runseq
 sudo perf annotate --source "$function_name" > "output/report_${function_name}.txt"

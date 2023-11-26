@@ -29,7 +29,6 @@
 #include<string.h>
 #include<vector>
 
-
 // Number of particles
 const int N = 10*500;
 
@@ -330,23 +329,20 @@ int main()
         // Also computes the Pressure as the sum of momentum changes from wall collisions / timestep
         // which is a Kinetic Theory of gasses concept of Pressure
         
-
+        /*
         // VERSÃO SEPARADA
-        
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
         PE = Potential();
         //PE = Potential2();
+        */ 
         
-
-        /*
         // VERSÃO JUNTA
         Press = VV_Pot(dt, i+1, tfp);
         Press *= PressFac;
         // Updated the potential value
         PE = Global_Pot;
-        */
-        
+         
 
         //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //  Now we would like to calculate somethings about the system:
@@ -665,6 +661,13 @@ double computeAccelerationsAndPot(){
             a[j + 1] -= cache[j+1];
             a[j + 2] -= cache[j+2];
         }
+        /* // update accelerations of i
+        for (j = i + 3; j < N * 3; j += 3) {
+            // Update accelerations
+            a[i] += cache[j];
+            a[i+1] += cache[j+1];
+            a[i+2] += cache[j+2];
+        } */
     }
     return Pot;
 }
