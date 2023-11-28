@@ -329,20 +329,20 @@ int main()
         // Also computes the Pressure as the sum of momentum changes from wall collisions / timestep
         // which is a Kinetic Theory of gasses concept of Pressure
         
-        /*
+        /* 
         // VERSÃO SEPARADA
         Press = VelocityVerlet(dt, i+1, tfp);
         Press *= PressFac;
         PE = Potential();
         //PE = Potential2();
-        */ 
-        
+         */
+         
         // VERSÃO JUNTA
         Press = VV_Pot(dt, i+1, tfp);
         Press *= PressFac;
         // Updated the potential value
         PE = Global_Pot;
-         
+        
 
         //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //  Now we would like to calculate somethings about the system:
@@ -553,55 +553,45 @@ double Potential() {
     return 4.0 * epsilon * Pot;
 }
 
-
 void computeAccelerations() {
     int i, j;
-    double f, inv_rSqd, inv_rSqd_2, inv_rSqd_4, inv_rSqd_7;
-    double cache[MAXPART3];
+    double cache[3] = {0};
 
     // Loop over all distinct pairs i,j
     for (i = 0; i < N * 3; i += 3) {
-        
+        cache[0] = 0;
+        cache[1] = 0;
+        cache[2] = 0;
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
             double dx = r[i] - r[j];
-            double dy = r[i + 1] - r[j + 1];
-            double dz = r[i + 2] - r[j + 2];
+            double dy = r[i+1] - r[j+1];
+            double dz = r[i+2] - r[j+2];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
 
             // Calculate inverse powers of rSqd
-            inv_rSqd = 1.0 / rSqd;
-            inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-            inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
+            double inv_rSqd = 1.0 / rSqd;
+            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
+            double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
             // Calculate the force magnitude
-            f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
+            double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
-            cache[j] = f * dx;
-            cache[j+1] = f * dy;
-            cache[j+2] = f * dz;
+            cache[0] += f * dx;
+            cache[1] += f * dy;
+            cache[2] += f * dz;
 
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
+            a[j] -= f*dx;
+            a[j+1] -= f*dy;
+            a[j+2] -= f*dz;
         }
-        // update accelerations of j
-        for (j = i + 3; j < N * 3; j += 3) {
-            a[j] -= cache[j];
-            a[j + 1] -= cache[j+1];
-            a[j + 2] -= cache[j+2];
-        }
-        /* // update accelerations of i
-        for (j = i + 3; j < N * 3; j += 3) {
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
-        } */
+        // Update accelerations
+        a[i] += cache[0];
+        a[i+1] += cache[1];
+        a[i+2] += cache[2];
     }
 }
 
@@ -609,65 +599,50 @@ double computeAccelerationsAndPot(){
     // Potential
     double Pot;
     int i, j;
+    double cache[3] = {0};
     Pot = 0.0;
 
-    // compute
-    double f, inv_rSqd, inv_rSqd_2, inv_rSqd_3, inv_rSqd_4, inv_rSqd_6, inv_rSqd_7;
-    double cache[MAXPART3];
-
-    // loop
-    for (i = 0; i < (N-1) * 3; i += 3) {
-        // ---------------------- begin pot
-        double ri0 = r[i];
-        double ri1 = r[i+1];
-        double ri2 = r[i+2];
-        // ---------------------- end pot
+    // Loop over all distinct pairs i,j
+    for (i = 0; i < N * 3; i += 3) {
+        cache[0] = 0;
+        cache[1] = 0;
+        cache[2] = 0;
         for (j = i + 3; j < N * 3; j += 3) {
             // Calculate differences in positions
-            double dx = ri0 - r[j];
-            double dy = ri1 - r[j+1];
-            double dz = ri2 - r[j+2];
+            double dx = r[i] - r[j];
+            double dy = r[i+1] - r[j+1];
+            double dz = r[i+2] - r[j+2];
 
             // Calculate the squared distance
             double rSqd = dx * dx + dy * dy + dz * dz;
 
             // Calculate inverse powers of rSqd
-            inv_rSqd = 1.0 / rSqd;
-            inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
-            inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-            inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
-            inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
+            double inv_rSqd = 1.0 / rSqd;
+            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
+            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
+            double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
+            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
+            double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
 
             // Calculate the force magnitude
-            f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
+            double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
 
-            cache[j] = f * dx;
-            cache[j+1] = f * dy;
-            cache[j+2] = f * dz;
+            cache[0] += f*dx;
+            cache[1] += f*dy;
+            cache[2] += f*dz;
+
+            a[j] -= f*dx;
+            a[j+1] -= f*dy;
+            a[j+2] -= f*dz;
 
             // ---------------------- begin pot
             Pot += (inv_rSqd_6 - inv_rSqd_3) * 2;
             // ---------------------- end pot
-
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
         }
-        // update accelerations of j
-        for (j = i + 3; j < N * 3; j += 3) {
-            a[j] -= cache[j];
-            a[j + 1] -= cache[j+1];
-            a[j + 2] -= cache[j+2];
-        }
-        /* // update accelerations of i
-        for (j = i + 3; j < N * 3; j += 3) {
-            // Update accelerations
-            a[i] += cache[j];
-            a[i+1] += cache[j+1];
-            a[i+2] += cache[j+2];
-        } */
+        // update accelerations of i
+        a[i] += cache[0];
+        a[i+1] += cache[1];
+        a[i+2] += cache[2];
     }
     return Pot;
 }

@@ -1,6 +1,6 @@
 CC = gcc
 SRC = src/
-CFLAGS = -Wall -pg -O3 -funroll-all-loops -ftree-vectorize -mavx
+CFLAGS = -Wall -pg -Ofast -funroll-all-loops -ftree-vectorize -mavx
 
 .DEFAULT_GOAL = all
 
@@ -22,7 +22,7 @@ runseq: MDseq.exe
 	sudo perf stat -e cache-misses,cache-references,L1-dcache-load-misses,instructions,cycles ./MDseq.exe < inputdata.txt
 
 runpar: MDpar.exe
-	export OMP_NUM_THREADS=4;\
+	export OMP_NUM_THREADS=1;\
 	sudo perf stat -e cache-misses,cache-references,L1-dcache-load-misses,instructions,cycles ./MDpar.exe < inputdata.txt
 #	./MDpar.exe < inputdata.txt
 	

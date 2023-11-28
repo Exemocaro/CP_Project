@@ -1,0 +1,660 @@
+  Performance counter stats for 'make run':
+
+         739610354      L1-dcache-load-misses                                                 
+      730745384030      instructions                     #    1,90  insn per cycle            
+      384808694973      cycles                                                                
+      730745384030      INST_RETIRED.ANY                 #     0,53 CPI                       
+      384808694973      CPU_CLK_UNHALTED.THREAD                                               
+
+      99,383231144 seconds time elapsed
+
+      98,605212000 seconds user
+       0,723785000 seconds sys
+
+ Performance counter stats for './MD.exe':
+
+      755701302808      instructions                     #    1,93  insn per cycle            
+      392017646157      cycles                                                                
+
+     111,904660519 seconds time elapsed
+
+     101,174154000 seconds user
+       0,071999000 seconds sys
+
+// DEPOIS DE LOOP UNROLLING NO Potential():
+
+ Performance counter stats for './MD.exe':
+
+      650738351716      instructions                     #    1,70  insn per cycle            
+      382594218227      cycles                                                                
+
+     105,389293745 seconds time elapsed
+
+      98,642504000 seconds user
+       0,019999000 seconds sys
+
+ Performance counter stats for './MD.exe':
+
+         705790592      L1-dcache-load-misses                                                 
+      644228779732      instructions                     #    1,77  insn per cycle            
+      364866730401      cycles                                                                
+      644228779732      INST_RETIRED.ANY                 #     0,57 CPI                       
+      364866730401      CPU_CLK_UNHALTED.THREAD                                               
+
+     103,677890649 seconds time elapsed
+
+      93,943241000 seconds user
+       0,111984000 seconds sys
+
+// DEPOIS DAS FLAGS
+
+ Performance counter stats for './MD.exe':
+
+         673748416      L1-dcache-load-misses                                                 
+      416402194655      instructions                     #    1,77  insn per cycle            
+      235814290786      cycles                                                                
+      416402194655      INST_RETIRED.ANY                 #     0,57 CPI                       
+      235814290786      CPU_CLK_UNHALTED.THREAD                                               
+
+      68,247065747 seconds time elapsed
+
+      60,726427000 seconds user
+       0,107982000 seconds sys
+
+// DEPOIS DA SIMPLIFICAÇÃO DO POW() EM COMPUTE ACCELERATIONS
+
+ Performance counter stats for './MD.exe':
+
+         667280448      L1-dcache-load-misses                                                 
+      303527172184      instructions                     #    1,69  insn per cycle            
+      179891574832      cycles                                                                
+      303527172184      INST_RETIRED.ANY                 #     0,59 CPI                       
+      179891574832      CPU_CLK_UNHALTED.THREAD                                               
+
+      52,689307834 seconds time elapsed
+
+      46,282051000 seconds user
+       0,024001000 seconds sys
+
+
+// DEPOIS DA SIMPLIFICAÇÃO DO POW() EM Potential()
+
+ Performance counter stats for 'make run':
+
+         417657552      L1-dcache-load-misses                                                 
+       40026302977      instructions                     #    2,11  insn per cycle            
+       18977673368      cycles                                                                
+       40026302977      INST_RETIRED.ANY                 #     0,47 CPI                       
+       18977673368      CPU_CLK_UNHALTED.THREAD                                               
+
+       4,890328874 seconds time elapsed
+
+       4,875793000 seconds user
+       0,011993000 seconds sys
+
+
+// DEPOIS DA SIMPLIFICAÇÃO DO POW() EM Potential()
+
+ Performance counter stats for 'make run':
+
+
+         669970596      L1-dcache-load-misses                                                 
+       52216267237      instructions                     #    2,32  insn per cycle            
+       22501611806      cycles                                                                
+       52216267237      INST_RETIRED.ANY                 #     0,43 CPI                       
+       22501611806      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,817308327 seconds time elapsed
+
+       5,815339000 seconds user
+       0,000000000 seconds sys
+
+
+
+
+
+--------------------
+
+
+ Performance counter stats for 'make run':
+
+         703778238      L1-dcache-load-misses                                                 
+      430742273364      instructions                     #    1,74  insn per cycle            
+      247879267842      cycles                                                                
+      430742273364      INST_RETIRED.ANY                 #     0,58 CPI                       
+      247879267842      CPU_CLK_UNHALTED.THREAD                                               
+
+      63,962683825 seconds time elapsed
+
+      63,574848000 seconds user
+       0,380025000 seconds sys
+
+
+// DEPOIS DOS POWS
+
+ Performance counter stats for 'make run':
+
+         670962902      L1-dcache-load-misses                                                 
+       53155618968      instructions                     #    2,19  insn per cycle            
+       24271398385      cycles                                                                
+       53155618968      INST_RETIRED.ANY                 #     0,46 CPI                       
+       24271398385      CPU_CLK_UNHALTED.THREAD                                               
+
+       6,267132326 seconds time elapsed
+
+       6,255259000 seconds user
+       0,007995000 seconds sys
+
+// DEPOIS DAS SQRTS
+
+ Performance counter stats for 'make run':
+
+         670949501      L1-dcache-load-misses                                                 
+       52217371748      instructions                     #    2,24  insn per cycle            
+       23338921711      cycles                                                                
+       52217371748      INST_RETIRED.ANY                 #     0,45 CPI                       
+       23338921711      CPU_CLK_UNHALTED.THREAD                                               
+
+       6,043747851 seconds time elapsed
+
+       6,037637000 seconds user
+       0,004201000 seconds sys
+
+// --------------------------------------------------------------------------------------
+
+ Performance counter stats for 'make run':
+
+         670176504      L1-dcache-load-misses                                                 
+       52686051815      instructions                     #    2,28  insn per cycle            
+       23116551141      cycles                                                                
+       52686051815      INST_RETIRED.ANY                 #     0,44 CPI                       
+       23116551141      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,958494866 seconds time elapsed
+
+       5,953910000 seconds user
+       0,003999000 seconds sys
+
+ Performance counter stats for 'make run':
+
+         670559628      L1-dcache-load-misses                                                 
+       52686838973      instructions                     #    2,28  insn per cycle            
+       23059884959      cycles                                                                
+       52686838973      INST_RETIRED.ANY                 #     0,44 CPI                       
+       23059884959      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,957055010 seconds time elapsed
+
+       5,956639000 seconds user
+       0,000000000 seconds sys
+
+
+Performance counter stats for 'make run':
+
+         673564535      L1-dcache-load-misses                                                 
+       52702911928      instructions                     #    2,14  insn per cycle            
+       24588533974      cycles                                                                
+       52702911928      INST_RETIRED.ANY                 #     0,47 CPI                       
+       24588533974      CPU_CLK_UNHALTED.THREAD                                               
+
+       6,334362965 seconds time elapsed
+
+       6,216371000 seconds user
+       0,103832000 seconds sys
+
+// MELHOR TEMPO ATÉ AGORA DEPOIS DA SEMI-VETORIZAÇÃO
+
+Performance counter stats for 'make run':
+
+         672438980      L1-dcache-load-misses                                                 
+       38131275609      instructions                     #    1,77  insn per cycle            
+       21563910865      cycles                                                                
+       38131275609      INST_RETIRED.ANY                 #     0,57 CPI                       
+       21563910865      CPU_CLK_UNHALTED.THREAD                                               
+
+       5,596521495 seconds time elapsed
+
+       5,583353000 seconds user
+       0,011995000 seconds sys
+
+// compute vetorizado
+
+ Performance counter stats for 'make run':
+
+        1012004308      L1-dcache-load-misses                                                 
+       29445397335      instructions                     #    1,64  insn per cycle            
+       17974709562      cycles                                                                
+       29445397335      INST_RETIRED.ANY                 #     0,61 CPI                       
+       17974709562      CPU_CLK_UNHALTED.THREAD                                               
+
+       4,642685438 seconds time elapsed
+
+       4,610452000 seconds user
+       0,031993000 seconds sys
+
+// potential vetorizado sem erros
+
+ Performance counter stats for 'make run':
+
+        1011874567      L1-dcache-load-misses                                                 
+       18716458990      instructions                     #    1,31  insn per cycle            
+       14259858343      cycles                                                                
+       18716458990      INST_RETIRED.ANY                 #     0,76 CPI                       
+       14259858343      CPU_CLK_UNHALTED.THREAD                                               
+
+       3,690821094 seconds time elapsed
+
+       3,680552000 seconds user
+       0,007996000 seconds sys
+
+
+// MELHOR VERSÃO C/FUNÇÕES SEPARADAS E POTENTIAL DIREITO
+
+           7288249      cache-misses                     #    5,846 % of all cache refs         (83,35%)
+         124677972      cache-references                                                        (83,24%)
+        1012211732      L1-dcache-load-misses                                                   (83,36%)
+       18693854424      instructions                     #    1,31  insn per cycle              (83,35%)
+       14291787299      cycles                                                                  (83,34%)
+       18738132261      INST_RETIRED.ANY                 #     0,76 CPI                         (83,37%)
+       14293297049      CPU_CLK_UNHALTED.THREAD                                                 (83,37%)
+
+       3,700969972 seconds time elapsed
+
+       3,667402000 seconds user
+       0,021861000 seconds sys
+
+// MELHOR VERSÃO C/FUNÇÕES SEPARADAS E POTENTIAL MAL
+
+           6567502      cache-misses                     #    2,630 % of all cache refs         (83,20%)
+         249742910      cache-references                                                        (83,32%)
+         755862292      L1-dcache-load-misses                                                   (83,32%)
+       14341348201      instructions                     #    1,15  insn per cycle              (83,32%)
+       12500013086      cycles                                                                  (83,43%)
+       14328587613      INST_RETIRED.ANY                 #     0,87 CPI                         (83,42%)
+       12502302838      CPU_CLK_UNHALTED.THREAD                                                 (83,42%)
+
+       3,237634422 seconds time elapsed
+
+       3,146624000 seconds user
+       0,081498000 seconds sys
+
+
+// MELHOR VERSÃO COM VV_POT E POTENTIAL MAL
+
+           5612045      cache-misses                     #    3,969 % of all cache refs         (83,28%)
+         141396078      cache-references                                                        (83,28%)
+         791212751      L1-dcache-load-misses                                                   (83,28%)
+       18705048796      instructions                     #    1,61  insn per cycle              (83,41%)
+       11593400870      cycles                                                                  (83,41%)
+       18735078306      INST_RETIRED.ANY                 #     0,62 CPI                         (83,35%)
+       11593007487      CPU_CLK_UNHALTED.THREAD                                                 (83,35%)
+
+       2,990981525 seconds time elapsed
+
+       2,985784000 seconds user
+       0,004957000 seconds sys
+
+
+
+
+real    0m28,791s
+user    0m28,777s
+sys     0m0,000s
+Running with OMP_NUM_THREADS=2
+
+real    0m29,544s
+user    0m29,383s
+sys     0m0,148s
+Running with OMP_NUM_THREADS=4
+
+real    0m28,954s
+user    0m28,832s
+sys     0m0,112s
+Running with OMP_NUM_THREADS=20
+
+real    0m28,375s
+user    0m28,222s
+sys     0m0,124s
+Running with OMP_NUM_THREADS=40
+
+real    0m28,352s
+user    0m28,148s
+sys     0m0,192s
+
+
+
+
+real    0m13,713s
+user    0m13,704s
+sys     0m0,008s
+
+
+-------------------------------------------------------------
+make runseq
+-----------------------------------------------------------
+ Performance counter stats for './MDseq.exe':
+
+          11378978      cache-misses                     #    0,375 % of all cache refs       
+        3032367776      cache-references                                                      
+        5639239514      L1-dcache-load-misses                                                 
+      186637737986      instructions                     #    2,42  insn per cycle            
+       77007431146      cycles                                                                
+
+      19,750806077 seconds time elapsed
+
+      19,735526000 seconds user
+       0,000000000 seconds sys
+--------------------------------------------------------------
+make runpar
+-------------------------------------------------------------
+ Performance counter stats for './MDpar.exe':
+
+          18337198      cache-misses                     #    0,426 % of all cache refs       
+        4309040998      cache-references                                                      
+        7509771864      L1-dcache-load-misses                                                 
+      368132840289      instructions                     #    2,39  insn per cycle            
+      153744133877      cycles                                                                
+
+      24,467423196 seconds time elapsed
+
+      39,690367000 seconds user
+       0,031992000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (tem valores errados !!!) 
+
+          17870004      cache-misses                     #    0,271 % of all cache refs       
+        6586385591      cache-references                                                      
+        8253704371      L1-dcache-load-misses                                                 
+      243114734434      instructions                     #    0,75  insn per cycle            
+      324050462693      cycles                                                                
+
+      10,998504753 seconds time elapsed
+
+      83,140752000 seconds user
+       0,187164000 seconds sys
+--------------------------------------------------------------
+make runpar - cluster (script nosso)
+-------------------------------------------------------------
+
+ Performance counter stats for './MDpar.exe': (sem paralelizaçao no codigo)
+
+        5664456352      L1-dcache-load-misses                                       
+      276193798525      inst_retired.any          #      0,5 CPI                    
+      150843137382      cycles                                                      
+
+      60,342569078 seconds time elapsed
+
+      60,335333000 seconds user
+       0,004000000 seconds sys
+
+
+
+ Performance counter stats for './MDpar.exe': (32 threads)
+
+        8553533451      L1-dcache-load-misses                                       
+      667703163417      inst_retired.any          #      2,2 CPI                    
+     1494867201040      cycles                                                      
+
+      21,228602256 seconds time elapsed
+
+     598,007055000 seconds user
+       0,204059000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (28 threads)
+
+        8604358212      L1-dcache-load-misses                                       
+      616669966550      inst_retired.any          #      2,0 CPI                    
+     1212621106545      cycles                                                      
+
+      20,837105552 seconds time elapsed
+
+     485,058408000 seconds user
+       0,253068000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (6 threads)
+
+        8562348029      L1-dcache-load-misses:u                                     
+      360137183306      inst_retired.any:u                                          
+      272440576983      cycles:u                                                    
+
+      21,262766233 seconds time elapsed
+
+     110,038130000 seconds user
+       0,033008000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (2 threads)
+
+        8446060809      L1-dcache-load-misses                                       
+      323626132484      inst_retired.any          #      0,5 CPI                    
+      175823667948      cycles                                                      
+
+     132,725772875 seconds time elapsed
+
+      70,333379000 seconds user
+       0,004999000 seconds sys
+
+ Performance counter stats for './MDpar.exe': (1 thread, sequencial (?))
+
+        8453770323      L1-dcache-load-misses                                       
+      321130851978      inst_retired.any          #      0,5 CPI                    
+      168217469862      cycles                                                      
+
+     160,090096687 seconds time elapsed
+
+      67,284420000 seconds user
+       0,005000000 seconds sys
+
+---------------------------------------------------------------------------------------
+ make runseq (valores mal)
+---------------------------------------------------------------------------------------
+ Performance counter stats for './MDseq.exe':
+
+          18180056      cache-misses                     #    0,774 % of all cache refs       
+        2350122453      cache-references                                                      
+        3757524726      L1-dcache-load-misses                                                 
+      101595724993      instructions                     #    1,53  insn per cycle            
+       66306009825      cycles                                                                
+
+      17,153366104 seconds time elapsed
+
+      17,035787000 seconds user
+       0,043968000 seconds sys
+
+---------------------------------------------------------------------------------------
+ make runpar (valores mal)
+---------------------------------------------------------------------------------------
+ Performance counter stats for './MDpar.exe':
+
+          13040485      cache-misses                     #    0,882 % of all cache refs       
+        1479246506      cache-references                                                      
+        2329391250      L1-dcache-load-misses                                                 
+      127962415986      instructions                     #    0,91  insn per cycle            
+      140697958007      cycles                                                                
+
+       4,809452857 seconds time elapsed
+
+      36,063575000 seconds user
+       0,127686000 seconds sys
+
+---------------------------------------------------------------------------------------
+ make runseq (valores mal) => Cluster
+---------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------
+ make runpar (valores mal) => Cluster
+---------------------------------------------------------------------------------------
+1
+
+real	1m7.126s
+user	1m6.936s
+sys	0m0.116s
+2
+
+real	0m34.057s
+user	1m7.830s
+sys	0m0.104s
+4
+
+real	0m20.407s
+user	1m10.699s
+sys	0m0.127s
+6
+
+real	0m20.888s
+user	1m8.286s
+sys	0m0.297s
+8
+
+real	0m21.676s
+user	1m13.874s
+sys	0m0.367s
+10
+
+real	0m19.464s
+user	1m9.228s
+sys	0m0.326s
+12
+
+real	0m19.190s
+user	1m9.778s
+sys	0m0.384s
+14
+
+real	0m21.287s
+user	1m13.222s
+sys	0m0.498s
+16
+
+real	0m20.679s
+user	1m8.345s
+sys	0m0.446s
+18
+
+real	0m18.790s
+user	1m8.215s
+sys	0m0.473s
+20
+
+real	0m18.580s
+user	1m8.175s
+sys	0m0.525s
+22
+
+real	0m18.619s
+user	1m8.449s
+sys	0m0.559s
+24
+
+real	0m20.242s
+user	1m9.580s
+sys	0m0.618s
+26
+
+real	0m26.408s
+user	1m18.952s
+sys	0m0.739s
+28
+
+real	0m23.503s
+user	1m10.298s
+sys	0m0.805s
+30
+
+real	0m26.957s
+user	1m10.727s
+sys	0m0.730s
+32
+
+real	0m29.055s
+user	1m13.296s
+sys	0m1.037s
+34
+
+real	0m22.489s
+user	1m12.761s
+sys	0m0.888s
+36
+
+real	0m21.892s
+user	1m13.089s
+sys	0m0.880s
+38
+
+real	0m21.606s
+user	1m10.407s
+sys	0m0.951s
+40
+
+real	0m28.498s
+user	1m13.057s
+sys	0m0.857s
+
+-_______________________________________________-
+
+[pg54004@search7edu code]$ cat slurm-383254.out 
+1
+
+real	0m23.082s
+user	0m23.066s
+sys	0m0.005s
+2
+
+real	0m11.633s
+user	0m23.237s
+sys	0m0.006s
+4
+
+real	0m5.864s
+user	0m23.405s
+sys	0m0.007s
+8
+
+real	0m2.993s
+user	0m23.807s
+sys	0m0.002s
+10
+
+real	0m2.433s
+user	0m24.067s
+sys	0m0.017s
+12
+
+real	0m2.041s
+user	0m24.313s
+sys	0m0.012s
+16
+
+real	0m1.595s
+user	0m24.959s
+sys	0m0.014s
+20
+
+real	0m1.314s
+user	0m26.033s
+sys	0m0.008s
+24
+
+real	0m1.251s
+user	0m29.500s
+sys	0m0.010s
+28
+
+real	0m1.215s
+user	0m32.836s
+sys	0m0.031s
+32
+
+real	0m1.142s
+user	0m36.147s
+sys	0m0.042s
+36
+
+real	0m1.105s
+user	0m39.347s
+sys	0m0.007s
+40
+
+real	0m1.089s
+user	0m43.002s
+sys	0m0.009s
+
