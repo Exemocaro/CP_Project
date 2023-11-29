@@ -1,28 +1,26 @@
 CC = gcc
 SRC = src/
-CFLAGS = -Wall -pg -Ofast -funroll-all-loops -ftree-vectorize -mavx
+CFLAGS = -Ofast -funroll-all-loops -ftree-vectorize
 
 .DEFAULT_GOAL = all
 
 all: MDseq.exe MDpar.exe
 
 MDseq.exe: $(SRC)/MDseq.cpp
-#	module load gcc/11.2.0;
+	module load gcc/11.2.0;\
 	$(CC) $(CFLAGS) $(SRC)MDseq.cpp -lm -o MDseq.exe
 
 MDpar.exe: $(SRC)/MDpar.cpp
-#	module load gcc/11.2.0;
+	module load gcc/11.2.0;\
 	$(CC) $(CFLAGS) $(SRC)MDpar.cpp -lm -fopenmp -o MDpar.exe
 
 clean:
-	rm -f gmon.out perf.data ./MD*.exe
+	rm ./MD*.exe
 
 runseq: MDseq.exe
-#	./MDseq.exe < inputdata.txt
-	sudo perf stat -e cache-misses,cache-references,L1-dcache-load-misses,instructions,cycles ./MDseq.exe < inputdata.txt
+	./MDseq.exe < inputdata.txt
 
 runpar: MDpar.exe
-	export OMP_NUM_THREADS=1;\
-	sudo perf stat -e cache-misses,cache-references,L1-dcache-load-misses,instructions,cycles ./MDpar.exe < inputdata.txt
-#	./MDpar.exe < inputdata.txt
+	export OMP_NUM_THREADS=2;\
+	./MDpar.exe < inputdata.txt
 	

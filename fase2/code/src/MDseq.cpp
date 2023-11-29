@@ -27,10 +27,9 @@
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>
-#include<vector>
 
 // Number of particles
-const int N = 10*500;
+int N = 10*500;
 
 //  Lennard-Jones parameters in natural units!
 double sigma = 1.;
@@ -96,9 +95,6 @@ double MSV_Kinetic();
 // Junction of VelocityVerlet() and Potential()
 double VV_Pot(double, int, FILE*);
 
-// self explanatory
-const char * OUTPUT_FOLDER = "output/";
-
 int main()
 {
     
@@ -107,31 +103,20 @@ int main()
     double dt, Vol, Temp, Press, Pavg, Tavg, rho;
     double VolFac, TempFac, PressFac, timefac;
     double KE, PE, mvs, gc, Z;
-    char prefix[1000], tfn[1000], ofn[1000], afn[1000];
-    FILE *tfp, *ofp, *afp;
+    char trash[10000], prefix[1000], tfn[1000], ofn[1000], afn[1000];
+    FILE *infp, *tfp, *ofp, *afp;
     
     
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("                  WELCOME TO WILLY P CHEM MD!\n");
     printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("\n  ENTER A TITLE FOR YOUR CALCULATION!\n");
-    
-    if (scanf("%s", prefix) != 1) {
-        fprintf(stderr, "Error reading prefix.\n");
-        exit(1);
-    }
-
-
-    strcpy(tfn,OUTPUT_FOLDER);
-    strcat(tfn,prefix);
+    scanf("%s",prefix);
+    strcpy(tfn,prefix);
     strcat(tfn,"_traj.xyz");
-
-    strcpy(ofn,OUTPUT_FOLDER);
-    strcat(ofn,prefix);
+    strcpy(ofn,prefix);
     strcat(ofn,"_output.txt");
-
-    strcpy(afn,OUTPUT_FOLDER);
-    strcat(afn,prefix);
+    strcpy(afn,prefix);
     strcat(afn,"_average.txt");
     
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
@@ -164,49 +149,57 @@ int main()
     printf("  FOR KRYPTON, TYPE 'Kr' THEN PRESS 'return' TO CONTINUE\n");
     printf("  FOR XENON,   TYPE 'Xe' THEN PRESS 'return' TO CONTINUE\n");
     printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-    if (scanf("%s", atype) != 1) {
-        fprintf(stderr, "Error reading atype.\n");
-        exit(1);
-    }
-
+    scanf("%s",atype);
     
     if (strcmp(atype,"He")==0) {
+        
         VolFac = 1.8399744000000005e-29;
         PressFac = 8152287.336171632;
         TempFac = 10.864459551225972;
         timefac = 1.7572698825166272e-12;
+        
     }
     else if (strcmp(atype,"Ne")==0) {
+        
         VolFac = 2.0570823999999997e-29;
         PressFac = 27223022.27659913;
         TempFac = 40.560648991243625;
         timefac = 2.1192341945685407e-12;
+        
     }
     else if (strcmp(atype,"Ar")==0) {
+        
         VolFac = 3.7949992920124995e-29;
         PressFac = 51695201.06691862;
         TempFac = 142.0950000000000;
         timefac = 2.09618e-12;
         //strcpy(atype,"Ar");
+        
     }
     else if (strcmp(atype,"Kr")==0) {
+        
         VolFac = 4.5882712000000004e-29;
         PressFac = 59935428.40275003;
         TempFac = 199.1817584391428;
         timefac = 8.051563913585078e-13;
+        
     }
     else if (strcmp(atype,"Xe")==0) {
+        
         VolFac = 5.4872e-29;
         PressFac = 70527773.72794868;
         TempFac = 280.30305642163006;
         timefac = 9.018957925790732e-13;
+        
     }
     else {
+        
         VolFac = 3.7949992920124995e-29;
         PressFac = 51695201.06691862;
         TempFac = 142.0950000000000;
         timefac = 2.09618e-12;
         strcpy(atype,"Ar");
+        
     }
     printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("\n                     YOU ARE SIMULATING %s GAS! \n",atype);
@@ -216,11 +209,7 @@ int main()
     printf("\n  YOU WILL NOW ENTER A FEW SIMULATION PARAMETERS\n");
     printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     printf("\n\n  ENTER THE INTIAL TEMPERATURE OF YOUR GAS IN KELVIN\n");
-    if (scanf("%lf", &Tinit) != 1) {
-        fprintf(stderr, "Error reading Tinit.\n");
-        exit(1);
-    }
-
+    scanf("%lf",&Tinit);
     // Make sure temperature is a positive number!
     if (Tinit<0.) {
         printf("\n  !!!!! ABSOLUTE TEMPERATURE MUST BE A POSITIVE NUMBER!  PLEASE TRY AGAIN WITH A POSITIVE TEMPERATURE!!!\n");
@@ -234,11 +223,9 @@ int main()
     printf("  FOR REFERENCE, NUMBER DENSITY OF AN IDEAL GAS AT STP IS ABOUT 40 moles/m^3\n");
     printf("  NUMBER DENSITY OF LIQUID ARGON AT 1 ATM AND 87 K IS ABOUT 35000 moles/m^3\n");
     
-    if (scanf("%lf", &rho) != 1) {
-        fprintf(stderr, "Error reading rho.\n");
-        exit(1);
-    }
-
+    scanf("%lf",&rho);
+    
+    N = 10*500;
     Vol = N/(rho*NA);
     
     Vol /= VolFac;
@@ -304,6 +291,7 @@ int main()
     //  The variables need to be set to zero initially
     Pavg = 0;
     Tavg = 0;
+    
     
     
     int tenp = floor(NumTime/10);
