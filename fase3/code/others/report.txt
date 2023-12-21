@@ -1,0 +1,98 @@
+src/MD.cpp:753:27: optimized:  Inlining double gaussdist()/1029 into void initializeVelocities()/1026.
+src/MD.cpp:752:27: optimized:  Inlining double gaussdist()/1029 into void initializeVelocities()/1026.
+src/MD.cpp:751:25: optimized:  Inlining double gaussdist()/1029 into void initializeVelocities()/1026.
+src/MD.cpp:402:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:401:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:400:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:399:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:398:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:397:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:396:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:395:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:394:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:393:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:391:12: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:390:12: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:389:12: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:380:16: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:349:36: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:348:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:347:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:346:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:345:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:344:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:343:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:342:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:341:35: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:340:28: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:336:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:335:12: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:326:12: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:287:15: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:286:15: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:285:15: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:284:15: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:260:16: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:257:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:256:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:255:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:248:15: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:242:16: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:240:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:239:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:238:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:237:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:235:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:234:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:233:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:230:15: optimized:   Inlining char* strcpy(char*, const char*)/995 into int main()/1018 (always_inline).
+src/MD.cpp:178:16: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:176:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:175:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:174:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:173:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:172:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:171:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:170:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:169:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:149:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:148:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:147:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:145:11: optimized:   Inlining char* strcat(char*, const char*)/999 into int main()/1018 (always_inline).
+src/MD.cpp:144:11: optimized:   Inlining char* strcat(char*, const char*)/999 into int main()/1018 (always_inline).
+src/MD.cpp:143:11: optimized:   Inlining char* strcpy(char*, const char*)/995 into int main()/1018 (always_inline).
+src/MD.cpp:141:11: optimized:   Inlining char* strcat(char*, const char*)/999 into int main()/1018 (always_inline).
+src/MD.cpp:140:11: optimized:   Inlining char* strcat(char*, const char*)/999 into int main()/1018 (always_inline).
+src/MD.cpp:139:11: optimized:   Inlining char* strcpy(char*, const char*)/995 into int main()/1018 (always_inline).
+src/MD.cpp:137:11: optimized:   Inlining char* strcat(char*, const char*)/999 into int main()/1018 (always_inline).
+src/MD.cpp:136:11: optimized:   Inlining char* strcat(char*, const char*)/999 into int main()/1018 (always_inline).
+src/MD.cpp:135:11: optimized:   Inlining char* strcpy(char*, const char*)/995 into int main()/1018 (always_inline).
+src/MD.cpp:130:16: optimized:   Inlining int fprintf(FILE*, const char*, ...)/15 into int main()/1018 (always_inline).
+src/MD.cpp:127:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:126:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:125:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:124:11: optimized:   Inlining int printf(const char*, ...)/16 into int main()/1018 (always_inline).
+src/MD.cpp:334:21: optimized:  Inlining constexpr typename __gnu_cxx::__enable_if<std::__is_integer<_Tp>::__value, double>::__type std::floor(_Tp) [with _Tp = int]/1081 into int main()/1018.
+optimized:  Inlined double _Z9gaussdistv.part.0()/1293 into void initializeVelocities()/1026 which now has time 72781.250000 and size 167, net change of +29.
+optimized:  Inlined double _Z9gaussdistv.part.0()/1294 into void initializeVelocities()/1026 which now has time 133237.997314 and size 196, net change of +29.
+optimized:  Inlined double _Z9gaussdistv.part.0()/1295 into void initializeVelocities()/1026 which now has time 193694.744629 and size 225, net change of +29.
+src/MD.cpp:364:34: optimized:  Inlined double MeanSquaredVelocity()/1296 into int main()/1018 which now has time 4982.774139 and size 479, net change of +18.
+src/MD.cpp:365:21: optimized:  Inlined double Kinetic()/1297 into int main()/1018 which now has time 9915.588593 and size 498, net change of +19.
+optimized:  Inlined double _Z9gaussdistv.part.0()/1221 into double gaussdist()/1029 which now has time 622.174087 and size 39, net change of -5.
+src/MD.cpp:463:20: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:483:20: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:702:16: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:805:19: optimized: sinking common stores to available
+src/MD.cpp:805:19: optimized: sinking common stores to available
+src/MD.cpp:783:16: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:775:16: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:767:16: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:765:16: optimized: loop vectorized using 16 byte vectors
+src/MD.cpp:758:16: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:765:16: optimized: loop turned into non-loop; it never loops
+src/MD.cpp:744:6: optimized: loop turned into non-loop; it never loops
+src/MD.cpp:744:6: optimized: basic block part vectorized using 32 byte vectors
+src/MD.cpp:427:24: optimized: loop with 13 iterations completely unrolled (header execution count 76665168)
+src/MD.cpp:429:26: optimized: basic block part vectorized using 32 byte vectors
+src/MD.cpp:483:20: optimized: loop vectorized using 32 byte vectors
+src/MD.cpp:463:20: optimized: loop vectorized using 32 byte vectors

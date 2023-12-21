@@ -1,0 +1,1334 @@
+ Percent |	Source code & Disassembly of MD.exe for cycles (7 samples, percent: local period)
+-------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3    Disassembly of section .text:
+         :
+         : 5    0000000000001260 <main>:
+         : 6    main():
+         : 91   double my_fabs(double x) {
+         : 92   return (x < 0) ? -x : x;
+         : 93   }
+         :
+         : 95   int main()
+         : 96   {
+    0.00 :   1260:   endbr64
+    0.00 :   1264:   push   %rbp
+    0.00 :   1265:   mov    %rsp,%rbp
+    0.00 :   1268:   push   %r15
+    0.00 :   126a:   push   %r14
+    0.00 :   126c:   push   %r13
+    0.00 :   126e:   push   %r12
+    0.00 :   1270:   push   %rbx
+    0.00 :   1271:   sub    $0x1000,%rsp
+    0.00 :   1278:   orq    $0x0,(%rsp)
+    0.00 :   127d:   sub    $0x68,%rsp
+         : 112  }
+         :
+         : 114  __fortify_function int
+         : 115  printf (const char *__restrict __fmt, ...)
+         : 116  {
+         : 117  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+    0.00 :   1281:   lea    0x2d80(%rip),%r14        # 4008 <_IO_stdin_used+0x8>
+    0.00 :   1288:   lea    0x2df1(%rip),%r15        # 4080 <_IO_stdin_used+0x80>
+         : 120  printf():
+    0.00 :   128f:   mov    %r14,%rdi
+         : 113  main():
+    0.00 :   1292:   mov    %fs:0x28,%rax
+    0.00 :   129b:   mov    %rax,-0x38(%rbp)
+    0.00 :   129f:   xor    %eax,%eax
+         : 109  printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+         : 110  printf("                  WELCOME TO WILLY P CHEM MD!\n");
+         : 111  printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+         : 112  printf("\n  ENTER A TITLE FOR YOUR CALCULATION!\n");
+         :
+         : 114  if (scanf("%s", prefix) != 1) {
+    0.00 :   12a1:   lea    -0xff0(%rbp),%r12
+         : 116  printf():
+    0.00 :   12a8:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   12ad:   lea    0x2d9c(%rip),%rdi        # 4050 <_IO_stdin_used+0x50>
+         : 113  printf():
+    0.00 :   12b4:   call   1150 <puts@plt>
+    0.00 :   12b9:   mov    %r15,%rdi
+    0.00 :   12bc:   call   1150 <puts@plt>
+         : 115  main():
+    0.00 :   12c1:   lea    0x2df8(%rip),%rdi        # 40c0 <_IO_stdin_used+0xc0>
+         : 113  printf():
+    0.00 :   12c8:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   12cd:   lea    0x386d(%rip),%r8        # 4b41 <_IO_stdin_used+0xb41>
+    0.00 :   12d4:   xor    %eax,%eax
+    0.00 :   12d6:   mov    %r12,%rsi
+    0.00 :   12d9:   mov    %r8,%rdi
+    0.00 :   12dc:   call   1200 <__isoc99_scanf@plt>
+    0.00 :   12e1:   cmp    $0x1,%eax
+    0.00 :   12e4:   jne    2227 <main+0xfc7>
+         : 115  fprintf(stderr, "Error reading prefix.\n");
+         : 116  exit(1);
+         : 117  }
+         :
+         :
+         : 120  strcpy(tfn,OUTPUT_FOLDER);
+    0.00 :   12ea:   mov    0x5d4f(%rip),%rbx        # 7040 <OUTPUT_FOLDER>
+         : 79   #endif
+         :
+         : 81   __fortify_function char *
+         : 82   __NTH (strcpy (char *__restrict __dest, const char *__restrict __src))
+         : 83   {
+         : 84   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   12f1:   lea    -0xc00(%rbp),%r13
+         : 86   strcpy():
+    0.00 :   12f8:   mov    $0x3e8,%edx
+    0.00 :   12fd:   mov    %r13,%rdi
+    0.00 :   1300:   mov    %rbx,%rsi
+    0.00 :   1303:   call   11c0 <__stpcpy_chk@plt>
+         : 83   main():
+         :
+         :
+         : 132  __fortify_function char *
+         : 133  __NTH (strcat (char *__restrict __dest, const char *__restrict __src))
+         : 134  {
+         : 135  return __builtin___strcat_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   1308:   mov    %r13,%rdx
+         : 137  strcat():
+    0.00 :   130b:   mov    %r12,%rsi
+    0.00 :   130e:   sub    %rax,%rdx
+         : 132  strcpy():
+         : 79   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   1311:   mov    %rax,%rdi
+         : 81   strcat():
+         : 130  return __builtin___strcat_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   1314:   add    $0x3e8,%rdx
+    0.00 :   131b:   call   11c0 <__stpcpy_chk@plt>
+         : 133  main():
+    0.00 :   1320:   mov    %r13,%rcx
+         : 131  strcat():
+    0.00 :   1323:   mov    $0xa,%edx
+    0.00 :   1328:   lea    0x382c(%rip),%rsi        # 4b5b <_IO_stdin_used+0xb5b>
+    0.00 :   132f:   sub    %rax,%rcx
+    0.00 :   1332:   mov    %rax,%rdi
+    0.00 :   1335:   add    $0x3e8,%rcx
+    0.00 :   133c:   call   11b0 <__memcpy_chk@plt>
+         : 136  main():
+         : 79   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   1341:   lea    -0x810(%rbp),%rax
+         : 81   strcpy():
+    0.00 :   1348:   mov    %rbx,%rsi
+    0.00 :   134b:   mov    $0x3e8,%edx
+    0.00 :   1350:   mov    %rax,%rdi
+    0.00 :   1353:   mov    %rax,-0x1028(%rbp)
+    0.00 :   135a:   call   11c0 <__stpcpy_chk@plt>
+         : 84   main():
+         : 130  return __builtin___strcat_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   135f:   mov    -0x1028(%rbp),%rdx
+         : 132  strcat():
+    0.00 :   1366:   mov    %r12,%rsi
+         : 131  strcpy():
+         : 79   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   1369:   mov    %rax,%rdi
+         : 81   strcat():
+         : 130  return __builtin___strcat_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   136c:   sub    %rax,%rdx
+    0.00 :   136f:   add    $0x3e8,%rdx
+    0.00 :   1376:   call   11c0 <__stpcpy_chk@plt>
+         : 134  main():
+    0.00 :   137b:   mov    -0x1028(%rbp),%rcx
+         : 131  strcat():
+    0.00 :   1382:   mov    $0xc,%edx
+    0.00 :   1387:   lea    0x37d7(%rip),%rsi        # 4b65 <_IO_stdin_used+0xb65>
+    0.00 :   138e:   mov    %rax,%rdi
+    0.00 :   1391:   sub    %rax,%rcx
+    0.00 :   1394:   add    $0x3e8,%rcx
+    0.00 :   139b:   call   11b0 <__memcpy_chk@plt>
+         : 136  main():
+         : 79   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   13a0:   lea    -0x420(%rbp),%rax
+         : 81   strcpy():
+    0.00 :   13a7:   mov    %rbx,%rsi
+    0.00 :   13aa:   mov    $0x3e8,%edx
+    0.00 :   13af:   mov    %rax,%rbx
+    0.00 :   13b2:   mov    %rax,%rdi
+    0.00 :   13b5:   mov    %rax,-0x1060(%rbp)
+    0.00 :   13bc:   call   11c0 <__stpcpy_chk@plt>
+         : 85   main():
+         : 130  return __builtin___strcat_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   13c1:   mov    %rbx,%rdx
+         : 132  strcat():
+    0.00 :   13c4:   mov    %r12,%rsi
+    0.00 :   13c7:   sub    %rax,%rdx
+         : 132  strcpy():
+         : 79   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   13ca:   mov    %rax,%rdi
+         : 81   strcat():
+         : 130  return __builtin___strcat_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   13cd:   add    $0x3e8,%rdx
+    0.00 :   13d4:   call   11c0 <__stpcpy_chk@plt>
+         : 133  main():
+    0.00 :   13d9:   mov    %rbx,%rcx
+         : 131  strcat():
+    0.00 :   13dc:   mov    $0xd,%edx
+    0.00 :   13e1:   lea    0x3789(%rip),%rsi        # 4b71 <_IO_stdin_used+0xb71>
+    0.00 :   13e8:   sub    %rax,%rcx
+    0.00 :   13eb:   mov    %rax,%rdi
+    0.00 :   13ee:   add    $0x3e8,%rcx
+    0.00 :   13f5:   call   11b0 <__memcpy_chk@plt>
+         : 136  main():
+    0.00 :   13fa:   mov    %r14,%rdi
+         : 113  printf():
+    0.00 :   13fd:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1402:   mov    %r12,%rdx
+         : 113  printf():
+    0.00 :   1405:   mov    $0x1,%edi
+    0.00 :   140a:   xor    %eax,%eax
+    0.00 :   140c:   lea    0x2cd5(%rip),%rsi        # 40e8 <_IO_stdin_used+0xe8>
+         : 115  main():
+         : 157  printf("  FOR NEON,    TYPE 'Ne' THEN PRESS 'return' TO CONTINUE\n");
+         : 158  printf("  FOR ARGON,   TYPE 'Ar' THEN PRESS 'return' TO CONTINUE\n");
+         : 159  printf("  FOR KRYPTON, TYPE 'Kr' THEN PRESS 'return' TO CONTINUE\n");
+         : 160  printf("  FOR XENON,   TYPE 'Xe' THEN PRESS 'return' TO CONTINUE\n");
+         : 161  printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+         : 162  if (scanf("%s", atype) != 1) {
+    0.00 :   1413:   lea    0x5c86(%rip),%r12        # 70a0 <atype>
+         : 164  printf():
+    0.00 :   141a:   call   11e0 <__printf_chk@plt>
+         : 113  main():
+    0.00 :   141f:   mov    %r15,%rdi
+         : 113  printf():
+    0.00 :   1422:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1427:   mov    %r14,%rdi
+         : 113  printf():
+    0.00 :   142a:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   142f:   lea    0x2ce2(%rip),%rdi        # 4118 <_IO_stdin_used+0x118>
+         : 113  printf():
+    0.00 :   1436:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   143b:   lea    0x2d1e(%rip),%rdi        # 4160 <_IO_stdin_used+0x160>
+         : 113  printf():
+    0.00 :   1442:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1447:   lea    0x2d52(%rip),%rdi        # 41a0 <_IO_stdin_used+0x1a0>
+         : 113  printf():
+    0.00 :   144e:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1453:   lea    0x2d86(%rip),%rdi        # 41e0 <_IO_stdin_used+0x1e0>
+         : 113  printf():
+    0.00 :   145a:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   145f:   lea    0x2dba(%rip),%rdi        # 4220 <_IO_stdin_used+0x220>
+         : 113  printf():
+    0.00 :   1466:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   146b:   lea    0x2dee(%rip),%rdi        # 4260 <_IO_stdin_used+0x260>
+         : 113  printf():
+    0.00 :   1472:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1477:   mov    %r15,%rdi
+         : 113  printf():
+    0.00 :   147a:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   147f:   lea    0x36bb(%rip),%r8        # 4b41 <_IO_stdin_used+0xb41>
+    0.00 :   1486:   xor    %eax,%eax
+    0.00 :   1488:   mov    %r12,%rsi
+    0.00 :   148b:   mov    %r8,%rdi
+    0.00 :   148e:   call   1200 <__isoc99_scanf@plt>
+    0.00 :   1493:   cmp    $0x1,%eax
+    0.00 :   1496:   jne    2200 <main+0xfa0>
+         : 163  fprintf(stderr, "Error reading atype.\n");
+         : 164  exit(1);
+         : 165  }
+         :
+         :
+         : 168  if (strcmp(atype,"He")==0) {
+    0.00 :   149c:   cmpw   $0x6548,0x5bfb(%rip)        # 70a0 <atype>
+    0.00 :   14a5:   je     1705 <main+0x4a5>
+         : 171  PressFac = 8152287.336171632;
+         : 172  TempFac = 10.864459551225972;
+         : 173  timefac = 1.7572698825166272e-12;
+         :
+         : 175  }
+         : 176  else if (strcmp(atype,"Ne")==0) {
+    0.00 :   14ab:   lea    0x36e5(%rip),%rsi        # 4b97 <_IO_stdin_used+0xb97>
+    0.00 :   14b2:   mov    %r12,%rdi
+    0.00 :   14b5:   call   11a0 <strcmp@plt>
+    0.00 :   14ba:   test   %eax,%eax
+    0.00 :   14bc:   jne    1668 <main+0x408>
+         :
+         : 177  VolFac = 2.0570823999999997e-29;
+         : 178  PressFac = 27223022.27659913;
+         : 179  TempFac = 40.560648991243625;
+         : 180  timefac = 2.1192341945685407e-12;
+    0.00 :   14c2:   movsd  0x37fe(%rip),%xmm7        # 4cc8 <_IO_stdin_used+0xcc8>
+    0.00 :   14ca:   movsd  %xmm7,-0x1030(%rbp)
+         : 174  PressFac = 27223022.27659913;
+    0.00 :   14d2:   movsd  0x37f6(%rip),%xmm7        # 4cd0 <_IO_stdin_used+0xcd0>
+    0.00 :   14da:   movsd  %xmm7,-0x1038(%rbp)
+         : 175  TempFac = 40.560648991243625;
+    0.00 :   14e2:   movsd  0x37ee(%rip),%xmm7        # 4cd8 <_IO_stdin_used+0xcd8>
+    0.00 :   14ea:   movsd  %xmm7,-0x1020(%rbp)
+         : 173  VolFac = 2.0570823999999997e-29;
+    0.00 :   14f2:   movsd  0x37e6(%rip),%xmm7        # 4ce0 <_IO_stdin_used+0xce0>
+    0.00 :   14fa:   movsd  %xmm7,-0x1058(%rbp)
+    0.00 :   1502:   mov    %r14,%rdi
+         : 113  printf():
+    0.00 :   1505:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   150a:   mov    %r12,%rdx
+         : 113  printf():
+    0.00 :   150d:   mov    $0x1,%edi
+    0.00 :   1512:   xor    %eax,%eax
+    0.00 :   1514:   lea    0x2d85(%rip),%rsi        # 42a0 <_IO_stdin_used+0x2a0>
+    0.00 :   151b:   call   11e0 <__printf_chk@plt>
+         : 116  main():
+    0.00 :   1520:   mov    %r14,%rdi
+         : 113  printf():
+    0.00 :   1523:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1528:   mov    %r14,%rdi
+         :
+         : 222  printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+         : 223  printf("\n  YOU WILL NOW ENTER A FEW SIMULATION PARAMETERS\n");
+         : 224  printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+         : 225  printf("\n\n  ENTER THE INTIAL TEMPERATURE OF YOUR GAS IN KELVIN\n");
+         : 226  if (scanf("%lf", &Tinit) != 1) {
+    0.00 :   152b:   lea    0x3671(%rip),%r14        # 4ba3 <_IO_stdin_used+0xba3>
+         : 228  printf():
+    0.00 :   1532:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1537:   lea    0x2d9a(%rip),%rdi        # 42d8 <_IO_stdin_used+0x2d8>
+         : 113  printf():
+    0.00 :   153e:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1543:   mov    %r15,%rdi
+         : 113  printf():
+    0.00 :   1546:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   154b:   lea    0x2dbe(%rip),%rdi        # 4310 <_IO_stdin_used+0x310>
+         : 113  printf():
+    0.00 :   1552:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1557:   xor    %eax,%eax
+    0.00 :   1559:   lea    0x7aed8(%rip),%rsi        # 7c438 <Tinit>
+    0.00 :   1560:   mov    %r14,%rdi
+    0.00 :   1563:   call   1200 <__isoc99_scanf@plt>
+    0.00 :   1568:   cmp    $0x1,%eax
+    0.00 :   156b:   jne    21b2 <main+0xf52>
+         : 227  fprintf(stderr, "Error reading Tinit.\n");
+         : 228  exit(1);
+         : 229  }
+         :
+         : 231  // Make sure temperature is a positive number!
+         : 232  if (Tinit<0.) {
+    0.00 :   1571:   movsd  0x7aebf(%rip),%xmm0        # 7c438 <Tinit>
+    0.00 :   1579:   pxor   %xmm7,%xmm7
+    0.00 :   157d:   comisd %xmm0,%xmm7
+    0.00 :   1581:   ja     16f2 <main+0x492>
+    0.00 :   1587:   lea    0x2e2a(%rip),%rdi        # 43b8 <_IO_stdin_used+0x3b8>
+         : 232  printf("\n  !!!!! ABSOLUTE TEMPERATURE MUST BE A POSITIVE NUMBER!  PLEASE TRY AGAIN WITH A POSITIVE TEMPERATURE!!!\n");
+         : 233  exit(0);
+         : 234  }
+         : 235  // Convert initial temperature from kelvin to natural units
+         : 236  Tinit /= TempFac;
+    0.00 :   158e:   divsd  -0x1020(%rbp),%xmm0
+    0.00 :   1596:   movsd  %xmm0,0x7ae9a(%rip)        # 7c438 <Tinit>
+         : 239  printf():
+    0.00 :   159e:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   15a3:   lea    0x2e3e(%rip),%rdi        # 43e8 <_IO_stdin_used+0x3e8>
+         : 113  printf():
+    0.00 :   15aa:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   15af:   lea    0x2e82(%rip),%rdi        # 4438 <_IO_stdin_used+0x438>
+         : 113  printf():
+    0.00 :   15b6:   call   1150 <puts@plt>
+         : 113  main():
+         :
+         : 240  printf("\n\n  ENTER THE NUMBER DENSITY IN moles/m^3\n");
+         : 241  printf("  FOR REFERENCE, NUMBER DENSITY OF AN IDEAL GAS AT STP IS ABOUT 40 moles/m^3\n");
+         : 242  printf("  NUMBER DENSITY OF LIQUID ARGON AT 1 ATM AND 87 K IS ABOUT 35000 moles/m^3\n");
+         :
+         : 244  if (scanf("%lf", &rho) != 1) {
+    0.00 :   15bb:   xor    %eax,%eax
+    0.00 :   15bd:   lea    -0xff8(%rbp),%rsi
+    0.00 :   15c4:   mov    %r14,%rdi
+    0.00 :   15c7:   call   1200 <__isoc99_scanf@plt>
+    0.00 :   15cc:   sub    $0x1,%eax
+    0.00 :   15cf:   jne    21d9 <main+0xf79>
+         : 246  exit(1);
+         : 247  }
+         :
+         :
+         : 250  N = 10*216;
+         : 251  Vol = N/(rho*NA);
+    0.00 :   15d5:   movsd  -0xff8(%rbp),%xmm0
+    0.00 :   15dd:   mulsd  0x5a33(%rip),%xmm0        # 7018 <NA>
+         : 245  N = 10*216;
+    0.00 :   15e5:   movl   $0x870,0x7ae59(%rip)        # 7c448 <N>
+         : 246  Vol = N/(rho*NA);
+    0.00 :   15ef:   movsd  0x3751(%rip),%xmm1        # 4d48 <_IO_stdin_used+0xd48>
+    0.00 :   15f7:   movapd %xmm1,%xmm2
+    0.00 :   15fb:   divsd  %xmm0,%xmm2
+         :
+         : 249  Vol /= VolFac;
+    0.00 :   15ff:   divsd  -0x1058(%rbp),%xmm2
+         : 261  }
+         : 262  //  Check to see if the volume makes sense - is it too small?
+         : 263  //  Remember VDW radius of the particles is 1 natural unit of length
+         : 264  //  and volume = L*L*L, so if V = N*L*L*L = N, then all the particles
+         : 265  //  will be initialized with an interparticle separation equal to 2xVDW radius
+         : 266  if (Vol<N) {
+    0.00 :   1607:   comisd %xmm2,%xmm1
+    0.00 :   160b:   movsd  %xmm2,-0x1068(%rbp)
+    0.00 :   1613:   jbe    1757 <main+0x4f7>
+    0.00 :   1619:   lea    0x2e68(%rip),%rdi        # 4488 <_IO_stdin_used+0x488>
+         : 113  printf():
+    0.00 :   1620:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1625:   mov    0x7ae1d(%rip),%edx        # 7c448 <N>
+         : 113  printf():
+    0.00 :   162b:   mov    $0x1,%edi
+    0.00 :   1630:   movsd  -0x1068(%rbp),%xmm0
+    0.00 :   1638:   lea    0x2e71(%rip),%rsi        # 44b0 <_IO_stdin_used+0x4b0>
+    0.00 :   163f:   mov    $0x1,%eax
+    0.00 :   1644:   call   11e0 <__printf_chk@plt>
+         : 117  main():
+    0.00 :   1649:   lea    0x2eb0(%rip),%rdi        # 4500 <_IO_stdin_used+0x500>
+         : 113  printf():
+    0.00 :   1650:   call   1150 <puts@plt>
+         : 113  main():
+    0.00 :   1655:   lea    0x2f04(%rip),%rdi        # 4560 <_IO_stdin_used+0x560>
+         : 113  printf():
+    0.00 :   165c:   call   1150 <puts@plt>
+         : 113  main():
+         :
+         : 268  printf("\n\n\n  YOUR DENSITY IS VERY HIGH!\n\n");
+         : 269  printf("  THE NUMBER OF PARTICLES IS %i AND THE AVAILABLE VOLUME IS %f NATURAL UNITS\n",N,Vol);
+         : 270  printf("  SIMULATIONS WITH DENSITY GREATER THAN 1 PARTCICLE/(1 Natural Unit of Volume) MAY DIVERGE\n");
+         : 271  printf("  PLEASE ADJUST YOUR INPUT FILE ACCORDINGLY AND RETRY\n\n");
+         : 272  exit(0);
+    0.00 :   1661:   xor    %edi,%edi
+    0.00 :   1663:   call   1210 <exit@plt>
+         : 179  else if (strcmp(atype,"Ar")==0) {
+    0.00 :   1668:   lea    0x352b(%rip),%rsi        # 4b9a <_IO_stdin_used+0xb9a>
+    0.00 :   166f:   mov    %r12,%rdi
+    0.00 :   1672:   call   11a0 <strcmp@plt>
+    0.00 :   1677:   test   %eax,%eax
+    0.00 :   1679:   je     1cbd <main+0xa5d>
+         : 188  else if (strcmp(atype,"Kr")==0) {
+    0.00 :   167f:   lea    0x3517(%rip),%rsi        # 4b9d <_IO_stdin_used+0xb9d>
+    0.00 :   1686:   mov    %r12,%rdi
+    0.00 :   1689:   call   11a0 <strcmp@plt>
+    0.00 :   168e:   test   %eax,%eax
+    0.00 :   1690:   je     2168 <main+0xf08>
+         : 196  else if (strcmp(atype,"Xe")==0) {
+    0.00 :   1696:   lea    0x3503(%rip),%rsi        # 4ba0 <_IO_stdin_used+0xba0>
+    0.00 :   169d:   mov    %r12,%rdi
+    0.00 :   16a0:   call   11a0 <strcmp@plt>
+    0.00 :   16a5:   test   %eax,%eax
+    0.00 :   16a7:   jne    1cad <main+0xa4d>
+         : 201  timefac = 9.018957925790732e-13;
+    0.00 :   16ad:   movsd  0x3673(%rip),%xmm7        # 4d28 <_IO_stdin_used+0xd28>
+    0.00 :   16b5:   movsd  %xmm7,-0x1030(%rbp)
+         : 199  PressFac = 70527773.72794868;
+    0.00 :   16bd:   movsd  0x366b(%rip),%xmm7        # 4d30 <_IO_stdin_used+0xd30>
+    0.00 :   16c5:   movsd  %xmm7,-0x1038(%rbp)
+         : 200  TempFac = 280.30305642163006;
+    0.00 :   16cd:   movsd  0x3663(%rip),%xmm7        # 4d38 <_IO_stdin_used+0xd38>
+    0.00 :   16d5:   movsd  %xmm7,-0x1020(%rbp)
+         : 198  VolFac = 5.4872e-29;
+    0.00 :   16dd:   movsd  0x365b(%rip),%xmm7        # 4d40 <_IO_stdin_used+0xd40>
+    0.00 :   16e5:   movsd  %xmm7,-0x1058(%rbp)
+    0.00 :   16ed:   jmp    1502 <main+0x2a2>
+    0.00 :   16f2:   lea    0x2c4f(%rip),%rdi        # 4348 <_IO_stdin_used+0x348>
+         : 113  printf():
+    0.00 :   16f9:   call   1150 <puts@plt>
+         : 113  main():
+         : 229  exit(0);
+    0.00 :   16fe:   xor    %edi,%edi
+    0.00 :   1700:   call   1210 <exit@plt>
+         : 163  if (strcmp(atype,"He")==0) {
+    0.00 :   1705:   cmpb   $0x0,0x5996(%rip)        # 70a2 <atype+0x2>
+    0.00 :   170c:   jne    14ab <main+0x24b>
+         : 168  timefac = 1.7572698825166272e-12;
+    0.00 :   1712:   movsd  0x358e(%rip),%xmm7        # 4ca8 <_IO_stdin_used+0xca8>
+    0.00 :   171a:   movsd  %xmm7,-0x1030(%rbp)
+         : 166  PressFac = 8152287.336171632;
+    0.00 :   1722:   movsd  0x3586(%rip),%xmm7        # 4cb0 <_IO_stdin_used+0xcb0>
+    0.00 :   172a:   movsd  %xmm7,-0x1038(%rbp)
+         : 167  TempFac = 10.864459551225972;
+    0.00 :   1732:   movsd  0x357e(%rip),%xmm7        # 4cb8 <_IO_stdin_used+0xcb8>
+    0.00 :   173a:   movsd  %xmm7,-0x1020(%rbp)
+         : 165  VolFac = 1.8399744000000005e-29;
+    0.00 :   1742:   movsd  0x3576(%rip),%xmm7        # 4cc0 <_IO_stdin_used+0xcc0>
+    0.00 :   174a:   movsd  %xmm7,-0x1058(%rbp)
+    0.00 :   1752:   jmp    1502 <main+0x2a2>
+         : 271  }
+         : 272  // Vol = L*L*L;
+         : 273  // Length of the box in natural units:
+         : 274  L = pow(Vol,(1./3));
+    0.00 :   1757:   movsd  0x3541(%rip),%xmm1        # 4ca0 <_IO_stdin_used+0xca0>
+    0.00 :   175f:   movsd  -0x1068(%rbp),%xmm0
+         :
+         : 275  //  Files that we can write different quantities to
+         : 276  tfp = fopen(tfn,"w");     //  The MD trajectory, coordinates of every particle at each timestep
+    0.00 :   1767:   lea    0x3463(%rip),%rbx        # 4bd1 <_IO_stdin_used+0xbd1>
+         : 271  L = pow(Vol,(1./3));
+    0.00 :   176e:   call   1160 <pow@plt>
+         : 274  tfp = fopen(tfn,"w");     //  The MD trajectory, coordinates of every particle at each timestep
+    0.00 :   1773:   mov    %rbx,%rsi
+    0.00 :   1776:   mov    %r13,%rdi
+         : 271  L = pow(Vol,(1./3));
+    0.00 :   1779:   movsd  %xmm0,0x7acbf(%rip)        # 7c440 <L>
+         : 274  tfp = fopen(tfn,"w");     //  The MD trajectory, coordinates of every particle at each timestep
+    0.00 :   1781:   call   11f0 <fopen@plt>
+         : 275  ofp = fopen(ofn,"w");     //  Output of other quantities (T, P, gc, etc) at every timestep
+    0.00 :   1786:   mov    -0x1028(%rbp),%rdi
+    0.00 :   178d:   mov    %rbx,%rsi
+         : 274  tfp = fopen(tfn,"w");     //  The MD trajectory, coordinates of every particle at each timestep
+    0.00 :   1790:   mov    %rax,%r15
+         : 275  ofp = fopen(ofn,"w");     //  Output of other quantities (T, P, gc, etc) at every timestep
+    0.00 :   1793:   call   11f0 <fopen@plt>
+         : 276  afp = fopen(afn,"w");    //  Average T, P, gc, etc from the simulation
+    0.00 :   1798:   mov    -0x1060(%rbp),%rdi
+    0.00 :   179f:   mov    %rbx,%rsi
+         : 275  ofp = fopen(ofn,"w");     //  Output of other quantities (T, P, gc, etc) at every timestep
+    0.00 :   17a2:   mov    %rax,%r14
+         : 276  afp = fopen(afn,"w");    //  Average T, P, gc, etc from the simulation
+    0.00 :   17a5:   call   11f0 <fopen@plt>
+         :
+         : 280  int NumTime;
+         : 281  if (strcmp(atype,"He")==0) {
+    0.00 :   17aa:   lea    0x33e3(%rip),%rsi        # 4b94 <_IO_stdin_used+0xb94>
+    0.00 :   17b1:   mov    %r12,%rdi
+         : 276  afp = fopen(afn,"w");    //  Average T, P, gc, etc from the simulation
+    0.00 :   17b4:   mov    %rax,-0x1080(%rbp)
+         : 279  if (strcmp(atype,"He")==0) {
+    0.00 :   17bb:   call   11a0 <strcmp@plt>
+    0.00 :   17c0:   test   %eax,%eax
+    0.00 :   17c2:   je     1c86 <main+0xa26>
+         : 290  //  And NumTime*dt multiplied by the appropriate conversion factor for time in seconds
+         : 291  NumTime=50000;
+         : 292  }
+         : 293  else {
+         : 294  dt = 0.5e-14/timefac;
+         : 295  NumTime=200;
+    0.00 :   17c8:   movl   $0xc8,-0x1074(%rbp)
+         : 289  dt = 0.5e-14/timefac;
+    0.00 :   17d2:   movsd  0x357e(%rip),%xmm0        # 4d58 <_IO_stdin_used+0xd58>
+    0.00 :   17da:   divsd  -0x1030(%rbp),%xmm0
+    0.00 :   17e2:   movsd  %xmm0,-0x1018(%rbp)
+         :
+         : 297  }
+         :
+         : 299  //  Put all the atoms in simple crystal lattice and give them random velocities
+         : 300  //  that corresponds to the initial temperature we have specified
+         : 301  initialize();
+    0.00 :   17ea:   call   3220 <initialize()>
+         :
+         : 302  //  Based on their positions, calculate the ininial intermolecular forces
+         : 303  //  The accellerations of each particle will be defined from the forces and their
+         : 304  //  mass, and this will allow us to update their positions via Newton's law
+         : 305  computeAccelerations();
+    0.00 :   17ef:   call   2720 <computeAccelerations()>
+         : 105  return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+    0.00 :   17f4:   mov    0x7ac4e(%rip),%ecx        # 7c448 <N>
+         : 107  fprintf():
+    0.00 :   17fa:   mov    %r15,%rdi
+    0.00 :   17fd:   xor    %eax,%eax
+    0.00 :   17ff:   lea    0x33cd(%rip),%rdx        # 4bd3 <_IO_stdin_used+0xbd3>
+    0.00 :   1806:   mov    $0x1,%esi
+    0.00 :   180b:   call   1230 <__fprintf_chk@plt>
+         : 110  main():
+         : 313  //  The variables need to be set to zero initially
+         : 314  Pavg = 0;
+         : 315  Tavg = 0;
+         :
+         :
+         : 318  int tenp = floor(NumTime/10);
+    0.00 :   1810:   mov    -0x1074(%rbp),%eax
+    0.00 :   1816:   mov    $0xa,%ecx
+    0.00 :   181b:   mov    $0x1,%esi
+         : 106  fprintf():
+    0.00 :   1820:   lea    0x2d71(%rip),%rdi        # 4598 <_IO_stdin_used+0x598>
+         : 106  main():
+    0.00 :   1827:   cltd
+    0.00 :   1828:   idiv   %ecx
+         : 315  fprintf():
+    0.00 :   182a:   mov    %r14,%rcx
+    0.00 :   182d:   mov    $0x7f,%edx
+         : 107  main():
+    0.00 :   1832:   mov    %eax,-0x1008(%rbp)
+         : 314  fprintf():
+    0.00 :   1838:   call   1220 <fwrite@plt>
+         : 106  main():
+         : 112  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+    0.00 :   183d:   lea    0x2dd4(%rip),%rsi        # 4618 <_IO_stdin_used+0x618>
+         : 114  printf():
+    0.00 :   1844:   mov    $0x1,%edi
+    0.00 :   1849:   xor    %eax,%eax
+    0.00 :   184b:   call   11e0 <__printf_chk@plt>
+         : 115  main():
+         : 320  printf("  PERCENTAGE OF CALCULATION COMPLETE:\n  [");
+         : 321  for (i=0; i<NumTime+1; i++) {
+         :
+         : 323  //  This just prints updates on progress of the calculation for the users convenience
+         : 324  if (i==tenp) printf(" 10 |");
+         : 325  else if (i==2*tenp) printf(" 20 |");
+    0.00 :   1850:   mov    -0x1008(%rbp),%ecx
+         : 310  Tavg = 0;
+    0.00 :   1856:   pxor   %xmm7,%xmm7
+    0.00 :   185a:   mov    -0x1074(%rbp),%eax
+    0.00 :   1860:   mov    %r13,-0x1090(%rbp)
+         : 320  else if (i==2*tenp) printf(" 20 |");
+    0.00 :   1867:   lea    (%rcx,%rcx,1),%ebx
+    0.00 :   186a:   add    $0x1,%eax
+    0.00 :   186d:   mov    %ecx,%r13d
+         : 310  Tavg = 0;
+    0.00 :   1870:   movsd  %xmm7,-0x1008(%rbp)
+         : 320  else if (i==2*tenp) printf(" 20 |");
+    0.00 :   1878:   mov    %ebx,-0x1044(%rbp)
+         : 321  else if (i==3*tenp) printf(" 30 |");
+    0.00 :   187e:   lea    (%rcx,%rcx,2),%ebx
+    0.00 :   1881:   mov    %ebx,-0x1048(%rbp)
+         : 322  else if (i==4*tenp) printf(" 40 |");
+    0.00 :   1887:   lea    0x0(,%rcx,4),%ebx
+    0.00 :   188e:   mov    %ebx,-0x104c(%rbp)
+         : 323  else if (i==5*tenp) printf(" 50 |");
+    0.00 :   1894:   lea    (%rcx,%rcx,4),%ebx
+    0.00 :   1897:   mov    %ebx,-0x1050(%rbp)
+         : 324  else if (i==6*tenp) printf(" 60 |");
+    0.00 :   189d:   imul   $0x6,%ecx,%ebx
+    0.00 :   18a0:   mov    %eax,-0x1040(%rbp)
+         : 309  Pavg = 0;
+    0.00 :   18a6:   movsd  %xmm7,-0x1010(%rbp)
+         : 324  else if (i==6*tenp) printf(" 60 |");
+    0.00 :   18ae:   mov    %ebx,-0x106c(%rbp)
+         : 325  else if (i==7*tenp) printf(" 70 |");
+    0.00 :   18b4:   imul   $0x7,%ecx,%ebx
+    0.00 :   18b7:   mov    %ebx,-0x1070(%rbp)
+         : 326  else if (i==8*tenp) printf(" 80 |");
+    0.00 :   18bd:   lea    0x0(,%rcx,8),%ebx
+    0.00 :   18c4:   mov    %ebx,-0x1078(%rbp)
+         : 327  else if (i==9*tenp) printf(" 90 |");
+    0.00 :   18ca:   lea    (%rcx,%rcx,8),%ebx
+    0.00 :   18cd:   mov    %ebx,-0x1084(%rbp)
+         : 328  else if (i==10*tenp) printf(" 100 ]\n");
+    0.00 :   18d3:   imul   $0xa,%ecx,%ebx
+    0.00 :   18d6:   mov    %ebx,-0x1088(%rbp)
+         : 316  for (i=0; i<NumTime+1; i++) {
+    0.00 :   18dc:   xor    %ebx,%ebx
+         : 319  if (i==tenp) printf(" 10 |");
+    0.00 :   18de:   cmp    %ebx,%r13d
+    0.00 :   18e1:   je     1c6e <main+0xa0e>
+    0.00 :   18e7:   nopw   0x0(%rax,%rax,1)
+         : 320  else if (i==2*tenp) printf(" 20 |");
+   14.27 :   18f0:   cmp    %ebx,-0x1044(%rbp)
+    0.00 :   18f6:   je     1d3a <main+0xada>
+         : 321  else if (i==3*tenp) printf(" 30 |");
+    0.00 :   18fc:   cmp    %ebx,-0x1048(%rbp)
+    0.00 :   1902:   je     1d52 <main+0xaf2>
+         : 322  else if (i==4*tenp) printf(" 40 |");
+    0.00 :   1908:   cmp    %ebx,-0x104c(%rbp)
+    0.00 :   190e:   je     208a <main+0xe2a>
+         : 323  else if (i==5*tenp) printf(" 50 |");
+    0.00 :   1914:   cmp    %ebx,-0x1050(%rbp)
+    0.00 :   191a:   je     20c5 <main+0xe65>
+         : 324  else if (i==6*tenp) printf(" 60 |");
+    0.00 :   1920:   cmp    %ebx,-0x106c(%rbp)
+    0.00 :   1926:   je     20f7 <main+0xe97>
+         : 325  else if (i==7*tenp) printf(" 70 |");
+    0.00 :   192c:   cmp    %ebx,-0x1070(%rbp)
+    0.00 :   1932:   je     210f <main+0xeaf>
+         : 326  else if (i==8*tenp) printf(" 80 |");
+    0.00 :   1938:   cmp    %ebx,-0x1078(%rbp)
+    0.00 :   193e:   je     2127 <main+0xec7>
+         : 327  else if (i==9*tenp) printf(" 90 |");
+    0.00 :   1944:   cmp    %ebx,-0x1084(%rbp)
+    0.00 :   194a:   je     213f <main+0xedf>
+         : 328  else if (i==10*tenp) printf(" 100 ]\n");
+    0.00 :   1950:   cmp    %ebx,-0x1088(%rbp)
+    0.00 :   1956:   je     2157 <main+0xef7>
+    0.00 :   195c:   nopl   0x0(%rax)
+         : 329  fflush(stdout);
+    0.00 :   1960:   mov    0x56f9(%rip),%rdi        # 7060 <stdout@GLIBC_2.2.5>
+         :
+         :
+         : 337  // This updates the positions and velocities using Newton's Laws
+         : 338  // Also computes the Pressure as the sum of momentum changes from wall collisions / timestep
+         : 339  // which is a Kinetic Theory of gasses concept of Pressure
+         : 340  Press = VelocityVerlet(dt, i+1, tfp);
+    0.00 :   1967:   lea    0x1(%rbx),%r12d
+         : 329  fflush(stdout);
+    0.00 :   196b:   call   11d0 <fflush@plt>
+         : 335  Press = VelocityVerlet(dt, i+1, tfp);
+    0.00 :   1970:   movsd  -0x1018(%rbp),%xmm0
+    0.00 :   1978:   mov    %r15,%rsi
+    0.00 :   197b:   mov    %r12d,%edi
+    0.00 :   197e:   call   28b0 <VelocityVerlet(double, int, _IO_FILE*)>
+         : 340  MeanSquaredVelocity():
+         : 449  double vx2 = 0;
+         : 450  double vy2 = 0;
+         : 451  double vz2 = 0;
+         : 452  double v2;
+         :
+         : 454  for (int i=0; i<N; i++) {
+   14.33 :   1983:   mov    0x7aabf(%rip),%esi        # 7c448 <N>
+    0.00 :   1989:   pxor   %xmm7,%xmm7
+         : 457  main():
+         : 336  Press *= PressFac;
+    0.00 :   198d:   mulsd  -0x1038(%rbp),%xmm0
+         : 338  MeanSquaredVelocity():
+         : 449  for (int i=0; i<N; i++) {
+    0.00 :   1995:   test   %esi,%esi
+         : 451  main():
+         : 336  Press *= PressFac;
+    0.00 :   1997:   movapd %xmm0,%xmm8
+         : 338  MeanSquaredVelocity():
+         : 449  for (int i=0; i<N; i++) {
+    0.00 :   199c:   jle    20a2 <main+0xe42>
+    0.00 :   19a2:   cmp    $0x1,%esi
+    0.00 :   19a5:   je     20dd <main+0xe7d>
+         : 445  double vy2 = 0;
+    0.00 :   19ab:   movapd %xmm7,%xmm4
+         : 444  double vx2 = 0;
+    0.00 :   19af:   movapd %xmm7,%xmm5
+    0.00 :   19b3:   movapd %xmm7,%xmm6
+    0.00 :   19b7:   mov    %esi,%edi
+    0.00 :   19b9:   shr    %edi
+    0.00 :   19bb:   lea    0x400be(%rip),%rdx        # 41a80 <v>
+    0.00 :   19c2:   sub    $0x1,%edi
+    0.00 :   19c5:   lea    0x30(%rdx),%r8
+    0.00 :   19c9:   mov    %rdx,%rax
+    0.00 :   19cc:   lea    (%rdi,%rdi,2),%rdi
+    0.00 :   19d0:   shl    $0x4,%rdi
+    0.00 :   19d4:   add    %r8,%rdi
+    0.00 :   19d7:   nopw   0x0(%rax,%rax,1)
+         :
+         : 452  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   19e0:   movapd 0x10(%rax),%xmm2
+    0.00 :   19e5:   movapd (%rax),%xmm1
+    0.00 :   19e9:   add    $0x30,%rax
+    0.00 :   19ed:   movapd -0x20(%rax),%xmm0
+    0.00 :   19f2:   movlpd -0x30(%rax),%xmm2
+    0.00 :   19f7:   palignr $0x8,%xmm1,%xmm1
+    0.00 :   19fd:   mulpd  %xmm2,%xmm2
+    0.00 :   1a01:   movhpd -0x30(%rax),%xmm0
+    0.00 :   1a06:   movhps -0x8(%rax),%xmm0
+    0.00 :   1a0a:   movhpd -0x10(%rax),%xmm1
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1a0f:   mulpd  %xmm1,%xmm1
+         : 453  vz2 = vz2 + v[i][2]*v[i][2];
+    0.00 :   1a13:   mulpd  %xmm0,%xmm0
+    0.00 :   1a17:   movapd %xmm2,%xmm3
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1a1b:   unpckhpd %xmm2,%xmm2
+    0.00 :   1a1f:   addsd  %xmm5,%xmm3
+    0.00 :   1a23:   movapd %xmm2,%xmm5
+    0.00 :   1a27:   movapd %xmm1,%xmm2
+    0.00 :   1a2b:   addsd  %xmm4,%xmm2
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1a2f:   unpckhpd %xmm1,%xmm1
+    0.00 :   1a33:   movapd %xmm1,%xmm4
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1a37:   addsd  %xmm3,%xmm5
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1a3b:   movapd %xmm0,%xmm3
+         : 453  vz2 = vz2 + v[i][2]*v[i][2];
+   14.33 :   1a3f:   unpckhpd %xmm0,%xmm0
+    0.00 :   1a43:   addsd  %xmm6,%xmm3
+    0.00 :   1a47:   movapd %xmm0,%xmm6
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1a4b:   addsd  %xmm2,%xmm4
+         : 453  vz2 = vz2 + v[i][2]*v[i][2];
+    0.00 :   1a4f:   addsd  %xmm3,%xmm6
+         : 449  for (int i=0; i<N; i++) {
+    0.00 :   1a53:   cmp    %rdi,%rax
+    0.00 :   1a56:   jne    19e0 <main+0x780>
+    0.00 :   1a58:   mov    %esi,%eax
+    0.00 :   1a5a:   movapd %xmm6,%xmm3
+    0.00 :   1a5e:   and    $0xfffffffe,%eax
+    0.00 :   1a61:   cmp    %eax,%esi
+    0.00 :   1a63:   je     1d14 <main+0xab4>
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1a69:   cltq
+    0.00 :   1a6b:   lea    0x4003e(%rip),%r8        # 41ab0 <v+0x30>
+         : 454  Kinetic():
+         : 477  for (int j=0; j<3; j++) {
+         :
+         : 479  v2 += v[i][j]*v[i][j];
+         :
+         : 481  }
+         : 482  kin += m*v2/2.;
+    0.00 :   1a72:   movsd  0x55ad(%rip),%xmm10        # 7028 <m>
+         : 484  MeanSquaredVelocity():
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1a7b:   lea    (%rax,%rax,2),%rax
+    0.00 :   1a7f:   lea    (%rdx,%rax,8),%rax
+    0.00 :   1a83:   movsd  (%rax),%xmm0
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1a87:   movsd  0x8(%rax),%xmm2
+         : 453  vz2 = vz2 + v[i][2]*v[i][2];
+    0.00 :   1a8c:   movsd  0x10(%rax),%xmm1
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1a91:   mulsd  %xmm0,%xmm0
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1a95:   mulsd  %xmm2,%xmm2
+         : 453  vz2 = vz2 + v[i][2]*v[i][2];
+    0.00 :   1a99:   mulsd  %xmm1,%xmm1
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1a9d:   movapd %xmm0,%xmm6
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   1aa1:   pxor   %xmm0,%xmm0
+         : 451  vx2 = vx2 + v[i][0]*v[i][0];
+    0.00 :   1aa5:   addsd  %xmm5,%xmm6
+         : 452  vy2 = vy2 + v[i][1]*v[i][1];
+    0.00 :   1aa9:   addsd  %xmm4,%xmm2
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   1aad:   cvtsi2sd %esi,%xmm0
+         : 453  vz2 = vz2 + v[i][2]*v[i][2];
+    0.00 :   1ab1:   addsd  %xmm3,%xmm1
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   1ab5:   addsd  %xmm2,%xmm6
+    0.00 :   1ab9:   addsd  %xmm1,%xmm6
+    0.00 :   1abd:   divsd  %xmm0,%xmm6
+         : 460  Kinetic():
+         : 469  for (int i=0; i<N; i++) {
+    0.00 :   1ac1:   cmp    $0x1,%esi
+    0.00 :   1ac4:   je     1d08 <main+0xaa8>
+    0.00 :   1aca:   movddup %xmm10,%xmm3
+         : 477  kin += m*v2/2.;
+    0.00 :   1acf:   movapd %xmm7,%xmm9
+         : 474  v2 += v[i][j]*v[i][j];
+    0.00 :   1ad4:   pxor   %xmm2,%xmm2
+    0.00 :   1ad8:   mov    %esi,%edi
+    0.00 :   1ada:   shr    %edi
+    0.00 :   1adc:   lea    0x3ff9d(%rip),%rax        # 41a80 <v>
+    0.00 :   1ae3:   sub    $0x1,%edi
+    0.00 :   1ae6:   lea    (%rdi,%rdi,2),%rdi
+    0.00 :   1aea:   shl    $0x4,%rdi
+    0.00 :   1aee:   add    %r8,%rdi
+    0.00 :   1af1:   nopl   0x0(%rax)
+    0.00 :   1af8:   movapd 0x10(%rax),%xmm1
+    0.00 :   1afd:   movapd (%rax),%xmm5
+    0.00 :   1b01:   add    $0x30,%rax
+    0.00 :   1b05:   movapd -0x20(%rax),%xmm0
+    0.00 :   1b0a:   movlpd -0x30(%rax),%xmm1
+   14.22 :   1b0f:   palignr $0x8,%xmm5,%xmm5
+    0.00 :   1b15:   mulpd  %xmm1,%xmm1
+    0.00 :   1b19:   movhpd -0x10(%rax),%xmm5
+    0.00 :   1b1e:   movhpd -0x30(%rax),%xmm0
+   14.25 :   1b23:   mulpd  %xmm5,%xmm5
+    0.00 :   1b27:   movapd %xmm0,%xmm4
+    0.00 :   1b2b:   movhps -0x8(%rax),%xmm4
+    0.00 :   1b2f:   mulpd  %xmm4,%xmm4
+    0.00 :   1b33:   movapd %xmm1,%xmm0
+    0.00 :   1b37:   addpd  %xmm2,%xmm0
+    0.00 :   1b3b:   addpd  %xmm5,%xmm0
+    0.00 :   1b3f:   addpd  %xmm4,%xmm0
+         : 477  kin += m*v2/2.;
+    0.00 :   1b43:   mulpd  %xmm3,%xmm0
+    0.00 :   1b47:   mulpd  0x30e1(%rip),%xmm0        # 4c30 <_IO_stdin_used+0xc30>
+    0.00 :   1b4f:   movapd %xmm0,%xmm1
+    0.00 :   1b53:   unpckhpd %xmm0,%xmm0
+   14.31 :   1b57:   addsd  %xmm9,%xmm1
+   14.29 :   1b5c:   addsd  %xmm1,%xmm0
+    0.00 :   1b60:   movapd %xmm0,%xmm9
+         : 469  for (int i=0; i<N; i++) {
+    0.00 :   1b65:   cmp    %rax,%rdi
+    0.00 :   1b68:   jne    1af8 <main+0x898>
+    0.00 :   1b6a:   mov    %esi,%eax
+    0.00 :   1b6c:   and    $0xfffffffe,%eax
+    0.00 :   1b6f:   and    $0x1,%esi
+    0.00 :   1b72:   je     1bba <main+0x95a>
+         : 474  v2 += v[i][j]*v[i][j];
+    0.00 :   1b74:   cltq
+    0.00 :   1b76:   lea    (%rax,%rax,2),%rax
+    0.00 :   1b7a:   lea    (%rdx,%rax,8),%rax
+    0.00 :   1b7e:   movsd  (%rax),%xmm0
+    0.00 :   1b82:   mulsd  %xmm0,%xmm0
+    0.00 :   1b86:   movapd %xmm0,%xmm1
+    0.00 :   1b8a:   movsd  0x8(%rax),%xmm0
+    0.00 :   1b8f:   addsd  %xmm7,%xmm1
+    0.00 :   1b93:   mulsd  %xmm0,%xmm0
+    0.00 :   1b97:   addsd  %xmm0,%xmm1
+    0.00 :   1b9b:   movsd  0x10(%rax),%xmm0
+    0.00 :   1ba0:   mulsd  %xmm0,%xmm0
+    0.00 :   1ba4:   addsd  %xmm1,%xmm0
+         : 477  kin += m*v2/2.;
+    0.00 :   1ba8:   mulsd  %xmm10,%xmm0
+    0.00 :   1bad:   mulsd  0x307b(%rip),%xmm0        # 4c30 <_IO_stdin_used+0xc30>
+    0.00 :   1bb5:   addsd  %xmm0,%xmm9
+         : 481  main():
+         : 345  PE = Potential();
+    0.00 :   1bba:   call   2610 <Potential()>
+         : 348  Temp = m*mvs/(3*kB) * TempFac;
+    0.00 :   1bbf:   mulsd  %xmm10,%xmm6
+         : 105  return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+    0.00 :   1bc4:   movapd %xmm9,%xmm5
+         : 356  Tavg += Temp;
+    0.00 :   1bc9:   movsd  -0x1008(%rbp),%xmm7
+         : 345  PE = Potential();
+    0.00 :   1bd1:   movapd %xmm0,%xmm4
+         : 347  fprintf():
+    0.00 :   1bd5:   movapd %xmm9,%xmm3
+         : 106  main():
+         : 348  Temp = m*mvs/(3*kB) * TempFac;
+    0.00 :   1bda:   movsd  0x317e(%rip),%xmm0        # 4d60 <_IO_stdin_used+0xd60>
+         : 350  fprintf():
+    0.00 :   1be2:   movapd %xmm8,%xmm2
+         : 106  main():
+    0.00 :   1be7:   mulsd  0x5431(%rip),%xmm0        # 7020 <kB>
+         : 349  fprintf():
+    0.00 :   1bef:   addsd  %xmm4,%xmm5
+    0.00 :   1bf3:   mov    $0x1,%esi
+    0.00 :   1bf8:   mov    %r14,%rdi
+    0.00 :   1bfb:   lea    0x2a46(%rip),%rdx        # 4648 <_IO_stdin_used+0x648>
+    0.00 :   1c02:   mov    $0x6,%eax
+         : 110  main():
+    0.00 :   1c07:   movapd %xmm6,%xmm1
+    0.00 :   1c0b:   divsd  %xmm0,%xmm1
+         : 359  fprintf(ofp,"  %8.4e  %20.12g  %20.12g %20.12g  %20.12g  %20.12g \n",i*dt*timefac,Temp,Press,KE, PE, KE+PE);
+    0.00 :   1c0f:   pxor   %xmm0,%xmm0
+    0.00 :   1c13:   cvtsi2sd %ebx,%xmm0
+    0.00 :   1c17:   mulsd  -0x1018(%rbp),%xmm0
+    0.00 :   1c1f:   mulsd  -0x1030(%rbp),%xmm0
+         : 348  Temp = m*mvs/(3*kB) * TempFac;
+    0.00 :   1c27:   mulsd  -0x1020(%rbp),%xmm1
+         : 356  Tavg += Temp;
+    0.00 :   1c2f:   addsd  %xmm1,%xmm7
+    0.00 :   1c33:   movsd  %xmm7,-0x1008(%rbp)
+         : 357  Pavg += Press;
+    0.00 :   1c3b:   movsd  -0x1010(%rbp),%xmm7
+    0.00 :   1c43:   addsd  %xmm8,%xmm7
+    0.00 :   1c48:   movsd  %xmm7,-0x1010(%rbp)
+         : 361  fprintf():
+    0.00 :   1c50:   call   1230 <__fprintf_chk@plt>
+         : 106  main():
+         : 316  for (i=0; i<NumTime+1; i++) {
+    0.00 :   1c55:   cmp    -0x1040(%rbp),%r12d
+    0.00 :   1c5c:   je     1d6a <main+0xb0a>
+    0.00 :   1c62:   mov    %r12d,%ebx
+         : 319  if (i==tenp) printf(" 10 |");
+    0.00 :   1c65:   cmp    %ebx,%r13d
+    0.00 :   1c68:   jne    18f0 <main+0x690>
+         : 112  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+    0.00 :   1c6e:   lea    0x2f62(%rip),%rsi        # 4bd7 <_IO_stdin_used+0xbd7>
+         : 114  printf():
+    0.00 :   1c75:   mov    $0x1,%edi
+    0.00 :   1c7a:   xor    %eax,%eax
+    0.00 :   1c7c:   call   11e0 <__printf_chk@plt>
+    0.00 :   1c81:   jmp    1960 <main+0x700>
+         : 116  main():
+         : 282  dt = 0.2e-14/timefac;
+    0.00 :   1c86:   movsd  0x30c2(%rip),%xmm0        # 4d50 <_IO_stdin_used+0xd50>
+         : 286  NumTime=50000;
+    0.00 :   1c8e:   movl   $0xc350,-0x1074(%rbp)
+         : 282  dt = 0.2e-14/timefac;
+    0.00 :   1c98:   divsd  -0x1030(%rbp),%xmm0
+    0.00 :   1ca0:   movsd  %xmm0,-0x1018(%rbp)
+         : 286  NumTime=50000;
+    0.00 :   1ca8:   jmp    17ea <main+0x58a>
+         : 79   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+    0.00 :   1cad:   movw   $0x7241,0x53ea(%rip)        # 70a0 <atype>
+         : 81   strcpy():
+    0.00 :   1cb6:   movb   $0x0,0x53e5(%rip)        # 70a2 <atype+0x2>
+         : 80   main():
+         : 184  timefac = 2.09618e-12;
+    0.00 :   1cbd:   movsd  0x3023(%rip),%xmm7        # 4ce8 <_IO_stdin_used+0xce8>
+    0.00 :   1cc5:   movsd  %xmm7,-0x1030(%rbp)
+         : 182  PressFac = 51695201.06691862;
+    0.00 :   1ccd:   movsd  0x301b(%rip),%xmm7        # 4cf0 <_IO_stdin_used+0xcf0>
+    0.00 :   1cd5:   movsd  %xmm7,-0x1038(%rbp)
+         : 183  TempFac = 142.0950000000000;
+    0.00 :   1cdd:   movsd  0x3013(%rip),%xmm7        # 4cf8 <_IO_stdin_used+0xcf8>
+    0.00 :   1ce5:   movsd  %xmm7,-0x1020(%rbp)
+         : 181  VolFac = 3.7949992920124995e-29;
+    0.00 :   1ced:   movsd  0x300b(%rip),%xmm7        # 4d00 <_IO_stdin_used+0xd00>
+    0.00 :   1cf5:   movsd  %xmm7,-0x1058(%rbp)
+    0.00 :   1cfd:   jmp    1502 <main+0x2a2>
+    0.00 :   1d02:   nopw   0x0(%rax,%rax,1)
+         : 186  Kinetic():
+         : 477  kin += m*v2/2.;
+    0.00 :   1d08:   movapd %xmm7,%xmm9
+    0.00 :   1d0d:   xor    %eax,%eax
+    0.00 :   1d0f:   jmp    1b74 <main+0x914>
+         : 481  MeanSquaredVelocity():
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   1d14:   addsd  %xmm4,%xmm5
+    0.00 :   1d18:   pxor   %xmm0,%xmm0
+         : 459  Kinetic():
+         : 477  kin += m*v2/2.;
+    0.00 :   1d1c:   movsd  0x5303(%rip),%xmm10        # 7028 <m>
+         : 479  MeanSquaredVelocity():
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   1d25:   cvtsi2sd %esi,%xmm0
+    0.00 :   1d29:   addsd  %xmm6,%xmm5
+    0.00 :   1d2d:   divsd  %xmm0,%xmm5
+    0.00 :   1d31:   movapd %xmm5,%xmm6
+         : 461  Kinetic():
+         : 469  for (int i=0; i<N; i++) {
+    0.00 :   1d35:   jmp    1aca <main+0x86a>
+         : 471  main():
+    0.00 :   1d3a:   lea    0x2e9c(%rip),%rsi        # 4bdd <_IO_stdin_used+0xbdd>
+         : 113  printf():
+    0.00 :   1d41:   mov    $0x1,%edi
+    0.00 :   1d46:   xor    %eax,%eax
+    0.00 :   1d48:   call   11e0 <__printf_chk@plt>
+    0.00 :   1d4d:   jmp    1960 <main+0x700>
+         : 116  main():
+    0.00 :   1d52:   lea    0x2e8a(%rip),%rsi        # 4be3 <_IO_stdin_used+0xbe3>
+         : 113  printf():
+    0.00 :   1d59:   mov    $0x1,%edi
+    0.00 :   1d5e:   xor    %eax,%eax
+    0.00 :   1d60:   call   11e0 <__printf_chk@plt>
+    0.00 :   1d65:   jmp    1960 <main+0x700>
+         : 116  main():
+         : 364  Pavg /= NumTime;
+    0.00 :   1d6a:   pxor   %xmm0,%xmm0
+    0.00 :   1d6e:   movsd  -0x1010(%rbp),%xmm2
+         : 365  Tavg /= NumTime;
+    0.00 :   1d76:   movsd  -0x1008(%rbp),%xmm1
+         : 105  return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+    0.00 :   1d7e:   mov    $0xb4,%edx
+         : 364  Pavg /= NumTime;
+    0.00 :   1d83:   cvtsi2sdl -0x1074(%rbp),%xmm0
+         : 366  Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
+    0.00 :   1d8b:   movsd  0x527d(%rip),%xmm3        # 7010 <kBSI>
+    0.00 :   1d93:   movsd  -0x1058(%rbp),%xmm5
+         : 369  fprintf():
+    0.00 :   1d9b:   mov    $0x1,%esi
+         : 106  main():
+    0.00 :   1da0:   mulsd  -0x1068(%rbp),%xmm5
+         : 367  fprintf():
+    0.00 :   1da8:   mov    -0x1080(%rbp),%rbx
+    0.00 :   1daf:   lea    0x28ca(%rip),%rdi        # 4680 <_IO_stdin_used+0x680>
+         : 107  main():
+         : 364  Pavg /= NumTime;
+    0.00 :   1db6:   mov    -0x1090(%rbp),%r13
+         : 366  fprintf():
+    0.00 :   1dbd:   mov    %rbx,%rcx
+         : 106  main():
+    0.00 :   1dc0:   divsd  %xmm0,%xmm2
+         : 366  Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
+    0.00 :   1dc4:   movapd %xmm5,%xmm4
+         : 367  gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
+    0.00 :   1dc8:   movsd  %xmm5,-0x1010(%rbp)
+         : 365  Tavg /= NumTime;
+    0.00 :   1dd0:   divsd  %xmm0,%xmm1
+         : 366  Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
+    0.00 :   1dd4:   pxor   %xmm0,%xmm0
+    0.00 :   1dd8:   cvtsi2sdl 0x7a668(%rip),%xmm0        # 7c448 <N>
+    0.00 :   1de0:   mulsd  %xmm0,%xmm3
+    0.00 :   1de4:   mulsd  %xmm2,%xmm4
+         : 367  gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
+    0.00 :   1de8:   movsd  %xmm2,-0x1040(%rbp)
+         : 366  Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
+    0.00 :   1df0:   mulsd  %xmm1,%xmm3
+         : 367  gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
+    0.00 :   1df4:   movsd  %xmm1,-0x1038(%rbp)
+    0.00 :   1dfc:   mulsd  %xmm1,%xmm0
+         : 366  Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
+    0.00 :   1e00:   divsd  %xmm3,%xmm4
+         : 367  gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
+    0.00 :   1e04:   movapd %xmm2,%xmm3
+    0.00 :   1e08:   mulsd  0x5208(%rip),%xmm3        # 7018 <NA>
+    0.00 :   1e10:   mulsd  %xmm5,%xmm3
+    0.00 :   1e14:   divsd  %xmm0,%xmm3
+         : 366  Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
+    0.00 :   1e18:   movsd  %xmm4,-0x1020(%rbp)
+         : 367  gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
+    0.00 :   1e20:   movsd  %xmm3,-0x1008(%rbp)
+         : 369  fprintf():
+    0.00 :   1e28:   call   1220 <fwrite@plt>
+         : 106  main():
+    0.00 :   1e2d:   mov    %rbx,%rcx
+         : 106  fprintf():
+    0.00 :   1e30:   mov    $0xc1,%edx
+    0.00 :   1e35:   mov    $0x1,%esi
+    0.00 :   1e3a:   lea    0x28f7(%rip),%rdi        # 4738 <_IO_stdin_used+0x738>
+    0.00 :   1e41:   call   1220 <fwrite@plt>
+         : 109  main():
+         : 370  fprintf(afp,"  %8.12e       %15.12g              %15.12g       %10.12g              %10.12g             %10.12e          %i\n",i*dt*timefac,Tavg,Pavg,gc,Z,Vol*VolFac,N);
+    0.00 :   1e46:   pxor   %xmm0,%xmm0
+    0.00 :   1e4a:   mov    %rbx,%rdi
+         : 106  fprintf():
+    0.00 :   1e4d:   movsd  -0x1010(%rbp),%xmm5
+         : 106  main():
+    0.00 :   1e55:   cvtsi2sd %r12d,%xmm0
+    0.00 :   1e5a:   mulsd  -0x1018(%rbp),%xmm0
+         : 372  fprintf():
+    0.00 :   1e62:   movsd  -0x1008(%rbp),%xmm3
+    0.00 :   1e6a:   lea    0x298f(%rip),%rdx        # 4800 <_IO_stdin_used+0x800>
+         : 107  main():
+    0.00 :   1e71:   mulsd  -0x1030(%rbp),%xmm0
+         : 371  fprintf():
+    0.00 :   1e79:   movsd  -0x1020(%rbp),%xmm4
+    0.00 :   1e81:   mov    $0x1,%esi
+    0.00 :   1e86:   mov    $0x6,%eax
+    0.00 :   1e8b:   mov    0x7a5b7(%rip),%ecx        # 7c448 <N>
+    0.00 :   1e91:   movsd  -0x1040(%rbp),%xmm2
+    0.00 :   1e99:   movsd  %xmm5,-0x1030(%rbp)
+    0.00 :   1ea1:   movsd  -0x1038(%rbp),%xmm1
+    0.00 :   1ea9:   movsd  %xmm3,-0x1018(%rbp)
+    0.00 :   1eb1:   movsd  %xmm2,-0x1010(%rbp)
+    0.00 :   1eb9:   movsd  %xmm1,-0x1008(%rbp)
+    0.00 :   1ec1:   call   1230 <__fprintf_chk@plt>
+         : 116  main():
+         : 112  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+    0.00 :   1ec6:   mov    %r13,%rdx
+         : 114  printf():
+    0.00 :   1ec9:   mov    $0x1,%edi
+    0.00 :   1ece:   xor    %eax,%eax
+    0.00 :   1ed0:   lea    0x2999(%rip),%rsi        # 4870 <_IO_stdin_used+0x870>
+    0.00 :   1ed7:   call   11e0 <__printf_chk@plt>
+         : 116  main():
+    0.00 :   1edc:   mov    -0x1028(%rbp),%rdx
+         : 113  printf():
+    0.00 :   1ee3:   lea    0x29e6(%rip),%rsi        # 48d0 <_IO_stdin_used+0x8d0>
+    0.00 :   1eea:   xor    %eax,%eax
+    0.00 :   1eec:   mov    $0x1,%edi
+    0.00 :   1ef1:   call   11e0 <__printf_chk@plt>
+         : 116  main():
+    0.00 :   1ef6:   mov    -0x1060(%rbp),%rdx
+         : 113  printf():
+    0.00 :   1efd:   lea    0x2a5c(%rip),%rsi        # 4960 <_IO_stdin_used+0x960>
+    0.00 :   1f04:   xor    %eax,%eax
+    0.00 :   1f06:   mov    $0x1,%edi
+    0.00 :   1f0b:   call   11e0 <__printf_chk@plt>
+         : 116  main():
+    0.00 :   1f10:   mov    $0x1,%edi
+         : 113  printf():
+    0.00 :   1f15:   mov    $0x1,%eax
+    0.00 :   1f1a:   movsd  -0x1008(%rbp),%xmm1
+    0.00 :   1f22:   lea    0x2a97(%rip),%rsi        # 49c0 <_IO_stdin_used+0x9c0>
+    0.00 :   1f29:   movapd %xmm1,%xmm0
+    0.00 :   1f2d:   call   11e0 <__printf_chk@plt>
+         : 117  main():
+    0.00 :   1f32:   mov    $0x1,%edi
+         : 113  printf():
+    0.00 :   1f37:   mov    $0x1,%eax
+    0.00 :   1f3c:   movsd  -0x1010(%rbp),%xmm2
+    0.00 :   1f44:   lea    0x2aad(%rip),%rsi        # 49f8 <_IO_stdin_used+0x9f8>
+    0.00 :   1f4b:   movapd %xmm2,%xmm0
+    0.00 :   1f4f:   call   11e0 <__printf_chk@plt>
+         : 117  main():
+    0.00 :   1f54:   mov    $0x1,%edi
+         : 113  printf():
+    0.00 :   1f59:   mov    $0x1,%eax
+    0.00 :   1f5e:   movsd  -0x1018(%rbp),%xmm3
+    0.00 :   1f66:   lea    0x2ac3(%rip),%rsi        # 4a30 <_IO_stdin_used+0xa30>
+    0.00 :   1f6d:   movapd %xmm3,%xmm0
+    0.00 :   1f71:   movsd  %xmm3,-0x1008(%rbp)
+    0.00 :   1f79:   call   11e0 <__printf_chk@plt>
+         : 118  main():
+         : 378  printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*my_fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
+    0.00 :   1f7e:   movsd  0x2de2(%rip),%xmm0        # 4d68 <_IO_stdin_used+0xd68>
+    0.00 :   1f86:   movsd  -0x1008(%rbp),%xmm3
+         : 381  my_fabs(double):
+         : 87   return (x < 0) ? -x : x;
+    0.00 :   1f8e:   pxor   %xmm7,%xmm7
+    0.00 :   1f92:   movsd  -0x1020(%rbp),%xmm4
+    0.00 :   1f9a:   movsd  -0x1030(%rbp),%xmm5
+         : 91   main():
+         : 378  printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*my_fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
+    0.00 :   1fa2:   subsd  %xmm0,%xmm3
+         : 380  my_fabs(double):
+         : 87   return (x < 0) ? -x : x;
+    0.00 :   1fa6:   comisd %xmm3,%xmm7
+    0.00 :   1faa:   jbe    1fb4 <main+0xd54>
+    0.00 :   1fac:   xorpd  0x2c6c(%rip),%xmm3        # 4c20 <_IO_stdin_used+0xc20>
+         : 91   main():
+         : 378  printf("\n  PERCENT ERROR of pV/nT AND GAS CONSTANT: %15.12f\n",100*my_fabs(gc-8.3144598)/8.3144598); // NOTA: molar gas constant,
+    0.00 :   1fb4:   mulsd  0x2db4(%rip),%xmm3        # 4d70 <_IO_stdin_used+0xd70>
+    0.00 :   1fbc:   mov    $0x1,%edi
+         : 113  printf():
+    0.00 :   1fc1:   lea    0x2aa0(%rip),%rsi        # 4a68 <_IO_stdin_used+0xa68>
+    0.00 :   1fc8:   mov    $0x1,%eax
+    0.00 :   1fcd:   movsd  %xmm5,-0x1008(%rbp)
+    0.00 :   1fd5:   movsd  %xmm4,-0x1010(%rbp)
+         : 116  main():
+    0.00 :   1fdd:   divsd  %xmm0,%xmm3
+         : 379  printf():
+    0.00 :   1fe1:   movapd %xmm3,%xmm0
+    0.00 :   1fe5:   call   11e0 <__printf_chk@plt>
+         : 114  main():
+    0.00 :   1fea:   mov    $0x1,%edi
+         : 113  printf():
+    0.00 :   1fef:   mov    $0x1,%eax
+    0.00 :   1ff4:   movsd  -0x1010(%rbp),%xmm4
+    0.00 :   1ffc:   lea    0x2a9d(%rip),%rsi        # 4aa0 <_IO_stdin_used+0xaa0>
+    0.00 :   2003:   movapd %xmm4,%xmm0
+    0.00 :   2007:   call   11e0 <__printf_chk@plt>
+         : 117  main():
+    0.00 :   200c:   mov    $0x1,%edi
+         : 113  printf():
+    0.00 :   2011:   mov    $0x1,%eax
+    0.00 :   2016:   movsd  -0x1008(%rbp),%xmm5
+    0.00 :   201e:   lea    0x2ab3(%rip),%rsi        # 4ad8 <_IO_stdin_used+0xad8>
+    0.00 :   2025:   movapd %xmm5,%xmm0
+    0.00 :   2029:   call   11e0 <__printf_chk@plt>
+         : 117  main():
+    0.00 :   202e:   mov    0x7a414(%rip),%edx        # 7c448 <N>
+         : 113  printf():
+    0.00 :   2034:   lea    0x2ad5(%rip),%rsi        # 4b10 <_IO_stdin_used+0xb10>
+    0.00 :   203b:   xor    %eax,%eax
+    0.00 :   203d:   mov    $0x1,%edi
+    0.00 :   2042:   call   11e0 <__printf_chk@plt>
+         : 116  main():
+         : 388  fclose(tfp);
+    0.00 :   2047:   mov    %r15,%rdi
+    0.00 :   204a:   call   1170 <fclose@plt>
+         : 389  fclose(ofp);
+    0.00 :   204f:   mov    %r14,%rdi
+    0.00 :   2052:   call   1170 <fclose@plt>
+         : 390  fclose(afp);
+    0.00 :   2057:   mov    -0x1080(%rbp),%rdi
+    0.00 :   205e:   call   1170 <fclose@plt>
+         : 393  }
+    0.00 :   2063:   mov    -0x38(%rbp),%rax
+    0.00 :   2067:   sub    %fs:0x28,%rax
+    0.00 :   2070:   jne    21ad <main+0xf4d>
+    0.00 :   2076:   add    $0x1068,%rsp
+    0.00 :   207d:   xor    %eax,%eax
+    0.00 :   207f:   pop    %rbx
+    0.00 :   2080:   pop    %r12
+    0.00 :   2082:   pop    %r13
+    0.00 :   2084:   pop    %r14
+    0.00 :   2086:   pop    %r15
+    0.00 :   2088:   pop    %rbp
+    0.00 :   2089:   ret
+    0.00 :   208a:   lea    0x2b58(%rip),%rsi        # 4be9 <_IO_stdin_used+0xbe9>
+         : 113  printf():
+    0.00 :   2091:   mov    $0x1,%edi
+    0.00 :   2096:   xor    %eax,%eax
+    0.00 :   2098:   call   11e0 <__printf_chk@plt>
+    0.00 :   209d:   jmp    1960 <main+0x700>
+         : 116  MeanSquaredVelocity():
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   20a2:   pxor   %xmm0,%xmm0
+    0.00 :   20a6:   movapd %xmm7,%xmm6
+         : 459  Kinetic():
+         : 468  kin =0.;
+    0.00 :   20aa:   movapd %xmm7,%xmm9
+         : 470  main():
+         : 348  Temp = m*mvs/(3*kB) * TempFac;
+    0.00 :   20af:   movsd  0x4f70(%rip),%xmm10        # 7028 <m>
+         : 350  MeanSquaredVelocity():
+         : 456  v2 = (vx2+vy2+vz2)/N;
+    0.00 :   20b8:   cvtsi2sd %esi,%xmm0
+    0.00 :   20bc:   divsd  %xmm0,%xmm6
+         : 459  Kinetic():
+         : 469  for (int i=0; i<N; i++) {
+    0.00 :   20c0:   jmp    1bba <main+0x95a>
+         : 471  main():
+    0.00 :   20c5:   lea    0x2b23(%rip),%rsi        # 4bef <_IO_stdin_used+0xbef>
+         : 113  printf():
+    0.00 :   20cc:   mov    $0x1,%edi
+    0.00 :   20d1:   xor    %eax,%eax
+    0.00 :   20d3:   call   11e0 <__printf_chk@plt>
+    0.00 :   20d8:   jmp    1960 <main+0x700>
+         : 116  MeanSquaredVelocity():
+         : 446  double vz2 = 0;
+    0.00 :   20dd:   movapd %xmm7,%xmm3
+         : 445  double vy2 = 0;
+    0.00 :   20e1:   movapd %xmm7,%xmm4
+         : 444  double vx2 = 0;
+    0.00 :   20e5:   movapd %xmm7,%xmm5
+         : 449  for (int i=0; i<N; i++) {
+    0.00 :   20e9:   xor    %eax,%eax
+    0.00 :   20eb:   lea    0x3f98e(%rip),%rdx        # 41a80 <v>
+    0.00 :   20f2:   jmp    1a69 <main+0x809>
+         : 453  main():
+    0.00 :   20f7:   lea    0x2af7(%rip),%rsi        # 4bf5 <_IO_stdin_used+0xbf5>
+         : 113  printf():
+    0.00 :   20fe:   mov    $0x1,%edi
+    0.00 :   2103:   xor    %eax,%eax
+    0.00 :   2105:   call   11e0 <__printf_chk@plt>
+    0.00 :   210a:   jmp    1960 <main+0x700>
+         : 116  main():
+    0.00 :   210f:   lea    0x2ae5(%rip),%rsi        # 4bfb <_IO_stdin_used+0xbfb>
+         : 113  printf():
+    0.00 :   2116:   mov    $0x1,%edi
+    0.00 :   211b:   xor    %eax,%eax
+    0.00 :   211d:   call   11e0 <__printf_chk@plt>
+    0.00 :   2122:   jmp    1960 <main+0x700>
+         : 116  main():
+    0.00 :   2127:   lea    0x2ad3(%rip),%rsi        # 4c01 <_IO_stdin_used+0xc01>
+         : 113  printf():
+    0.00 :   212e:   mov    $0x1,%edi
+    0.00 :   2133:   xor    %eax,%eax
+    0.00 :   2135:   call   11e0 <__printf_chk@plt>
+    0.00 :   213a:   jmp    1960 <main+0x700>
+         : 116  main():
+    0.00 :   213f:   lea    0x2ac1(%rip),%rsi        # 4c07 <_IO_stdin_used+0xc07>
+         : 113  printf():
+    0.00 :   2146:   mov    $0x1,%edi
+    0.00 :   214b:   xor    %eax,%eax
+    0.00 :   214d:   call   11e0 <__printf_chk@plt>
+    0.00 :   2152:   jmp    1960 <main+0x700>
+         : 116  main():
+    0.00 :   2157:   lea    0x2aaf(%rip),%rdi        # 4c0d <_IO_stdin_used+0xc0d>
+         : 113  printf():
+    0.00 :   215e:   call   1150 <puts@plt>
+    0.00 :   2163:   jmp    1960 <main+0x700>
+         : 114  main():
+         : 193  timefac = 8.051563913585078e-13;
+    0.00 :   2168:   movsd  0x2b98(%rip),%xmm7        # 4d08 <_IO_stdin_used+0xd08>
+    0.00 :   2170:   movsd  %xmm7,-0x1030(%rbp)
+         : 191  PressFac = 59935428.40275003;
+    0.00 :   2178:   movsd  0x2b90(%rip),%xmm7        # 4d10 <_IO_stdin_used+0xd10>
+    0.00 :   2180:   movsd  %xmm7,-0x1038(%rbp)
+         : 192  TempFac = 199.1817584391428;
+    0.00 :   2188:   movsd  0x2b88(%rip),%xmm7        # 4d18 <_IO_stdin_used+0xd18>
+    0.00 :   2190:   movsd  %xmm7,-0x1020(%rbp)
+         : 190  VolFac = 4.5882712000000004e-29;
+    0.00 :   2198:   movsd  0x2b80(%rip),%xmm7        # 4d20 <_IO_stdin_used+0xd20>
+    0.00 :   21a0:   movsd  %xmm7,-0x1058(%rbp)
+    0.00 :   21a8:   jmp    1502 <main+0x2a2>
+         : 393  }
+    0.00 :   21ad:   call   1180 <__stack_chk_fail@plt>
+         : 105  return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+    0.00 :   21b2:   mov    0x4ec7(%rip),%rcx        # 7080 <stderr@GLIBC_2.2.5>
+         : 107  fprintf():
+    0.00 :   21b9:   mov    $0x15,%edx
+    0.00 :   21be:   mov    $0x1,%esi
+    0.00 :   21c3:   lea    0x29dd(%rip),%rdi        # 4ba7 <_IO_stdin_used+0xba7>
+    0.00 :   21ca:   call   1220 <fwrite@plt>
+         : 109  main():
+         : 223  exit(1);
+    0.00 :   21cf:   mov    $0x1,%edi
+    0.00 :   21d4:   call   1210 <exit@plt>
+    0.00 :   21d9:   mov    0x4ea0(%rip),%rcx        # 7080 <stderr@GLIBC_2.2.5>
+         : 106  fprintf():
+    0.00 :   21e0:   mov    $0x13,%edx
+    0.00 :   21e5:   mov    $0x1,%esi
+    0.00 :   21ea:   lea    0x29cc(%rip),%rdi        # 4bbd <_IO_stdin_used+0xbbd>
+    0.00 :   21f1:   call   1220 <fwrite@plt>
+         : 109  main():
+         : 241  exit(1);
+    0.00 :   21f6:   mov    $0x1,%edi
+    0.00 :   21fb:   call   1210 <exit@plt>
+    0.00 :   2200:   mov    0x4e79(%rip),%rcx        # 7080 <stderr@GLIBC_2.2.5>
+         : 106  fprintf():
+    0.00 :   2207:   mov    $0x15,%edx
+    0.00 :   220c:   mov    $0x1,%esi
+    0.00 :   2211:   lea    0x2966(%rip),%rdi        # 4b7e <_IO_stdin_used+0xb7e>
+    0.00 :   2218:   call   1220 <fwrite@plt>
+         : 109  main():
+         : 159  exit(1);
+    0.00 :   221d:   mov    $0x1,%edi
+    0.00 :   2222:   call   1210 <exit@plt>
+    0.00 :   2227:   mov    0x4e52(%rip),%rcx        # 7080 <stderr@GLIBC_2.2.5>
+         : 106  fprintf():
+    0.00 :   222e:   mov    $0x16,%edx
+    0.00 :   2233:   mov    $0x1,%esi
+    0.00 :   2238:   lea    0x2905(%rip),%rdi        # 4b44 <_IO_stdin_used+0xb44>
+    0.00 :   223f:   call   1220 <fwrite@plt>
+         : 109  main():
+         : 111  exit(1);
+    0.00 :   2244:   mov    $0x1,%edi
+    0.00 :   2249:   call   1210 <exit@plt>
