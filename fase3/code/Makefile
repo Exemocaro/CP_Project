@@ -30,4 +30,4 @@ runpar: MDpar.exe
 	./MDpar.exe < inputdata.txt
 
 runparmpi: MDparmpi.exe
-	mpirun -np 4 ./MDparmpi.exe < inputdata.txt
+	mpirun -np 2 ./MDparmpi.exe < inputdata.txt

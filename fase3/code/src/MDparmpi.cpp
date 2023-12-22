@@ -648,7 +648,7 @@ double computeAccelerationsAndPot(int size, int rank){
     // Reduce all local potentials to a global potential on the root process
     // ------------------------------------------------------------------------------------------- reduce
     // MPI_Reduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD); 
-    
+
     // ------------------------------------------------------------------------------------------- reduce all
     MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
@@ -701,16 +701,22 @@ double computeAccelerationsAndPot(int size, int rank){
     //     MPI_Send(&localPot, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
     // }
 
-    // ------------------------------------------------------------------------------------------ send & recv (pipeline)
+    // ------------------------------------------------------------------------------------------ send & recv (ring-like)
+    // double recvPot;
+    // MPI_Status status;
     // if (rank == 0) {
-    //     // Root process: send its local potential to the next process
+    //     // Root process sends to next and receives from last
     //     MPI_Send(&localPot, 1, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
+    //     MPI_Recv(&recvPot, 1, MPI_DOUBLE, size - 1, 0, MPI_COMM_WORLD, &status);
+    //     Pot = recvPot + localPot;
+    //     printf("Rank %d: Total Potential: %f\n", rank, Pot);
     // } else if (rank == size - 1) {
-    //     // Last process: receive the accumulated potential and print it
+    //     // Last process receives, adds, and sends back to root
     //     MPI_Recv(&recvPot, 1, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
-    //     printf("Rank %d: Total Potential: %f\n", rank, recvPot + localPot);
+    //     localPot += recvPot;
+    //     MPI_Send(&localPot, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
     // } else {
-    //     // Intermediate processes: receive, add their potential, and send forward
+    //     // Intermediate processes: receive, add, and send forward
     //     MPI_Recv(&recvPot, 1, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
     //     localPot += recvPot;
     //     MPI_Send(&localPot, 1, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
@@ -844,9 +850,6 @@ double computeAccelerationsAndPot1(int size, int rank) {
 
     return Pot;
 }
-
-
-
 
 /*
 double computeAccelerationsAndPot(int size, int rank){
