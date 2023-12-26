@@ -106,12 +106,9 @@ int main()
     int i;
     int tenp, NumTime;
     double dt = 0, Vol = 0, Temp = 0, Press = 0, Pavg = 0, Tavg = 0, rho = 0;
-    double local_rho = 0;
     double VolFac, TempFac, PressFac, timefac;
-    double local_VolFac, local_TempFac, local_PressFac, local_timefac;
     double KE, PE, mvs, gc, Z;
     char trash[10000], prefix[1000], tfn[1000], ofn[1000], afn[1000];
-    char local_trash[10000], local_prefix[1000], local_tfn[1000], local_ofn[1000], local_afn[1000];
     FILE *infp, *tfp, *ofp, *afp;
 
     // MPI
@@ -120,29 +117,29 @@ int main()
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     
-    if (rank == 0){
+    if (rank == 0){ // root process
         printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         printf("                  WELCOME TO WILLY P CHEM MD!\n");
         printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         printf("\n  ENTER A TITLE FOR YOUR CALCULATION!\n");
-        if (scanf("%s", local_prefix) != 1) {
+        if (scanf("%s", prefix) != 1) {
             fprintf(stderr, "Failed to read 'prefix'\n");
             // Handle the error, e.g., by exiting or asking for input again
         }
-    /* 
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Allreduce(&local_prefix, &prefix, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    */
+        /* 
+        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Allreduce(&local_prefix, &prefix, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        */
 
-    strcpy(tfn,local_prefix);
-    strcat(tfn,"_traj.xyz");
-    strcpy(ofn,local_prefix);
-    strcat(ofn,"_output.txt");
-    strcpy(afn,local_prefix);
-    strcat(afn,"_average.txt");
+        strcpy(tfn, prefix);
+        strcat(tfn,"_traj.xyz");
+        strcpy(ofn, prefix);
+        strcat(ofn,"_output.txt");
+        strcpy(afn, prefix);
+        strcat(afn,"_average.txt");
 
         printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-        printf("                  TITLE ENTERED AS '%s'\n",local_prefix);
+        printf("                  TITLE ENTERED AS '%s'\n", prefix);
         printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         /*     Table of values for Argon relating natural units to SI units:
         *     These are derived from Lennard-Jones parameters from the article
@@ -170,57 +167,49 @@ int main()
         printf("  FOR KRYPTON, TYPE 'Kr' THEN PRESS 'return' TO CONTINUE\n");
         printf("  FOR XENON,   TYPE 'Xe' THEN PRESS 'return' TO CONTINUE\n");
         printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-        if (scanf("%s", local_atype) != 1) {
+        if (scanf("%s", atype) != 1) {
             fprintf(stderr, "Failed to read 'atype'\n");
             // Handle the error
         }
-        if (strcmp(local_atype,"He")==0) {
-            local_VolFac = 1.8399744000000005e-29;
-            local_PressFac = 8152287.336171632;
-            local_TempFac = 10.864459551225972;
-            local_timefac = 1.7572698825166272e-12;
+        if (strcmp(atype,"He")==0) {
+            VolFac = 1.8399744000000005e-29;
+            PressFac = 8152287.336171632;
+            TempFac = 10.864459551225972;
+            timefac = 1.7572698825166272e-12;
         }
-        else if (strcmp(local_atype,"Ne")==0) {
-            local_VolFac = 2.0570823999999997e-29;
-            local_PressFac = 27223022.27659913;
-            local_TempFac = 40.560648991243625;
-            local_timefac = 2.1192341945685407e-12;
+        else if (strcmp(atype,"Ne")==0) {
+            VolFac = 2.0570823999999997e-29;
+            PressFac = 27223022.27659913;
+            TempFac = 40.560648991243625;
+            timefac = 2.1192341945685407e-12;
         }
-        else if (strcmp(local_atype,"Ar")==0) {
-            local_VolFac = 3.7949992920124995e-29;
-            local_PressFac = 51695201.06691862;
-            local_TempFac = 142.0950000000000;
-            local_timefac = 2.09618e-12;
+        else if (strcmp(atype,"Ar")==0) {
+            VolFac = 3.7949992920124995e-29;
+            PressFac = 51695201.06691862;
+            TempFac = 142.0950000000000;
+            timefac = 2.09618e-12;
             //strcpy(atype,"Ar");
         }
-        else if (strcmp(local_atype,"Kr")==0) {
-            local_VolFac = 4.5882712000000004e-29;
-            local_PressFac = 59935428.40275003;
-            local_TempFac = 199.1817584391428;
-            local_timefac = 8.051563913585078e-13;
+        else if (strcmp(atype,"Kr")==0) {
+            VolFac = 4.5882712000000004e-29;
+            PressFac = 59935428.40275003;
+            TempFac = 199.1817584391428;
+            timefac = 8.051563913585078e-13;
         }
-        else if (strcmp(local_atype,"Xe")==0) {
-            local_VolFac = 5.4872e-29;
-            local_PressFac = 70527773.72794868;
-            local_TempFac = 280.30305642163006;
-            local_timefac = 9.018957925790732e-13;
+        else if (strcmp(atype,"Xe")==0) {
+            VolFac = 5.4872e-29;
+            PressFac = 70527773.72794868;
+            TempFac = 280.30305642163006;
+            timefac = 9.018957925790732e-13;
         }
         else {
-            local_VolFac = 3.7949992920124995e-29;
-            local_PressFac = 51695201.06691862;
-            local_TempFac = 142.0950000000000;
-            local_timefac = 2.09618e-12;
-            strcpy(local_atype,"Ar");
+            VolFac = 3.7949992920124995e-29;
+            PressFac = 51695201.06691862;
+            TempFac = 142.0950000000000;
+            timefac = 2.09618e-12;
+            strcpy(atype,"Ar");
         }
-    }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Allreduce(&local_VolFac, &VolFac, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(&local_PressFac, &PressFac, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(&local_TempFac, &TempFac, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(&local_timefac, &timefac, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-
-    if(rank == 0){
         printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         printf("\n                     YOU ARE SIMULATING %s GAS! \n",atype);
         printf("\n  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
@@ -229,19 +218,23 @@ int main()
         printf("\n  YOU WILL NOW ENTER A FEW SIMULATION PARAMETERS\n");
         printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         printf("\n\n  ENTER THE INTIAL TEMPERATURE OF YOUR GAS IN KELVIN\n");
-        if (scanf("%lf", &local_Tinit) != 1) {
+        if (scanf("%lf", &Tinit) != 1) {
             fprintf(stderr, "Failed to read 'Tinit'\n");
             // Handle the error
         }
         // Make sure temperature is a positive number!
-        if (local_Tinit<0.) {
+        if (Tinit<0.) {
             printf("\n  !!!!! ABSOLUTE TEMPERATURE MUST BE A POSITIVE NUMBER!  PLEASE TRY AGAIN WITH A POSITIVE TEMPERATURE!!!\n");
             exit(0);
         }
-    }
+    } // end root process
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Allreduce(&local_Tinit, &Tinit, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Bcast(&VolFac, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&PressFac, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&TempFac, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&timefac, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&Tinit, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
 
     // Convert initial temperature from kelvin to natural units
     Tinit /= TempFac;
@@ -251,14 +244,13 @@ int main()
         printf("  FOR REFERENCE, NUMBER DENSITY OF AN IDEAL GAS AT STP IS ABOUT 40 moles/m^3\n");
         printf("  NUMBER DENSITY OF LIQUID ARGON AT 1 ATM AND 87 K IS ABOUT 35000 moles/m^3\n");
         
-        if (scanf("%lf", &local_rho) != 1) {
+        if (scanf("%lf", &rho) != 1) {
             fprintf(stderr, "Failed to read 'rho'\n");
             // Handle the error
         }
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Allreduce(&local_rho, &rho, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Bcast(&rho, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     N = 10*500;
     Vol = N/(rho*NA);
@@ -361,7 +353,7 @@ int main()
         */
 
         // VERSÃO JUNTA
-        MPI_Barrier(MPI_COMM_WORLD);
+        //MPI_Barrier(MPI_COMM_WORLD);
         Press = VV_Pot(dt, i+1, tfp, size, rank);
         /* if(rank == 0){
             printf("RANK==0 Global_Pot: %f\n", Global_Pot);
@@ -396,7 +388,7 @@ int main()
         
         Tavg += Temp;
         Pavg += Press;
-        MPI_Barrier(MPI_COMM_WORLD);
+        // MPI_Barrier(MPI_COMM_WORLD);
         if(rank == 0){
             fprintf(ofp,"  %8.4e  %20.12g  %20.12g %20.12g  %20.12g  %20.12g \n",i*dt*timefac,Temp,Press,KE, PE, KE+PE);
         }
@@ -429,6 +421,8 @@ int main()
         fclose(ofp);
         fclose(afp);
     }
+
+    //MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize(); // Finalize MPI environment
     return 0;
@@ -592,13 +586,39 @@ double computeAccelerationsAndPot(int size, int rank){
     double localPot = 0.0; // Local potential energy for each process
     double cache[3] = {0};
     
+    
     // Determine the range of particles this process will handle
-    int particles_per_process = (N*3) / size;
+    int particles_per_process = (N*3)-1 / size;
     int start_idx = rank * particles_per_process;
     int end_idx = (rank + 1) * particles_per_process;
 
+    // If N is not divisible evenly by size, handle the last process separately
+    if (rank == size - 1) {
+        end_idx = (N*3)-1;
+    }
+
+    // // Correct particle distribution across processes
+    // int particles_per_process = N*3 / size; // Number of particles per process
+    // int excess_particles = N*3 % size;      // Extra particles to distribute
+
+    // int start_particle_idx = rank * particles_per_process;
+    // int end_particle_idx = (rank + 1) * particles_per_process;
+
+    // // Distribute the excess particles among the first 'excess_particles' ranks
+    // if (rank < excess_particles) {
+    //     start_particle_idx += rank;
+    //     end_particle_idx += rank + 1;
+    // } else {
+    //     start_particle_idx += excess_particles;
+    //     end_particle_idx += excess_particles;
+    // }
+
+    // // Convert particle index to coordinate index
+    // int start_idx = start_particle_idx;
+    // int end_idx = end_particle_idx; // 'end_idx' is exclusive
+
     // loop over all distinct pairs i,j
-    for (int i = start_idx; i < end_idx * 3; i += 3) {
+    for (int i = start_idx; i < end_idx; i += 3) {
     //for (int i = 0; i < (N-1) * 3; i += 3) {
         cache[0] = 0;
         cache[1] = 0;
