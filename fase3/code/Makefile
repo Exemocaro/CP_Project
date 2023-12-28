@@ -1,7 +1,7 @@
 CC = gcc
 MPICC = mpiCC
 SRC = src/
-CFLAGS = -Ofast -funroll-all-loops -ftree-vectorize
+CFLAGS = -Ofast -funroll-all-loops -ftree-vectorize -g
 
 .DEFAULT_GOAL = all
 
@@ -17,7 +17,7 @@ MDpar.exe: $(SRC)/MDpar.cpp
 
 # Parallel version with MPI
 MDparmpi.exe: $(SRC)/MDparmpi.cpp
-	$(MPICC) $(CFLAGS) $(SRC)MDparmpi.cpp -lm -o MDparmpi.exe
+	$(MPICC) $(CFLAGS) $(SRC)MDparmpi.cpp -lm -fopenmp -o MDparmpi.exe
 
 clean:
 	rm -f ./MD*.exe
@@ -30,4 +30,5 @@ runpar: MDpar.exe
 	./MDpar.exe < inputdata.txt
 
 runparmpi: MDparmpi.exe
-	mpirun -np 4 ./MDparmpi.exe < inputdata.txt
+	export OMP_NUM_THREADS=40;\
+	mpirun -np 3 ./MDparmpi.exe < inputdata.txt

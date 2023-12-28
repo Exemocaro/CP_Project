@@ -28,6 +28,7 @@
 #include<math.h>
 #include<string.h>
 #include<mpi.h>
+#include<omp.h>
 
 
 // Number of particles
@@ -126,10 +127,6 @@ int main()
             fprintf(stderr, "Failed to read 'prefix'\n");
             // Handle the error, e.g., by exiting or asking for input again
         }
-        /* 
-        MPI_Barrier(MPI_COMM_WORLD);
-        MPI_Allreduce(&local_prefix, &prefix, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-        */
 
         strcpy(tfn, prefix);
         strcat(tfn,"_traj.xyz");
@@ -234,6 +231,7 @@ int main()
     MPI_Bcast(&TempFac, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(&timefac, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(&Tinit, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&atype, 1, MPI_CHAR, 0, MPI_COMM_WORLD);
 
 
     // Convert initial temperature from kelvin to natural units
@@ -252,7 +250,6 @@ int main()
 
     MPI_Bcast(&rho, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    N = 10*500;
     Vol = N/(rho*NA);
     
     Vol /= VolFac;
@@ -422,7 +419,7 @@ int main()
         fclose(afp);
     }
 
-    //MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize(); // Finalize MPI environment
     return 0;
@@ -585,41 +582,24 @@ double computeAccelerationsAndPot(int size, int rank){
     double Pot = 0.0;
     double localPot = 0.0; // Local potential energy for each process
     double cache[3] = {0};
+    double local_a[N * 3];
     
+    // Initialize the local acceleration array
+    for (int i = 0; i < N * 3; i++) {
+        local_a[i] = 0.0;
+    }
     
-    // Determine the range of particles this process will handle
-    int particles_per_process = (N*3)-1 / size;
-    int start_idx = rank * particles_per_process;
-    int end_idx = (rank + 1) * particles_per_process;
+    int particles_per_process = N / size;
+    int start_idx = rank * particles_per_process * 3;
+    int end_idx = (rank + 1) * particles_per_process * 3;
 
-    // If N is not divisible evenly by size, handle the last process separately
     if (rank == size - 1) {
-        end_idx = (N*3)-1;
+        end_idx = N * 3;  // Handle the remainder in the last process
     }
 
-    // // Correct particle distribution across processes
-    // int particles_per_process = N*3 / size; // Number of particles per process
-    // int excess_particles = N*3 % size;      // Extra particles to distribute
-
-    // int start_particle_idx = rank * particles_per_process;
-    // int end_particle_idx = (rank + 1) * particles_per_process;
-
-    // // Distribute the excess particles among the first 'excess_particles' ranks
-    // if (rank < excess_particles) {
-    //     start_particle_idx += rank;
-    //     end_particle_idx += rank + 1;
-    // } else {
-    //     start_particle_idx += excess_particles;
-    //     end_particle_idx += excess_particles;
-    // }
-
-    // // Convert particle index to coordinate index
-    // int start_idx = start_particle_idx;
-    // int end_idx = end_particle_idx; // 'end_idx' is exclusive
-
     // loop over all distinct pairs i,j
+    //#pragma omp parallel for private(cache) reduction(+:Pot) reduction(+:a) schedule(dynamic)
     for (int i = start_idx; i < end_idx; i += 3) {
-    //for (int i = 0; i < (N-1) * 3; i += 3) {
         cache[0] = 0;
         cache[1] = 0;
         cache[2] = 0;
@@ -647,22 +627,19 @@ double computeAccelerationsAndPot(int size, int rank){
             cache[1]+=f*dy;
             cache[2]+=f*dz;
 
-            a[j] -= f * dx;
-            a[j+1] -= f * dy;
-            a[j+2] -= f * dz;
+            local_a[j] -= f * dx;
+            local_a[j+1] -= f * dy;
+            local_a[j+2] -= f * dz;
 
             // ---------------------- begin pot
             localPot += (inv_rSqd_6 - inv_rSqd_3) * 2;
             // ---------------------- end pot
         }
         // update accelerations of i
-        a[i] += cache[0];
-        a[i+1] += cache[1];
-        a[i+2] += cache[2];
+        local_a[i] += cache[0];
+        local_a[i+1] += cache[1];
+        local_a[i+2] += cache[2];
 
-        //MPI_Allreduce(&a[i], &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-        //double global_a[N*3];
-        //MPI_Allreduce(&a[i], global_a, N*3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
     }
 
     // Reduce all local potentials to a global potential on the root process
@@ -670,8 +647,13 @@ double computeAccelerationsAndPot(int size, int rank){
     // MPI_Reduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD); 
 
     // ------------------------------------------------------------------------------------------- reduce all
-    MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    //printf("Process %d local potential: %f\n", rank, localPot);
 
+    MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    // Reduce local accelerations to a global acceleration array
+    MPI_Allreduce(local_a, a, N * 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+    //MPI_Allreduce(MPI_IN_PLACE, &localPot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
     // -------------------------------------------------------------------------------------------- gather
     // Gather all local potentials to the root process
 
@@ -744,186 +726,6 @@ double computeAccelerationsAndPot(int size, int rank){
 
     return Pot;
 } 
-
-
-double computeAccelerationsAndPot2(int size, int rank){
-    // Assuming N, r, and a are defined elsewhere and passed to this function.
-    // N: Total number of particles
-    // r: Array of particle positions
-    // a: Array of particle accelerations
-
-    double Pot = 0.0;
-    double localPot = 0.0; // Local potential energy for each process
-
-    // Determine the range of particles this process will handle
-    int particles_per_process = N / size;
-    int start_idx = rank * particles_per_process;
-    int end_idx = (rank == size - 1) ? N : (rank + 1) * particles_per_process;
-
-    // loop over all distinct pairs i,j
-    for (int i = start_idx; i < end_idx; i++) {
-        double cache[3] = {0, 0, 0};
-        for (int j = 0; j < N; j++) {
-            if (i != j) {
-                // Calculate differences in positions
-                double dx = r[i*3] - r[j*3];
-                double dy = r[i*3+1] - r[j*3+1];
-                double dz = r[i*3+2] - r[j*3+2];
-
-                // Calculate the squared distance and ensure it's not zero
-                double rSqd = dx * dx + dy * dy + dz * dz;
-                if (rSqd == 0) continue;
-
-                // Calculate inverse powers of rSqd
-                double inv_rSqd = 1.0 / rSqd;
-                double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-                double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
-                double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-                double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
-                double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
-
-                // Calculate the force magnitude
-                double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
-
-                cache[0] += f * dx;
-                cache[1] += f * dy;
-                cache[2] += f * dz;
-
-                // ---------------------- begin pot
-                localPot += (inv_rSqd_6 - inv_rSqd_3) * 2;
-                // ---------------------- end pot
-            }
-        }
-        // update accelerations of i
-        a[i*3] += cache[0];
-        a[i*3+1] += cache[1];
-        a[i*3+2] += cache[2];
-    }
-
-    // Reduce all local potentials to a global potential
-    MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-
-    return Pot;
-}
-
-
-double computeAccelerationsAndPot1(int size, int rank) {
-    // Potential
-    double Pot = 0.0;
-    double localPot = 0.0; // Local potential energy for each process
-    
-    // Determine the range of particles this process will handle
-    int particles_per_process = N / size;
-    int start_idx = rank * particles_per_process * 3;
-    int end_idx = (rank + 1) * particles_per_process * 3;
-    if (rank == size - 1) {
-        end_idx = N * 3; // Handle remainder in the last process
-    }
-
-    // loop over all distinct pairs i,j
-    for (int i = start_idx; i < end_idx; i += 3) {
-        double cache[3] = {0, 0, 0};
-        for (int j = 0; j < N * 3; j += 3) {
-            if (i != j) { // Ensure that i and j are not the same particle
-                // Calculate differences in positions
-                double dx = r[i] - r[j];
-                double dy = r[i + 1] - r[j + 1];
-                double dz = r[i + 2] - r[j + 2];
-
-                // Calculate the squared distance
-                double rSqd = dx * dx + dy * dy + dz * dz;
-
-                // Calculate inverse powers of rSqd
-                double inv_rSqd = 1.0 / rSqd;
-                double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-                double inv_rSqd_3 = inv_rSqd_2 * inv_rSqd;
-                double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-                double inv_rSqd_6 = inv_rSqd_4 * inv_rSqd_2;
-                double inv_rSqd_7 = inv_rSqd_6 * inv_rSqd;
-
-                // Calculate the force magnitude
-                double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
-
-                cache[0] += f * dx;
-                cache[1] += f * dy;
-                cache[2] += f * dz;
-
-                // update accelerations of j, only if j is within the range
-                if (j >= start_idx && j < end_idx) {
-                    a[j] -= f * dx;
-                    a[j + 1] -= f * dy;
-                    a[j + 2] -= f * dz;
-                }
-
-                // Potential energy calculation
-                localPot += 4 * (inv_rSqd_6 - inv_rSqd_3); // Factor of 4 for Lennard-Jones potential
-            }
-        }
-        // update accelerations of i
-        a[i] += cache[0];
-        a[i + 1] += cache[1];
-        a[i + 2] += cache[2];
-    }
-
-    // Reduce all local potentials to a global potential on all processes
-    MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-
-    return Pot;
-}
-
-/*
-double computeAccelerationsAndPot(int size, int rank){
-    // Potential
-    double Pot;
-    double cache[3] = {0};
-    Pot = 0.0;
-
-    
-    // loop over all distinct pairs i,j
-    for (int i = 0; i < (N-1) * 3; i += 3) {
-        cache[0] = 0;
-        cache[1] = 0;
-        cache[2] = 0;
-        for (int j = i + 3; j < N * 3; j += 3) {
-            // Calculate differences in positions
-            double dx = r[i] - r[j];
-            double dy = r[i+1] - r[j+1];
-            double dz = r[i+2] - r[j+2];
-
-            // Calculate the squared distance
-            double rSqd = dx * dx + dy * dy + dz * dz;
-
-            // Calculate inverse powers of rSqd
-            double inv_rSqd = 1.0 / rSqd;
-            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
-            double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
-            double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
-
-            // Calculate the force magnitude
-            double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
-
-            cache[0]+=f*dx;
-            cache[1]+=f*dy;
-            cache[2]+=f*dz;
-
-            a[j] -= f * dx;
-            a[j+1] -= f * dy;
-            a[j+2] -= f * dz;
-
-            // ---------------------- begin pot
-            Pot += (inv_rSqd_6 - inv_rSqd_3) * 2;
-            // ---------------------- end pot
-        }
-        // update accelerations of i
-        a[i] += cache[0];
-        a[i+1] += cache[1];
-        a[i+2] += cache[2];
-    }
-
-    return Pot;
-}*/
 
 double VV_Pot(double dt, int iter, FILE *fp, int size, int rank){
     // Velocity Verlet
