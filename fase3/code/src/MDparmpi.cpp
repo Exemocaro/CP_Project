@@ -98,7 +98,6 @@ double computeAccelerationsAndPot();
 double MSV_Kinetic();
 
 // Junction of VelocityVerlet() and Potential()
-//double VV_Pot(double, int, FILE*, int size, int rank);
 double VV_Pot(double, int, FILE*, int size, int rank);
 
 int main()
@@ -576,19 +575,15 @@ void computeAccelerations() {
     }
 }
 
+//int debugNums = 0;
 
 double computeAccelerationsAndPot(int size, int rank){
     // Potential
     double Pot = 0.0;
     double localPot = 0.0; // Local potential energy for each process
     double cache[3] = {0};
-    double local_a[N * 3];
-    
-    // Initialize the local acceleration array
-    for (int i = 0; i < N * 3; i++) {
-        local_a[i] = 0.0;
-    }
-    
+    double local_a[N*3];
+
     int particles_per_process = N / size;
     int start_idx = rank * particles_per_process * 3;
     int end_idx = (rank + 1) * particles_per_process * 3;
@@ -597,8 +592,49 @@ double computeAccelerationsAndPot(int size, int rank){
         end_idx = N * 3;  // Handle the remainder in the last process
     }
 
+    // Initialize the local acceleration array
+    for (int i = 0; i < N * 3; i++) {
+        local_a[i] = 0.0;
+    }
+
+    // int remainder = rank == size - 1 ? N % size : 0;
+    // int local_N = (particles_per_process + remainder) * 3;
+
+    // double* local_a = (double*)malloc(local_N * sizeof(double)); // Allocate only for the local portion
+
+
+    /* 
+    if (rank == size - 1) {
+        if(debugNums == 0){
+            printf("BEFORE -> Size: %d | Rank %d: start_idx: %d, end_idx: %d\n", size, rank, start_idx, end_idx);
+            debugNums = 1;
+        }
+        end_idx = N * 3;  // Handle the remainder in the last process
+        if(debugNums == 1){
+            printf("AFTER -> Size: %d | Rank %d: start_idx: %d, end_idx: %d\n", size, rank, start_idx, end_idx);
+            debugNums = 2;
+        }
+    }
+    */
+    
+    /* 
+    size = 2:
+        rank = 0 -> end_idx = 1 * N/2 * 3
+        rank = 1 -> end_idx = 2 * N/2 * 3 = N*3 (sem if)
+        rank = 1 -> end_idx =  N*3 (com if)
+
+    size = 3:
+        rank = 0 -> end_idx = 1 * N/3 * 3
+        rank = 1 -> end_idx = 2 * N/3 * 3
+        rank = 1 -> end_idx = 3 * N/3 * 3 != N*3 (sem if)
+
+        rank = 2 -> end_idx = N*3 (com if)
+    */
+
     // loop over all distinct pairs i,j
+
     //#pragma omp parallel for private(cache) reduction(+:Pot) reduction(+:a) schedule(dynamic)
+    #pragma omp parallel for private(cache) reduction(+:localPot) reduction(+:local_a) schedule(dynamic)
     for (int i = start_idx; i < end_idx; i += 3) {
         cache[0] = 0;
         cache[1] = 0;
@@ -639,93 +675,40 @@ double computeAccelerationsAndPot(int size, int rank){
         local_a[i] += cache[0];
         local_a[i+1] += cache[1];
         local_a[i+2] += cache[2];
-
     }
-
-    // Reduce all local potentials to a global potential on the root process
-    // ------------------------------------------------------------------------------------------- reduce
-    // MPI_Reduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD); 
-
-    // ------------------------------------------------------------------------------------------- reduce all
-    //printf("Process %d local potential: %f\n", rank, localPot);
-
+    
     MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    // Reduce local accelerations to a global acceleration array
     MPI_Allreduce(local_a, a, N * 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    /* 
+    //
+    //local_a:         | global_a:
+    //0: 0 -> 2500     |
+    //                 | 0 -> 5000
+    //1: 2500 -> 5000  |
 
-    //MPI_Allreduce(MPI_IN_PLACE, &localPot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    // -------------------------------------------------------------------------------------------- gather
-    // Gather all local potentials to the root process
+    */
 
-    // double *allLocalPots = NULL;
-    // if (rank == 0) {
-    //     allLocalPots = (double*) malloc(size * sizeof(double));
-    // }
-    // MPI_Gather(&localPot, 1, MPI_DOUBLE, allLocalPots, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
+    // // Gather all local potentials to the root process
+    //MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
-    // Root process sums up all potentials
+    // // Gather all local accelerations to the root process
+    // MPI_Gather(local_a, N * 3, MPI_DOUBLE, a, N * 3, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // if (rank == 0) {
-    //     Pot = 0.0;
-    //     for (int i = 0; i < size; i++) {
-    //         Pot += allLocalPots[i];
-    //     }
-    //     free(allLocalPots);
-    // }
+    // free(local_a);
 
-    // ----------------------------------------------------------------------------------------- gather all
-    // double allPots[size]; // Array to store all local potentials
+    // // print of a vector
+    // printf("RANK %d: a[0]: %f | a[1]: %f | a[2]: %f\n", rank, a[0], a[1], a[2]);
 
-    // MPI_Allgather(&localPot, 1, MPI_DOUBLE, allPots, 1, MPI_DOUBLE, MPI_COMM_WORLD);
+    // Gather all localPots to the root process
+    //MPI_Gather(&localPot, 1, MPI_DOUBLE, allPots, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // Sum up all local potentials
-    // for (int i = 0; i < size; i++) {
-    //     Pot += allPots[i];
-    // }
-    // printf("Rank %d: Total Potential: %f\n", rank, Pot);
+    // Gather all local_a arrays to the root process
+    //MPI_Gather(local_a, local_N, MPI_DOUBLE, a, N * 3, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // Optionally, broadcast the total potential back to all processes
-
-    //MPI_Bcast(&Pot, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    // ------------------------------------------------------------------------------------------- send & recv
-    // if (rank == 0) {
-    //     // Root process: receive local potentials from all other processes and sum them up
-    //     Pot = localPot; // include the root's own local potential
-    //  double recvPot;
-    //  MPI_Status status;
-    //     for (int i = 1; i < size; i++) {
-    //         MPI_Recv(&recvPot, 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    //         Pot += recvPot;
-    //     }
-    // } else {
-    //     // All other processes: send local potential to the root process
-    //     MPI_Send(&localPot, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
-    // }
-
-    // ------------------------------------------------------------------------------------------ send & recv (ring-like)
-    // double recvPot;
-    // MPI_Status status;
-    // if (rank == 0) {
-    //     // Root process sends to next and receives from last
-    //     MPI_Send(&localPot, 1, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
-    //     MPI_Recv(&recvPot, 1, MPI_DOUBLE, size - 1, 0, MPI_COMM_WORLD, &status);
-    //     Pot = recvPot + localPot;
-    //     printf("Rank %d: Total Potential: %f\n", rank, Pot);
-    // } else if (rank == size - 1) {
-    //     // Last process receives, adds, and sends back to root
-    //     MPI_Recv(&recvPot, 1, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
-    //     localPot += recvPot;
-    //     MPI_Send(&localPot, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
-    // } else {
-    //     // Intermediate processes: receive, add, and send forward
-    //     MPI_Recv(&recvPot, 1, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
-    //     localPot += recvPot;
-    //     MPI_Send(&localPot, 1, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
-    // }
+    //free(local_a);
 
     return Pot;
-} 
+}
 
 double VV_Pot(double dt, int iter, FILE *fp, int size, int rank){
     // Velocity Verlet

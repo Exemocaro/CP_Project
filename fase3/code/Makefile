@@ -31,4 +31,4 @@ runpar: MDpar.exe
 
 runparmpi: MDparmpi.exe
 	export OMP_NUM_THREADS=40;\
-	mpirun -np 3 ./MDparmpi.exe < inputdata.txt
+	mpirun -np 4 ./MDparmpi.exe < inputdata.txt
