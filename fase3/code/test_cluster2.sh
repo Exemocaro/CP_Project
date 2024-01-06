@@ -11,7 +11,7 @@ processes=(1 2 4 8 10 12 16 20 24 28 32 36 40 43 45 47)
 for nprocs in "${processes[@]}"
 do
     echo "Running with ${nprocs} processes:"
-    export OMP_NUM_THREADS=${processes}; time mpirun -np ${nprocs} ./MDparmpi.exe < inputdata.txt > output/output_${nprocs}.txt
+    export OMP_NUM_THREADS=${40}; time mpirun -np ${nprocs} ./MDparmpi.exe < inputdata.txt > output/output_${nprocs}.txt
 
     # cd output
 
