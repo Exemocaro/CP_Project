@@ -123,7 +123,6 @@ int main()
         printf("\n  ENTER A TITLE FOR YOUR CALCULATION!\n");
         if (scanf("%s", prefix) != 1) {
             fprintf(stderr, "Failed to read 'prefix'\n");
-            // Handle the error, e.g., by exiting or asking for input again
         }
 
         strcpy(tfn, prefix);
@@ -164,7 +163,6 @@ int main()
         printf("  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         if (scanf("%s", atype) != 1) {
             fprintf(stderr, "Failed to read 'atype'\n");
-            // Handle the error
         }
         if (strcmp(atype,"He")==0) {
             VolFac = 1.8399744000000005e-29;
@@ -215,7 +213,6 @@ int main()
         printf("\n\n  ENTER THE INTIAL TEMPERATURE OF YOUR GAS IN KELVIN\n");
         if (scanf("%lf", &Tinit) != 1) {
             fprintf(stderr, "Failed to read 'Tinit'\n");
-            // Handle the error
         }
         // Make sure temperature is a positive number!
         if (Tinit<0.) {
@@ -242,7 +239,6 @@ int main()
         
         if (scanf("%lf", &rho) != 1) {
             fprintf(stderr, "Failed to read 'rho'\n");
-            // Handle the error
         }
     }
 
@@ -252,23 +248,24 @@ int main()
     
     Vol /= VolFac;
     
-    //  Limiting N to MAXPART for practical reasons
-    if (N>=MAXPART) {
-        printf("\n\n\n  MAXIMUM NUMBER OF PARTICLES IS %i\n\n  PLEASE ADJUST YOUR INPUT FILE ACCORDINGLY \n\n", MAXPART);
-        exit(0);
+    if(rank == 0){
+        //  Limiting N to MAXPART for practical reasons
+        if (N>=MAXPART) {
+            printf("\n\n\n  MAXIMUM NUMBER OF PARTICLES IS %i\n\n  PLEASE ADJUST YOUR INPUT FILE ACCORDINGLY \n\n", MAXPART);
+            exit(0);
+        }
+        //  Check to see if the volume makes sense - is it too small?
+        //  Remember VDW radius of the particles is 1 natural unit of length
+        //  and volume = L*L*L, so if V = N*L*L*L = N, then all the particles
+        //  will be initialized with an interparticle separation equal to 2xVDW radius
+        if (Vol<N) {
+            printf("\n\n\n  YOUR DENSITY IS VERY HIGH!\n\n");
+            printf("  THE NUMBER OF PARTICLES IS %i AND THE AVAILABLE VOLUME IS %f NATURAL UNITS\n",N,Vol);
+            printf("  SIMULATIONS WITH DENSITY GREATER THAN 1 PARTCICLE/(1 Natural Unit of Volume) MAY DIVERGE\n");
+            printf("  PLEASE ADJUST YOUR INPUT FILE ACCORDINGLY AND RETRY\n\n");
+            exit(0);
+        }
     }
-    //  Check to see if the volume makes sense - is it too small?
-    //  Remember VDW radius of the particles is 1 natural unit of length
-    //  and volume = L*L*L, so if V = N*L*L*L = N, then all the particles
-    //  will be initialized with an interparticle separation equal to 2xVDW radius
-    if (Vol<N) {
-        printf("\n\n\n  YOUR DENSITY IS VERY HIGH!\n\n");
-        printf("  THE NUMBER OF PARTICLES IS %i AND THE AVAILABLE VOLUME IS %f NATURAL UNITS\n",N,Vol);
-        printf("  SIMULATIONS WITH DENSITY GREATER THAN 1 PARTCICLE/(1 Natural Unit of Volume) MAY DIVERGE\n");
-        printf("  PLEASE ADJUST YOUR INPUT FILE ACCORDINGLY AND RETRY\n\n");
-        exit(0);
-    }
-
     
     // Vol = L*L*L;
     // Length of the box in natural units:
@@ -348,14 +345,9 @@ int main()
         */
 
         // VERSÃO JUNTA
-        //MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(MPI_COMM_WORLD);
         Press = VV_Pot(dt, i+1, tfp, size, rank);
-        /* if(rank == 0){
-            printf("RANK==0 Global_Pot: %f\n", Global_Pot);
-        }
-        else{
-            printf("NOT ROOT Global_Pot: %f\n", Global_Pot);
-        } */
+        MPI_Barrier(MPI_COMM_WORLD);
         
         Press *= PressFac;
         // Updated the potential value
@@ -396,6 +388,8 @@ int main()
     Z = Pavg*(Vol*VolFac)/(N*kBSI*Tavg);
     gc = NA*Pavg*(Vol*VolFac)/(N*Tavg);
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
     if (rank == 0){
         fprintf(afp,"     Total Time (s)                 T (K)                         P (Pa)                PV/nT (J/(mol K))                  Z                        V (m^3)                       N\n");
         fprintf(afp," -----------------------   ----------------------       -------------------------   -------------------------   ------------------------   -----------------------   ---------------------------\n");
@@ -416,8 +410,6 @@ int main()
         fclose(ofp);
         fclose(afp);
     }
-
-    MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize(); // Finalize MPI environment
     return 0;
@@ -585,6 +577,9 @@ double computeAccelerationsAndPot(int size, int rank){
     int particles_per_process = N / size;
     int start_idx = rank * particles_per_process * 3;
     int end_idx = (rank + 1) * particles_per_process * 3;
+    int extra;
+
+    MPI_Bcast(r, MAXPART3, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (rank == size - 1) {
         end_idx = N * 3;  // Handle the remainder in the last process
@@ -636,6 +631,8 @@ double computeAccelerationsAndPot(int size, int rank){
         local_a[i+1] += cache[1];
         local_a[i+2] += cache[2];
     }
+
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // The total potential energy will be available only in the root process
     MPI_Reduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD); // apenas precisa atualizar o processo root, no final todos os processos vao ter o Pot correto,
@@ -838,139 +835,6 @@ double computeAccelerationsAndPot2(int size, int rank){
     return Pot;
 }
 
-// rascunho (ELIMINAR DEPOIS ?)
-//int debugNums = 0;
-double computeAccelerationsAndPot3(int size, int rank){
-    // Potential
-    double Pot = 0.0;
-    double localPot = 0.0; // Local potential energy for each process
-    double cache[3] = {0};
-    double local_a[N*3];
-
-    int particles_per_process = N / size;
-    int start_idx = rank * particles_per_process * 3;
-    int end_idx = (rank + 1) * particles_per_process * 3;
-
-    if (rank == size - 1) {
-        end_idx = N * 3;  // Handle the remainder in the last process
-    }
-
-    // Initialize the local acceleration array
-    for (int i = 0; i < N * 3; i++) {
-        local_a[i] = 0.0;
-    }
-
-    // int remainder = rank == size - 1 ? N % size : 0;
-    // int local_N = (particles_per_process + remainder) * 3;
-
-    // double* local_a = (double*)malloc(local_N * sizeof(double)); // Allocate only for the local portion
-
-
-    /* 
-    if (rank == size - 1) {
-        if(debugNums == 0){
-            printf("BEFORE -> Size: %d | Rank %d: start_idx: %d, end_idx: %d\n", size, rank, start_idx, end_idx);
-            debugNums = 1;
-        }
-        end_idx = N * 3;  // Handle the remainder in the last process
-        if(debugNums == 1){
-            printf("AFTER -> Size: %d | Rank %d: start_idx: %d, end_idx: %d\n", size, rank, start_idx, end_idx);
-            debugNums = 2;
-        }
-    }
-    */
-    
-    /* 
-    size = 2:
-        rank = 0 -> end_idx = 1 * N/2 * 3
-        rank = 1 -> end_idx = 2 * N/2 * 3 = N*3 (sem if)
-        rank = 1 -> end_idx =  N*3 (com if)
-
-    size = 3:
-        rank = 0 -> end_idx = 1 * N/3 * 3
-        rank = 1 -> end_idx = 2 * N/3 * 3
-        rank = 1 -> end_idx = 3 * N/3 * 3 != N*3 (sem if)
-
-        rank = 2 -> end_idx = N*3 (com if)
-    */
-
-    // loop over all distinct pairs i,j
-
-    for (int i = start_idx; i < end_idx; i += 3) {
-        cache[0] = 0;
-        cache[1] = 0;
-        cache[2] = 0;
-        for (int j = i + 3; j < N * 3; j += 3) {
-            // Calculate differences in positions
-            double dx = r[i] - r[j];
-            double dy = r[i+1] - r[j+1];
-            double dz = r[i+2] - r[j+2];
-
-            // Calculate the squared distance
-            double rSqd = dx * dx + dy * dy + dz * dz;
-
-            // Calculate inverse powers of rSqd
-            double inv_rSqd = 1.0 / rSqd;
-            double inv_rSqd_2 = inv_rSqd * inv_rSqd;
-            double inv_rSqd_3 = inv_rSqd * inv_rSqd * inv_rSqd;
-            double inv_rSqd_4 = inv_rSqd_2 * inv_rSqd_2;
-            double inv_rSqd_6 = inv_rSqd_2 * inv_rSqd_2 * inv_rSqd_2;
-            double inv_rSqd_7 = inv_rSqd * inv_rSqd_2 * inv_rSqd_4;
-
-            // Calculate the force magnitude
-            double f = (48 * inv_rSqd_7 - 24 * inv_rSqd_4);
-
-            cache[0]+=f*dx;
-            cache[1]+=f*dy;
-            cache[2]+=f*dz;
-
-            local_a[j] -= f * dx;
-            local_a[j+1] -= f * dy;
-            local_a[j+2] -= f * dz;
-
-            // ---------------------- begin pot
-            localPot += (inv_rSqd_6 - inv_rSqd_3) * 2;
-            // ---------------------- end pot
-        }
-        // update accelerations of i
-        local_a[i] += cache[0];
-        local_a[i+1] += cache[1];
-        local_a[i+2] += cache[2];
-    }
-    
-    MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(local_a, a, N * 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-    /* 
-    //
-    //local_a:         | global_a:
-    //0: 0 -> 2500     |
-    //                 | 0 -> 5000
-    //1: 2500 -> 5000  |
-
-    */
-
-    // // Gather all local potentials to the root process
-    //MPI_Allreduce(&localPot, &Pot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-
-    // // Gather all local accelerations to the root process
-    // MPI_Gather(local_a, N * 3, MPI_DOUBLE, a, N * 3, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    // free(local_a);
-
-    // // print of a vector
-    // printf("RANK %d: a[0]: %f | a[1]: %f | a[2]: %f\n", rank, a[0], a[1], a[2]);
-
-    // Gather all localPots to the root process
-    //MPI_Gather(&localPot, 1, MPI_DOUBLE, allPots, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    // Gather all local_a arrays to the root process
-    //MPI_Gather(local_a, local_N, MPI_DOUBLE, a, N * 3, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    //free(local_a);
-
-    return Pot;
-}
-
 double VV_Pot(double dt, int iter, FILE *fp, int size, int rank){
     // Velocity Verlet
     double psum = 0.;
@@ -1004,6 +868,8 @@ double VV_Pot(double dt, int iter, FILE *fp, int size, int rank){
     //  Update accellerations from updated positions
     Pot = computeAccelerationsAndPot(size, rank);
     
+    MPI_Barrier(MPI_COMM_WORLD);
+
     //  Update velocity with updated acceleration
     //#pragma omp parallel for reduction(+:psum)
     for (int i=0; i<N*3; i+=3) {

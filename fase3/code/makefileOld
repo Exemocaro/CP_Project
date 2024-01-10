@@ -13,7 +13,7 @@ MDseq.exe: $(SRC)/MDseq.cpp
 
 # Parallel version with OpenMP
 MDpar.exe: $(SRC)/MDpar.cpp
-	module load gcc/11.2.0;\
+#	module load gcc/11.2.0;\.
 	$(CC) $(CFLAGS) $(SRC)MDpar.cpp -lm -fopenmp -o MDpar.exe
 
 # Parallel version with MPI
@@ -22,20 +22,22 @@ MDmpi.exe: $(SRC)/MDmpi.cpp
 
 # Parallel version with MPI + OpenMP
 MDparmpi.exe: $(SRC)/MDparmpi.cpp
-	module load gcc/11.2.0;\
+#   module load gcc/11.2.0;\.
 	$(MPICC) $(CFLAGS) $(SRC)MDparmpi.cpp -lm -fopenmp -o MDparmpi.exe
 
 clean:
 	rm -f ./MD*.exe
 
 runseq: MDseq.exe
-	sbatch scriptseq.sh
+	./MDseq.exe < inputdata.txt
 
 runpar: MDpar.exe
-	sbatch scriptpar.sh
+	export OMP_NUM_THREADS=40;\
+	./MDpar.exe < inputdata.txt
 
 runmpi: MDmpi.exe
-	sbatch scriptmpi.sh
+	mpirun -np 4 ./MDmpi.exe < inputdata.txt
 
 runparmpi: MDparmpi.exe
-	sbatch test_cluster2.sh 
+	export OMP_NUM_THREADS=40;\
+	mpirun -np 4 ./MDparmpi.exe < inputdata.txt
