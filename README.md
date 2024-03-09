@@ -5,5 +5,5 @@ We were given some source code taken from [FoleyLab's MolecularDynamics Repo](ht
 Some of the techniques used range from simple code simplification and dependency removals, to code vectorization, OpenMP and MPI, among others. In the end, we achieved a 99% in the execution time of this code.
 
 Project members:
--> Luís Araújo
--> Mateus Pereira
+- Luís Araújo
+- Mateus Pereira
