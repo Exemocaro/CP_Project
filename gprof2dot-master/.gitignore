@@ -1,8 +1,0 @@
-.*.sw?
-.coverage
-*.dot
-*.egg-info
-*.orig
-*.png
-*.pyc
-dist
